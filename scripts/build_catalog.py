@@ -77,12 +77,19 @@ def main() -> int:
                     if digest(path, "sha256") != artifact["sha256"]:
                         raise SystemExit(f"SHA-256 mismatch: {path}")
                     output_artifact["md5"] = digest(path, "md5")
-                    output_artifact["local_url"] = args.firmware_base.rstrip("/") + "/" + name
+                    output_artifact["local_url"] = (
+                        args.firmware_base.rstrip("/")
+                        + "/"
+                        + artifact["sha256"]
+                        + "/"
+                        + name
+                    )
                 output_profile[kind] = output_artifact
             output_device["profiles"].append(output_profile)
         result["devices"].append(output_device)
 
-    Path(args.output).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    with Path(args.output).open("w", encoding="utf-8", newline="\n") as output:
+        output.write(json.dumps(result, indent=2) + "\n")
     return 0
 
 

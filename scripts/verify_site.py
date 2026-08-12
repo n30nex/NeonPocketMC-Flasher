@@ -44,7 +44,10 @@ def main() -> int:
                 artifacts.append(artifact)
                 require(re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"]), f"bad SHA-256: {artifact['name']}")
                 require(re.fullmatch(r"[0-9a-f]{32}", artifact["md5"]), f"bad MD5: {artifact['name']}")
-                require(artifact["local_url"] == f"/firmware/{artifact['name']}", f"bad local URL: {artifact['name']}")
+                require(
+                    artifact["local_url"] == f"/firmware/{artifact['sha256']}/{artifact['name']}",
+                    f"bad local URL: {artifact['name']}",
+                )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
     require(len(artifacts) == 22, f"expected 22 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
