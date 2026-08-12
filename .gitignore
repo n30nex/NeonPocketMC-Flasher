@@ -1,0 +1,4 @@
+firmware/
+site/
+*.part
+__pycache__/

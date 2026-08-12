@@ -1,564 +1,140 @@
-/* Hide the app until Vue mounts (prevents a flash of raw {{ mustache }}
-   template). !important is required because #app sets `display: flex`, and an
-   ID selector would otherwise outweigh this attribute selector. */
-[v-cloak] {
-  display: none !important;
+:root {
+  color-scheme: dark;
+  --bg: #050817;
+  --panel: rgba(10, 16, 39, .84);
+  --panel-strong: #0c1430;
+  --line: rgba(89, 164, 255, .24);
+  --blue: #18b7ff;
+  --blue-soft: #65d1ff;
+  --lime: #9cff38;
+  --yellow: #ffd84d;
+  --red: #ff557b;
+  --text: #f6fbff;
+  --muted: #99a9c5;
+  --radius: 22px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-body {
-  display: flex;
-  min-height: 100vh;
-}
+* { box-sizing: border-box; }
+html { min-height: 100%; background: var(--bg); scroll-behavior: smooth; }
+body { margin: 0; min-height: 100vh; color: var(--text); background: radial-gradient(circle at 50% -20%, #173a72 0, #071128 32%, var(--bg) 68%); overflow-x: hidden; }
+button, input, select { font: inherit; }
+button, a, label { -webkit-tap-highlight-color: transparent; }
+button { color: inherit; }
+.hidden { display: none !important; }
 
-body:has([v-cloak]):after {
-  content: '';
-  position: absolute;
-  top: calc(50% - 50px);
-  left: calc(50% - 50px);
-  width: 50px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border: 8px solid #f0f0f0;
-  animation:
-    l20-1 0.8s infinite linear alternate,
-    l20-2 1.6s infinite linear;
-}
-@keyframes l20-1{
-   0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
-   12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
-   25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
-   50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-   62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-   75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
-   100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
-}
-@keyframes l20-2{
-  0%    {transform:scaleY(1)  rotate(0deg)}
-  49.99%{transform:scaleY(1)  rotate(135deg)}
-  50%   {transform:scaleY(-1) rotate(0deg)}
-  100%  {transform:scaleY(-1) rotate(-135deg)}
-}
+.ambient { position: fixed; z-index: -1; width: 430px; height: 430px; border-radius: 50%; filter: blur(100px); opacity: .13; pointer-events: none; }
+.ambient-one { left: -180px; top: 22%; background: var(--blue); }
+.ambient-two { right: -200px; top: 48%; background: var(--lime); }
 
-#app {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
+.site-header { width: min(1180px, calc(100% - 36px)); margin: 0 auto; min-height: 88px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.brand { color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 12px; letter-spacing: .08em; }
+.brand img { width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 0 14px rgba(24,183,255,.45)); }
+.brand span { display: grid; line-height: 1; }
+.brand b { font-size: 17px; }
+.brand small { color: var(--lime); margin-top: 5px; font-size: 10px; letter-spacing: .34em; }
+.header-status { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 13px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 16px var(--lime); }
 
-#app h5.logo-top img {
-  height: 16px;
-  margin-top: -4px;
-}
+main { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding-bottom: 80px; }
+.hero { min-height: 390px; display: grid; grid-template-columns: 1fr 320px; align-items: center; gap: 48px; }
+.eyebrow { color: var(--blue-soft); font-weight: 800; font-size: 11px; letter-spacing: .28em; margin: 0 0 12px; }
+h1, h2, h3, p { overflow-wrap: anywhere; }
+h1 { margin: 0; font-size: clamp(43px, 7vw, 82px); line-height: .96; letter-spacing: -.055em; }
+h1 span { color: transparent; background: linear-gradient(92deg, var(--blue-soft), var(--lime)); background-clip: text; -webkit-background-clip: text; }
+.hero-copy { max-width: 720px; color: var(--muted); line-height: 1.7; font-size: 16px; margin: 25px 0 0; }
+.hero-orbit { width: 290px; height: 290px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; position: relative; box-shadow: inset 0 0 80px rgba(24,183,255,.08), 0 0 60px rgba(24,183,255,.08); }
+.hero-orbit::before, .hero-orbit::after { content: ""; position: absolute; border: 1px solid var(--line); border-radius: 50%; inset: 26px; }
+.hero-orbit::after { inset: 56px; border-color: rgba(156,255,56,.26); }
+.hero-orbit img { width: 150px; z-index: 2; filter: drop-shadow(0 0 24px rgba(24,183,255,.5)); }
+.hero-orbit i { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 15px var(--lime); animation: orbit 7s linear infinite; }
+.hero-orbit i:nth-child(2) { animation-delay: -2.3s; }.hero-orbit i:nth-child(3) { animation-delay: -4.6s; }
+@keyframes orbit { from { transform: rotate(0deg) translateX(144px) rotate(0); } to { transform: rotate(360deg) translateX(144px) rotate(-360deg); } }
 
-#app h5.logo-top span {
-  font-style: italic; font-weight: bold; line-height: 0.9
-}
+.notice { border: 1px solid rgba(255,216,77,.42); background: rgba(255,216,77,.08); color: #ffed9e; padding: 16px 18px; border-radius: 14px; margin-bottom: 24px; line-height: 1.5; }
+.stepper { position: sticky; top: 12px; z-index: 20; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 7px; border: 1px solid var(--line); background: rgba(5,8,23,.86); backdrop-filter: blur(18px); border-radius: 16px; margin-bottom: 20px; box-shadow: 0 12px 40px rgba(0,0,0,.24); }
+.step { appearance: none; border: 0; background: transparent; min-height: 51px; border-radius: 11px; display: flex; align-items: center; justify-content: center; gap: 9px; color: #71819e; cursor: pointer; }
+.step b { width: 24px; height: 24px; border: 1px solid currentColor; border-radius: 8px; display: grid; place-items: center; font-size: 11px; }
+.step.active { background: rgba(24,183,255,.13); color: var(--blue-soft); }
+.step.done { color: var(--lime); }.step:disabled { cursor: not-allowed; opacity: .48; }
 
-#app select {
-  cursor: pointer
-}
-#app .tooltip:has(>.device) {
-  background: #f0f0f055;
-  width: auto;
-}
-#app img.device {
-  width: 400px;
-  max-width: 400px;
-  max-height: 400px;
-}
-#app div.autoscroller {
-  overflow: auto;
-  max-height: 300px;
-  display: flex;
-  flex-direction: column-reverse;
-}
-#app pre.term {
-  font-family: monospace;
-}
-#app .overlay {
-  display: flex !important;
-  flex-direction: column;
-}
-#app .console {
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  margin: 0;
-}
-#app .console .holder {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-}
-#app .console-input {
-  flex-grow: 1;
-  display: block;
-  appearance: none;
-  background: transparent;
-  border: 0;
-  font-family: monospace;
-  font-size: .875rem;
-}
-#app .console-input:focus, #app console-input:focus{
-  outline: none;
-}
-#app .pre {
-  white-space-collapse: preserve;
-  min-width: 300px;
-}
-#app a {
-  text-decoration: underline;
-}
+.panel { display: none; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(150deg, rgba(14,23,52,.94), rgba(6,11,29,.96)); box-shadow: 0 25px 80px rgba(0,0,0,.28); padding: clamp(20px, 4vw, 42px); min-height: 400px; }
+.panel.active { display: block; animation: panel-in .28s ease-out; }
+@keyframes panel-in { from { opacity: 0; transform: translateY(9px); } }
+.panel-heading { display: grid; grid-template-columns: 1fr minmax(260px, 480px); align-items: end; gap: 32px; padding-bottom: 26px; }
+.panel-heading h2 { margin: 0; font-size: clamp(30px, 4vw, 46px); letter-spacing: -.04em; }
+.panel-heading > p { color: var(--muted); line-height: 1.6; margin: 0; }
 
-#app .version {
-  flex-wrap: wrap;
+.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.device-card, .profile-card { border: 1px solid var(--line); background: rgba(8,14,34,.78); border-radius: 17px; padding: 20px; min-height: 183px; text-align: left; cursor: pointer; transition: .18s ease; position: relative; overflow: hidden; }
+.device-card::after, .profile-card::after { content: ""; position: absolute; right: -42px; bottom: -55px; width: 130px; height: 130px; border-radius: 50%; background: var(--blue); filter: blur(55px); opacity: .08; transition: opacity .18s; }
+.device-card:hover, .profile-card:hover { transform: translateY(-2px); border-color: rgba(101,209,255,.58); }
+.device-card.selected, .profile-card.selected { border-color: var(--lime); box-shadow: inset 0 0 0 1px rgba(156,255,56,.24), 0 0 22px rgba(156,255,56,.09); }
+.device-card.selected::after, .profile-card.selected::after { background: var(--lime); opacity: .18; }
+.card-kicker { color: var(--lime); text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: .19em; }
+.device-card h3, .profile-card h3 { font-size: 20px; margin: 13px 0 8px; }
+.device-card p, .profile-card p { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.tag { border: 1px solid rgba(101,209,255,.23); border-radius: 99px; color: #b8d7ed; font-size: 10px; padding: 5px 8px; }
+
+.install-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+.choice { display: flex; gap: 12px; border: 1px solid var(--line); border-radius: 15px; padding: 16px; cursor: pointer; background: rgba(4,9,24,.52); }
+.choice:has(input:checked) { border-color: var(--blue); background: rgba(24,183,255,.08); }
+.choice input { accent-color: var(--blue); margin-top: 3px; }
+.choice span { display: grid; gap: 5px; }.choice small { color: var(--muted); line-height: 1.45; }
+.confirm-box { margin-top: 14px; padding: 14px 16px; border: 1px solid rgba(255,216,77,.35); background: rgba(255,216,77,.07); border-radius: 13px; color: #ffe894; }
+.confirm-box input { accent-color: var(--yellow); }
+
+.actions { display: flex; justify-content: flex-end; margin-top: 26px; gap: 10px; }.actions.split { justify-content: space-between; }
+button.primary, button.secondary { min-height: 48px; border-radius: 13px; padding: 0 19px; border: 1px solid transparent; cursor: pointer; font-weight: 750; transition: .18s; }
+button.primary { color: #03101a; background: linear-gradient(105deg, var(--blue-soft), var(--lime)); box-shadow: 0 8px 24px rgba(24,183,255,.18); }
+button.primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 11px 32px rgba(24,183,255,.28); }
+button.primary:disabled { filter: grayscale(.7); opacity: .4; cursor: not-allowed; }
+button.secondary { color: var(--text); background: rgba(15,26,57,.82); border-color: var(--line); }
+button.secondary:hover:not(:disabled) { border-color: var(--blue); }
+button.secondary:disabled { opacity: .4; cursor: not-allowed; }
+
+.summary-card { border: 1px solid var(--line); border-radius: 17px; background: rgba(4,9,24,.55); padding: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.summary-card div { display: grid; gap: 4px; }.summary-card small { color: var(--muted); }.summary-card b { font-size: 14px; }
+.safety-strip { display: grid; grid-template-columns: 140px 1fr; gap: 15px; padding: 15px 18px; margin: 14px 0; border-radius: 13px; background: rgba(156,255,56,.07); border: 1px solid rgba(156,255,56,.23); }
+.safety-strip b { color: var(--lime); }.safety-strip span { color: #cad8e7; }
+.progress-wrap { margin: 19px 0; }.progress-label { display: flex; justify-content: space-between; color: var(--muted); margin-bottom: 8px; font-size: 13px; }
+progress { width: 100%; height: 8px; appearance: none; border: 0; background: #111a33; border-radius: 99px; overflow: hidden; }
+progress::-webkit-progress-bar { background: #111a33; } progress::-webkit-progress-value { background: linear-gradient(90deg, var(--blue), var(--lime)); } progress::-moz-progress-bar { background: linear-gradient(90deg, var(--blue), var(--lime)); }
+.terminal { min-height: 180px; max-height: 340px; overflow: auto; white-space: pre-wrap; word-break: break-word; background: #02050e; border: 1px solid rgba(101,209,255,.2); color: #b9f5ff; border-radius: 13px; padding: 15px; font: 12px/1.55 "Cascadia Mono", Consolas, monospace; }
+
+.restart-list { list-style: none; padding: 0; counter-reset: steps; display: grid; gap: 12px; }
+.restart-list li { counter-increment: steps; display: grid; grid-template-columns: 42px 1fr; align-items: center; min-height: 64px; border: 1px solid var(--line); border-radius: 15px; padding: 12px 17px; color: var(--muted); }
+.restart-list li::before { content: counter(steps); width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: rgba(24,183,255,.13); color: var(--blue-soft); font-weight: 800; }
+.restart-list li b { color: var(--text); }
+
+.onboarding { border: 1px solid var(--line); border-radius: 18px; background: rgba(4,9,24,.45); padding: clamp(18px, 3vw, 28px); }
+#companion-onboarding { text-align: center; max-width: 720px; margin: auto; }
+.success-mark { margin: auto; width: 66px; height: 66px; border-radius: 50%; display: grid; place-items: center; color: #07140a; background: var(--lime); box-shadow: 0 0 35px rgba(156,255,56,.24); font-size: 30px; font-weight: 900; }
+.onboarding h3 { font-size: 24px; margin: 18px 0 8px; }.onboarding > p { color: var(--muted); line-height: 1.65; }
+.checklist { display: grid; gap: 10px; text-align: left; margin-top: 22px; }.checklist label { border: 1px solid var(--line); border-radius: 12px; padding: 13px; }.checklist input { accent-color: var(--lime); }
+.form-section + .form-section { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line); }
+.form-section h3 { margin: 0 0 16px; font-size: 18px; }.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.field-grid label { display: grid; gap: 7px; color: #c6d3e5; font-size: 12px; font-weight: 700; }
+input, select { width: 100%; min-height: 45px; border: 1px solid var(--line); background: #080e22; color: var(--text); border-radius: 11px; padding: 0 12px; outline: none; }
+input:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(24,183,255,.1); }
+.form-note { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 12px 0 0; }
+.console-drawer { margin-top: 18px; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }.console-drawer summary { cursor: pointer; color: var(--blue-soft); font-weight: 700; }.console-drawer .terminal { margin-top: 14px; }
+.console-input { display: grid; grid-template-columns: 1fr auto; gap: 8px; }.console-input button { min-width: 90px; }
+.completion { margin-top: 18px; border: 1px solid rgba(156,255,56,.35); background: rgba(156,255,56,.08); border-radius: 14px; padding: 18px; display: grid; gap: 4px; }.completion b { color: var(--lime); font-size: 18px; }.completion span { color: #cde3c1; }
+
+footer { width: min(1180px, calc(100% - 36px)); margin: 0 auto; min-height: 90px; border-top: 1px solid var(--line); display: flex; gap: 20px; align-items: center; color: var(--muted); font-size: 12px; }
+footer span { margin-right: auto; } footer a { color: var(--blue-soft); text-decoration: none; }
+
+@media (max-width: 820px) {
+  .hero { grid-template-columns: 1fr; min-height: 430px; padding: 58px 0 38px; }.hero-orbit { display: none; }
+  .panel-heading { grid-template-columns: 1fr; gap: 13px; }.card-grid { grid-template-columns: 1fr 1fr; }.summary-card { grid-template-columns: 1fr 1fr; }
 }
-#app .version div.field {
-  min-width: 140px;
-  align-self: flex-start;
+@media (max-width: 600px) {
+  .site-header, main, footer { width: min(100% - 22px, 1180px); }.header-status { display: none; }.hero { min-height: 390px; }.hero-copy { font-size: 14px; }
+  .stepper { top: 6px; }.step { gap: 0; }.step span { display: none; }.step b { width: 29px; height: 29px; }
+  .panel { padding: 18px; border-radius: 17px; }.card-grid, .install-mode, .field-grid, .summary-card { grid-template-columns: 1fr; }.device-card, .profile-card { min-height: auto; }
+  .safety-strip { grid-template-columns: 1fr; }.actions.split { flex-wrap: wrap; }.actions.split button { flex: 1; }
+  .console-input { grid-template-columns: 1fr; } footer { flex-wrap: wrap; padding: 25px 0; } footer span { flex-basis: 100%; }
 }
-#app .version .pre {
-  padding-bottom: 10px;
-}
-#app img.icon {
-  height: 20px;
-}
-
-.flash-container {
-  padding-bottom: 150px;
-}
-
-.strong {
-  font-weight: 700;
-}
-
-.text-wrap {
-  text-wrap: auto;
-}
-
-/* Observer flasher — teal accent + teal-tinted dark backgrounds */
-body.dark {
-  /* Accent colors */
-  --primary: #80cbc4;
-  --on-primary: #00363d;
-  --primary-container: #004f56;
-  --on-primary-container: #9df0e7;
-  --inverse-primary: #00695c;
-  --secondary: #89ccc6;
-  --on-secondary: #00302d;
-  --secondary-container: #00504b;
-  --on-secondary-container: #a5ede7;
-
-  /* Background & surface — subtle teal tint */
-  --background: #161d1d;
-  --surface: #111918;
-  --surface-dim: #111918;
-  --surface-bright: #343d3c;
-  --surface-container-lowest: #0c1110;
-  --surface-container-low: #161d1d;
-  --surface-container: #1c2322;
-  --surface-container-high: #262d2c;
-  --surface-container-highest: #313938;
-
-  /* Outlines & variants */
-  --outline: #8e9a99;
-  --outline-variant: #424c4b;
-  --surface-variant: #424c4b;
-  --on-surface-variant: #c2ccca;
-}
-
-/* Mobile header overflow menu (visibility via BeerCSS .s / .m.l) */
-details.header-menu.s {
-  display: none;
-}
-
-@media only screen and (max-width: 600px) {
-  details.header-menu.s {
-    display: block;
-  }
-}
-
-details.header-menu {
-  position: relative;
-}
-
-details.header-menu > summary {
-  list-style: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2.5rem;
-  min-height: 2.5rem;
-  border-radius: 50%;
-  color: inherit;
-}
-
-details.header-menu > summary::-webkit-details-marker {
-  display: none;
-}
-
-details.header-menu > summary:hover,
-details.header-menu[open] > summary {
-  background: var(--active);
-}
-
-details.header-menu > .header-menu-panel {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  z-index: 20;
-  min-width: 12rem;
-  margin-top: 0.25rem;
-  padding: 0.25rem 0;
-  background: var(--surface-container-high);
-  border: 1px solid var(--outline-variant);
-  border-radius: 0.5rem;
-  box-shadow: var(--elevate2);
-  display: flex;
-  flex-direction: column;
-}
-
-details.header-menu > .header-menu-panel a,
-details.header-menu > .header-menu-panel button {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  text-align: left;
-  text-decoration: none;
-  cursor: pointer;
-  font: inherit;
-}
-
-details.header-menu > .header-menu-panel a:hover,
-details.header-menu > .header-menu-panel button:hover {
-  background: var(--active);
-}
-
-details.header-menu > .header-menu-panel i {
-  font-size: 1.25rem;
-}
-
-/* ============================================================
-   Persistent full-width banner (logo + global nav actions)
-   Sits at the top of #app, spanning both columns. Sticky so it
-   stays visible while the page scrolls on mobile.
-   ============================================================ */
-.app-banner {
-  flex: 0 0 auto;
-  transform: none;        /* cancel BeerCSS's default header translateY */
-  min-block-size: auto;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  padding: 0.5rem 1rem;
-  background: var(--surface-container);
-  border-bottom: 1px solid var(--outline-variant);
-}
-
-.app-banner > nav {
-  flex-wrap: wrap;
-  min-height: 3rem;
-}
-
-/* ============================================================
-   Split layout — quick-start instructions beside the flasher
-   ------------------------------------------------------------
-   Mobile-first: a single column with the flasher on top and the
-   instructions below (the whole page scrolls as one).
-   Desktop (>=1024px): two side-by-side columns that scroll
-   independently — instructions on the left, flasher on the right.
-   The flasher lives first in the DOM (so it is on top when stacked
-   on mobile); on desktop `order` swaps the columns.
-   ============================================================ */
-.split-layout {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  min-width: 0;
-  width: 100%;
-}
-
-.split-layout .flasher-pane,
-.split-layout .instructions-pane {
-  min-width: 0;
-  /* Cancel the incidental sibling margin BeerCSS adds to <aside>, so the
-     instructions line up with the flasher content, not 1rem lower. */
-  margin: 0;
-}
-
-@media only screen and (min-width: 1024px) {
-  /* Lock the flasher page to the viewport so its two columns scroll
-     independently. Scoped to .flasher-page (set on <html> in index.html)
-     so it does NOT leak into docs.html / changelog.html, which share this
-     stylesheet and must scroll the whole page normally. */
-  html.flasher-page,
-  html.flasher-page body {
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  #app {
-    height: 100vh;
-  }
-
-  /* The two columns fill the space below the persistent banner and
-     scroll independently. Cap the pair and centre it so a very wide
-     monitor gets symmetric outer margins instead of one column
-     ballooning — the banner above stays full-width. */
-  .split-layout {
-    flex: 1 1 auto;
-    min-height: 0;
-    flex-direction: row;
-    width: 100%;
-    max-width: 1500px;
-    margin-inline: auto;
-  }
-
-  /* Left column — the flasher */
-  .split-layout .flasher-pane {
-    order: 1;
-    flex: 0 0 clamp(460px, 44vw, 660px);
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-
-  /* Right column — the onboarding instructions */
-  .split-layout .instructions-pane {
-    order: 2;
-    flex: 1 1 0;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    border-left: 1px solid var(--outline-variant);
-  }
-}
-
-/* ============================================================
-   Stacked layout (mobile / narrow) — the instructions wrap below
-   the flasher. Add a horizontal divider between the two so they
-   read as separate sections (the desktop layout separates them
-   with the vertical border-left above instead), and trim the
-   flasher's bottom gutter: the generous desktop scroll padding
-   would just be dead space above the divider when stacked.
-   ============================================================ */
-@media only screen and (max-width: 1023.98px) {
-  .flash-container {
-    padding-bottom: 2.5rem;
-  }
-
-  .split-layout .instructions-pane {
-    border-top: 1px solid var(--outline-variant);
-  }
-}
-
-/* ============================================================
-   Quick-start instructions (prose in the right/bottom pane)
-   ============================================================ */
-.quickstart {
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 1.5rem 1.75rem 4rem;
-  color: var(--on-background);
-  line-height: 1.7;
-}
-
-.quickstart .qs-eyebrow {
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--primary);
-  margin: 0 0 0.35rem;
-}
-
-.quickstart h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 0.4rem;
-}
-
-.quickstart .qs-lead {
-  color: var(--on-surface-variant);
-  margin: 0 0 1.5rem;
-}
-
-.quickstart h2 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin: 2rem 0 0.75rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--outline-variant);
-}
-
-.quickstart p {
-  margin: 0.5rem 0;
-}
-
-.quickstart a:not(.button) {
-  color: var(--primary);
-}
-
-.quickstart code {
-  font-family: "Fira Code", "Cascadia Code", ui-monospace, monospace;
-  font-size: 0.85em;
-  background: var(--surface-container-high);
-  border: 1px solid var(--outline-variant);
-  border-radius: 4px;
-  padding: 0.1em 0.35em;
-  color: var(--primary);
-}
-
-/* Block code (e.g. a list of CLI commands to paste) */
-.quickstart pre {
-  background: var(--surface-container-highest);
-  border: 1px solid var(--outline-variant);
-  border-radius: 8px;
-  padding: 0.9rem 1.1rem;
-  overflow-x: auto;
-  margin: 0.85rem 0;
-}
-
-.quickstart pre code {
-  font-family: "Fira Code", "Cascadia Code", ui-monospace, monospace;
-  font-size: 0.82rem;
-  line-height: 1.65;
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--on-background);
-  white-space: pre;
-}
-
-/* Numbered step list */
-.qs-steps {
-  list-style: none;
-  counter-reset: qs-step;
-  padding: 0;
-  margin: 1rem 0;
-}
-
-.qs-steps > li {
-  position: relative;
-  padding-left: 3rem;
-  margin: 0 0 1.4rem;
-}
-
-.qs-steps > li::before {
-  counter-increment: qs-step;
-  content: counter(qs-step);
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.qs-steps > li h3 {
-  margin: 0.2rem 0 0.25rem;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--on-background);
-}
-
-.qs-steps > li p {
-  margin: 0.2rem 0;
-  color: var(--on-surface-variant);
-}
-
-/* Callout / note box */
-.qs-note {
-  display: flex;
-  gap: 0.6rem;
-  align-items: flex-start;
-  margin: 1rem 0;
-  padding: 0.75rem 1rem;
-  background: var(--surface-container);
-  border-left: 3px solid var(--primary);
-  border-radius: 0 8px 8px 0;
-  color: var(--on-surface-variant);
-  font-size: 0.9rem;
-}
-
-.qs-note i {
-  color: var(--primary);
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
-.qs-note p {
-  margin: 0;
-}
-
-/* Full-guide link button spacing */
-.quickstart .qs-fulllink {
-  margin: 1.25rem 0 0.5rem;
-}
-
-/* ============================================================
-   Configuration method tabs (Serial console / Web config) +
-   the web-config walkthrough figures
-   ============================================================ */
-
-/* Tabs sit between the shared intro copy and the two per-method pages. */
-.quickstart .qs-tabs {
-  margin: 1.25rem 0 0.25rem;
-}
-
-/* Beer's tab labels run-in uppercase; keep sentence case so "Web config"
-   matches the surrounding prose, and tighten the icon/label/badge gap. */
-.quickstart .qs-tabs > a {
-  gap: 0.4rem;
-  text-transform: none;
-}
-
-.webconfig-body {
-  padding-top: 0.25rem;
-}
-
-.wc-figure {
-  margin: 0.85rem 0 0;
-  border: 1px solid var(--outline-variant);
-  border-radius: 10px;
-  background: var(--surface-container);
-  overflow: hidden;
-}
-
-.wc-figure img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* Tall phone screenshots: narrow the whole figure to a phone-ish width so the
-   box hugs the image (no interior gutters) instead of let-boxing it, and centre
-   it in the column. The image still fills the box via the rule above. */
-.wc-figure.wc-figure--phone {
-  max-width: 340px;
-  margin-inline: auto;
-}
-
-.wc-figure figcaption {
-  padding: 0.55rem 0.85rem;
-  font-size: 0.8rem;
-  color: var(--on-surface-variant);
-  background: var(--surface-container-low);
-  border-top: 1px solid var(--outline-variant);
-}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; scroll-behavior: auto !important; } }

@@ -1,0 +1,235 @@
+{
+  "schema": 1,
+  "devices": [
+    {
+      "id": "heltec-v3",
+      "product": "heltec-v3-companion",
+      "name": "Heltec WiFi LoRa 32 V3",
+      "family": "ESP32-S3",
+      "display": "Integrated 128x64 OLED",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-S3",
+      "ambiguous_with": "Heltec V4",
+      "profiles": [
+        {
+          "id": "ble-companion-oled",
+          "name": "BLE Companion + OLED",
+          "summary": "Phone companion with the NeonPocket OLED interface.",
+          "transport": "BLE",
+          "features": ["OLED", "BLE", "messages", "nearby radios"],
+          "update": "NeonPocketMC-Heltec-V3-BLE-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V3-BLE-recovery-preserves-settings.bin",
+          "onboarding": "companion"
+        }
+      ]
+    },
+    {
+      "id": "heltec-v4",
+      "product": "heltec-v4-companion",
+      "name": "Heltec WiFi LoRa 32 V4 / V4.3",
+      "family": "ESP32-S3",
+      "display": "Integrated 128x64 OLED",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-S3",
+      "ambiguous_with": "Heltec V3",
+      "profiles": [
+        {
+          "id": "ble-companion-oled",
+          "name": "BLE Companion + OLED",
+          "summary": "Phone companion with the NeonPocket OLED interface.",
+          "transport": "BLE",
+          "features": ["OLED", "BLE", "messages", "nearby radios"],
+          "update": "NeonPocketMC-Heltec-V4-BLE-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V4-BLE-recovery-preserves-settings.bin",
+          "onboarding": "companion"
+        }
+      ]
+    },
+    {
+      "id": "rc52-companion",
+      "product": "rc52-companion",
+      "name": "RadioCore RC52 Companion",
+      "family": "nRF52840",
+      "display": "220x128 NV3001B TFT",
+      "flash_method": "uf2",
+      "usb_vid": 9114,
+      "usb_pid": 32881,
+      "profiles": [
+        {
+          "id": "ble-companion-tft",
+          "name": "BLE Companion + TFT",
+          "summary": "Low-power phone companion with the full NeonPocket TFT interface.",
+          "transport": "BLE",
+          "features": ["TFT", "BLE", "messages", "nearby radios"],
+          "update": "NeonPocketMC-RC52-1.1-RC3.uf2",
+          "onboarding": "companion"
+        }
+      ]
+    },
+    {
+      "id": "rc52-server",
+      "product": "rc52-server",
+      "name": "RadioCore RC52 Server",
+      "family": "nRF52840",
+      "display": "Headless or 220x128 NV3001B TFT",
+      "flash_method": "uf2",
+      "usb_vid": 9114,
+      "usb_pid": 32881,
+      "profiles": [
+        {
+          "id": "repeater-headless",
+          "name": "Low-power Repeater",
+          "summary": "Headless outdoor repeater profile.",
+          "transport": "USB CLI",
+          "features": ["headless", "repeater", "low power"],
+          "update": "NeonPocketMC-RC52-Repeater-v1.1.0-rc.2.uf2",
+          "onboarding": "server-core"
+        },
+        {
+          "id": "room-server-headless",
+          "name": "Room Server — Headless",
+          "summary": "Room Server core without a display.",
+          "transport": "USB CLI",
+          "features": ["headless", "room server", "optional repeat"],
+          "update": "NeonPocketMC-RC52-Room-Server-Headless-v1.1.0-rc.2.uf2",
+          "onboarding": "room-core"
+        },
+        {
+          "id": "room-server-tft",
+          "name": "Room Server + TFT",
+          "summary": "Room Server with the NeonPocket status display.",
+          "transport": "USB CLI",
+          "features": ["TFT", "room server", "optional repeat"],
+          "update": "NeonPocketMC-RC52-Room-Server-TFT-v1.1.0-rc.2.uf2",
+          "onboarding": "room-core"
+        }
+      ]
+    },
+    {
+      "id": "rcc6-companion",
+      "product": "rcc6-companion",
+      "name": "RadioCore RCC6 Ultimate Companion",
+      "family": "ESP32-C6",
+      "display": "220x128 NV3001B TFT",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-C6",
+      "usb_vid": 12346,
+      "usb_pid": 4097,
+      "profiles": [
+        {
+          "id": "ble-companion-tft",
+          "name": "Ultimate BLE Companion",
+          "summary": "The full standalone NeonPocket experience for standard companion apps.",
+          "transport": "BLE",
+          "features": ["TFT", "BLE", "history", "composer", "network explorer"],
+          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-recovery-preserves-settings.bin",
+          "onboarding": "companion"
+        },
+        {
+          "id": "web-ap-companion-tft",
+          "name": "Ultimate Wi-Fi / Web Companion",
+          "summary": "AP onboarding, LAN WebUI and trusted-LAN TCP companion access.",
+          "transport": "Wi-Fi + WebUI",
+          "features": ["TFT", "WebUI", "AP onboarding", "LAN TCP", "signed OTA"],
+          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-recovery-preserves-settings.bin",
+          "onboarding": "companion-web"
+        }
+      ]
+    },
+    {
+      "id": "rcc6-server",
+      "product": "rcc6-server",
+      "name": "RadioCore RCC6 Services",
+      "family": "ESP32-C6",
+      "display": "Headless or 220x128 NV3001B TFT",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-C6",
+      "usb_vid": 12346,
+      "usb_pid": 4097,
+      "profiles": [
+        {
+          "id": "mqtt-observer-repeater",
+          "name": "MQTT Observer + Repeater",
+          "summary": "Wi-Fi observer dashboard with MQTT ingestion and optional repeating.",
+          "transport": "Wi-Fi + WebUI + USB CLI",
+          "features": ["WebUI", "MQTT", "observer", "optional repeat", "headless"],
+          "update": "NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
+          "onboarding": "server-network"
+        },
+        {
+          "id": "room-server-minimal-headless",
+          "name": "Room Server Minimal — Headless",
+          "summary": "Smallest Room Server build; no screen, Wi-Fi, WebUI or MQTT.",
+          "transport": "USB CLI",
+          "features": ["headless", "room server", "minimal"],
+          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
+          "onboarding": "room-core"
+        },
+        {
+          "id": "room-server-minimal-tft",
+          "name": "Room Server Minimal + TFT",
+          "summary": "Room Server core plus the NeonPocket TFT; no Wi-Fi or MQTT.",
+          "transport": "USB CLI",
+          "features": ["TFT", "room server", "minimal"],
+          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
+          "onboarding": "room-core"
+        },
+        {
+          "id": "room-server-full-headless",
+          "name": "Room Server Full — Headless",
+          "summary": "Room Server with authenticated WebUI, Wi-Fi and MQTT.",
+          "transport": "Wi-Fi + WebUI + USB CLI",
+          "features": ["headless", "room server", "WebUI", "MQTT"],
+          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
+          "onboarding": "room-network"
+        },
+        {
+          "id": "room-server-full-tft-experimental",
+          "name": "Room Server Full + TFT — Experimental",
+          "summary": "Every RCC6 Room Server service plus the NeonPocket TFT and memory gate.",
+          "transport": "Wi-Fi + WebUI + USB CLI",
+          "features": ["TFT", "room server", "WebUI", "MQTT", "experimental"],
+          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
+          "onboarding": "room-network"
+        }
+      ]
+    }
+  ],
+  "radio_presets": [
+    {"name": "USA / Canada", "freq": "910.525", "bw": "62.5", "sf": 7, "cr": 5},
+    {"name": "Australia", "freq": "915.800", "bw": "250", "sf": 10, "cr": 5},
+    {"name": "Australia — narrow", "freq": "916.575", "bw": "62.5", "sf": 7, "cr": 8},
+    {"name": "Australia — mid", "freq": "915.075", "bw": "125", "sf": 9, "cr": 5},
+    {"name": "Australia — SA / WA", "freq": "923.125", "bw": "62.5", "sf": 8, "cr": 8},
+    {"name": "Australia — QLD", "freq": "923.125", "bw": "62.5", "sf": 8, "cr": 5},
+    {"name": "Brazil", "freq": "923.125", "bw": "62.5", "sf": 8, "cr": 8},
+    {"name": "EU / UK — narrow", "freq": "869.618", "bw": "62.5", "sf": 8, "cr": 8},
+    {"name": "EU / UK — legacy wide", "freq": "869.525", "bw": "250", "sf": 11, "cr": 5},
+    {"name": "Czech Republic — narrow", "freq": "869.432", "bw": "62.5", "sf": 7, "cr": 5},
+    {"name": "EU 433 MHz — long range", "freq": "433.650", "bw": "250", "sf": 11, "cr": 5},
+    {"name": "EU 433 MHz — narrow", "freq": "433.650", "bw": "62.5", "sf": 8, "cr": 8},
+    {"name": "Netherlands", "freq": "869.618", "bw": "62.5", "sf": 7, "cr": 5},
+    {"name": "New Zealand", "freq": "917.375", "bw": "250", "sf": 11, "cr": 5},
+    {"name": "New Zealand — narrow", "freq": "917.375", "bw": "62.5", "sf": 7, "cr": 5},
+    {"name": "Portugal 433", "freq": "433.375", "bw": "62.5", "sf": 9, "cr": 6},
+    {"name": "Portugal 868", "freq": "869.618", "bw": "62.5", "sf": 7, "cr": 6},
+    {"name": "Switzerland", "freq": "869.618", "bw": "62.5", "sf": 8, "cr": 8},
+    {"name": "Vietnam — narrow", "freq": "920.250", "bw": "62.5", "sf": 8, "cr": 5},
+    {"name": "Vietnam — legacy wide", "freq": "920.250", "bw": "250", "sf": 11, "cr": 5}
+  ],
+  "mqtt_presets": [
+    "meshcore-ca-1", "meshcore-ca-2", "analyzer-us", "analyzer-eu", "nz-analyzer",
+    "meshmapper", "meshrank", "waev", "meshomatic", "cascadiamesh", "tennmesh",
+    "nashmesh", "ctmesh", "chimesh", "meshat.se", "eastidahomesh", "coloradomesh",
+    "dutchmeshcore-1", "dutchmeshcore-2", "meshcore-fi", "okimesh-1", "okimesh-2",
+    "inwmesh", "bostonmesh", "rflab", "ipnt.uk", "flmesh", "corecomms", "meshtexas",
+    "mesh-chaun14", "wcmesh", "atvirastinklas", "gomesh", "idahomesh", "none"
+  ]
+}

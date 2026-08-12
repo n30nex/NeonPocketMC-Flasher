@@ -1,931 +1,665 @@
-import "/lib/beer.min.js";
-import { createApp, reactive, ref, nextTick, watch, computed, onMounted } from "/lib/vue.min.js";
-import { Dfu } from "/lib/dfu.js";
-import { ESPLoader, Transport, HardReset } from "/lib/esp32.js";
-import { SerialConsole } from '/lib/console.js';
+import { ESPLoader, Transport } from "/lib/esp32.js";
 
-const searchParams = new URLSearchParams(location.search);
-const configName = searchParams.get('config')?.replaceAll(/[^a-z_-]/g, '') ?? 'config';
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Release channels are entries in each firmware's Version dropdown (fed by
-// config.releasesUrl), so there is no per-channel config any more. ?config= is
-// kept for alternate configs (precedent: old-config.json); a stale or missing
-// name falls back to the default config rather than leaving the page broken —
-// this covers old ?config=config-beta links from the retired channel switcher.
-const configRes = await fetch(`/${configName}.json`);
-if (!configRes.ok && configName !== 'config') {
-  console.warn(`${configName}.json unavailable (${configRes.status}); falling back to config.json`);
-  const u = new URL(location.href);
-  u.searchParams.delete('config');
-  location.replace(u.toString());
-}
-const config = await configRes.json();
-
-let github = [];
-// Fetch release data only if some firmware needs it (a "github" def in the
-// config). The feed URL comes from config.releasesUrl: this page is served from
-// GitHub Pages, which cannot host a dynamic route, so the Observer feed lives
-// on the firmware-proxy Worker instead. The bare-path fallback preserves the
-// upstream mainline behaviour (old-config.json has no releasesUrl).
-const needsGithubReleases = config.device?.some(
-  d => d.firmware?.some(fw => fw.github?.files)
-);
-if (needsGithubReleases) {
-  try {
-    const githubRes = await fetch(config.releasesUrl ?? '/releases');
-    if (githubRes.ok) github = await githubRes.json();
-  } catch (e) {}
-}
-
-const commandReference  = {
-  // --- General ---
-  'time ': 'Set time {epoch-secs}',
-  'erase': 'Erase filesystem',
-  'advert': 'Send Advertisment packet',
-  'reboot': 'Reboot device',
-  'clock': 'Display current time',
-  'password ': 'Set new password',
-  'log': 'Ouput log',
-  'log start': 'Start packet logging to file system',
-  'log stop': 'Stop packet logging to file system',
-  'log erase': 'Erase the packet logs from file system',
-  'ver': 'Show device version',
-
-  // --- Radio & Device ---
-  'set freq ': 'Set frequency {MHz}',
-  'set af ': 'Set Air-time factor',
-  'set tx ': 'Set Tx power {dBm}',
-  'set repeat ': 'Set repeater mode {on|off}',
-  'set advert.interval ': 'Set advert rebroadcast interval {minutes}',
-  'set guest.password ': 'Set guest password',
-  'set name ': 'Set device name (also sets MQTT origin)',
-  'set lat ': 'Set advertisement map latitude',
-  'set lon ': 'Set advertisement map longitude',
-  'set prv.key ': 'Restore private key for identity migration {64-hex-char-key}',
-  'get freq': 'Get frequency (MHz)',
-  'get af': 'Get Air-time factor',
-  'get tx': 'Get Tx power (dBm)',
-  'get repeat': 'Get repeater mode',
-  'get advert.interval': 'Get advert rebroadcast interval (minutes)',
-  'get name': 'Get device name',
-  'get lat': 'Get advertisement map latitude',
-  'get lon': 'Get advertisement map longitude',
-  'get public.key': 'Get device public key',
-
-  // --- MQTT shared ---
-  'get mqtt.origin': 'Get MQTT origin name',
-  'set mqtt.origin ': 'Set MQTT origin name',
-  'get mqtt.iata': 'Get IATA code',
-  'set mqtt.iata ': 'Set IATA code (auto-uppercased)',
-  'get mqtt.status': 'Get MQTT connection status per slot',
-  'get mqtt.presets': 'List available MQTT presets',
-  'get mqtt.presets ': 'List MQTT presets from index {start}',
-  'get mqtt.packets': 'Get packet message setting (on/off)',
-  'set mqtt.packets ': 'Enable/disable packet messages {on|off}',
-  'get mqtt.raw': 'Get raw message setting (on/off)',
-  'set mqtt.raw ': 'Enable/disable raw messages {on|off}',
-  'get mqtt.rx': 'Get RX packet uplinking setting (on/off)',
-  'set mqtt.rx ': 'Enable/disable RX packet uplinking {on|off}',
-  'get mqtt.tx': 'Get TX packet uplinking setting (on/off/advert)',
-  'set mqtt.tx ': 'Set TX packet uplinking {on|off|advert}',
-  'get mqtt.interval': 'Get status publish interval (minutes)',
-  'set mqtt.interval ': 'Set status publish interval {1-60 minutes}',
-  'get mqtt.owner': 'Get owner public key',
-  'set mqtt.owner ': 'Set owner public key {64-hex-char-key}',
-  'get mqtt.email': 'Get owner email address',
-  'set mqtt.email ': 'Set owner email address',
-
-  // --- MQTT slot 1 ---
-  'get mqtt1.preset': 'Get slot 1 preset name',
-  'set mqtt1.preset ': 'Set slot 1 preset {analyzer-us|analyzer-eu|meshmapper|meshrank|waev|meshomatic|cascadiamesh|tennmesh|nashmesh|chimesh|meshat.se|eastidahomesh|coloradomesh|custom|none}',
-  'get mqtt1.server': 'Get slot 1 server hostname',
-  'set mqtt1.server ': 'Set slot 1 custom server hostname',
-  'get mqtt1.port': 'Get slot 1 server port',
-  'set mqtt1.port ': 'Set slot 1 custom server port {1-65535}',
-  'get mqtt1.username': 'Get slot 1 username',
-  'set mqtt1.username ': 'Set slot 1 custom username',
-  'get mqtt1.password': 'Get slot 1 password',
-  'set mqtt1.password ': 'Set slot 1 custom password',
-  'get mqtt1.token': 'Get slot 1 per-slot token',
-  'set mqtt1.token ': 'Set slot 1 token (required for meshrank preset)',
-  'get mqtt1.topic': 'Get slot 1 custom topic template',
-  'set mqtt1.topic ': 'Set slot 1 custom topic template e.g. {iata}/{device}/{type}',
-  'get mqtt1.audience': 'Get slot 1 JWT audience',
-  'set mqtt1.audience ': 'Set slot 1 JWT audience (enables Ed25519 auth; omit value to clear)',
-
-  // --- MQTT slot 2 ---
-  'get mqtt2.preset': 'Get slot 2 preset name',
-  'set mqtt2.preset ': 'Set slot 2 preset {analyzer-us|analyzer-eu|meshmapper|meshrank|waev|meshomatic|cascadiamesh|tennmesh|nashmesh|chimesh|meshat.se|eastidahomesh|coloradomesh|custom|none}',
-  'get mqtt2.server': 'Get slot 2 server hostname',
-  'set mqtt2.server ': 'Set slot 2 custom server hostname',
-  'get mqtt2.port': 'Get slot 2 server port',
-  'set mqtt2.port ': 'Set slot 2 custom server port {1-65535}',
-  'get mqtt2.username': 'Get slot 2 username',
-  'set mqtt2.username ': 'Set slot 2 custom username',
-  'get mqtt2.password': 'Get slot 2 password',
-  'set mqtt2.password ': 'Set slot 2 custom password',
-  'get mqtt2.token': 'Get slot 2 per-slot token',
-  'set mqtt2.token ': 'Set slot 2 token (required for meshrank preset)',
-  'get mqtt2.topic': 'Get slot 2 custom topic template',
-  'set mqtt2.topic ': 'Set slot 2 custom topic template e.g. {iata}/{device}/{type}',
-  'get mqtt2.audience': 'Get slot 2 JWT audience',
-  'set mqtt2.audience ': 'Set slot 2 JWT audience (enables Ed25519 auth; omit value to clear)',
-
-  // --- MQTT slot 3 ---
-  'get mqtt3.preset': 'Get slot 3 preset name',
-  'set mqtt3.preset ': 'Set slot 3 preset {analyzer-us|analyzer-eu|meshmapper|meshrank|waev|meshomatic|cascadiamesh|tennmesh|nashmesh|chimesh|meshat.se|eastidahomesh|coloradomesh|custom|none}',
-  'get mqtt3.server': 'Get slot 3 server hostname',
-  'set mqtt3.server ': 'Set slot 3 custom server hostname',
-  'get mqtt3.port': 'Get slot 3 server port',
-  'set mqtt3.port ': 'Set slot 3 custom server port {1-65535}',
-  'get mqtt3.username': 'Get slot 3 username',
-  'set mqtt3.username ': 'Set slot 3 custom username',
-  'get mqtt3.password': 'Get slot 3 password',
-  'set mqtt3.password ': 'Set slot 3 custom password',
-  'get mqtt3.token': 'Get slot 3 per-slot token',
-  'set mqtt3.token ': 'Set slot 3 token (required for meshrank preset)',
-  'get mqtt3.topic': 'Get slot 3 custom topic template',
-  'set mqtt3.topic ': 'Set slot 3 custom topic template e.g. {iata}/{device}/{type}',
-  'get mqtt3.audience': 'Get slot 3 JWT audience',
-  'set mqtt3.audience ': 'Set slot 3 JWT audience (enables Ed25519 auth; omit value to clear)',
-
-  // --- MQTT slot 4 ---
-  'get mqtt4.preset': 'Get slot 4 preset name',
-  'set mqtt4.preset ': 'Set slot 4 preset {analyzer-us|analyzer-eu|meshmapper|meshrank|waev|meshomatic|cascadiamesh|tennmesh|nashmesh|chimesh|meshat.se|eastidahomesh|coloradomesh|custom|none}',
-  'get mqtt4.server': 'Get slot 4 server hostname',
-  'set mqtt4.server ': 'Set slot 4 custom server hostname',
-  'get mqtt4.port': 'Get slot 4 server port',
-  'set mqtt4.port ': 'Set slot 4 custom server port {1-65535}',
-  'get mqtt4.username': 'Get slot 4 username',
-  'set mqtt4.username ': 'Set slot 4 custom username',
-  'get mqtt4.password': 'Get slot 4 password',
-  'set mqtt4.password ': 'Set slot 4 custom password',
-  'get mqtt4.token': 'Get slot 4 per-slot token',
-  'set mqtt4.token ': 'Set slot 4 token (required for meshrank preset)',
-  'get mqtt4.topic': 'Get slot 4 custom topic template',
-  'set mqtt4.topic ': 'Set slot 4 custom topic template e.g. {iata}/{device}/{type}',
-  'get mqtt4.audience': 'Get slot 4 JWT audience',
-  'set mqtt4.audience ': 'Set slot 4 JWT audience (enables Ed25519 auth; omit value to clear)',
-
-  // --- MQTT slot 5 ---
-  'get mqtt5.preset': 'Get slot 5 preset name',
-  'set mqtt5.preset ': 'Set slot 5 preset {analyzer-us|analyzer-eu|meshmapper|meshrank|waev|meshomatic|cascadiamesh|tennmesh|nashmesh|chimesh|meshat.se|eastidahomesh|coloradomesh|custom|none}',
-  'get mqtt5.server': 'Get slot 5 server hostname',
-  'set mqtt5.server ': 'Set slot 5 custom server hostname',
-  'get mqtt5.port': 'Get slot 5 server port',
-  'set mqtt5.port ': 'Set slot 5 custom server port {1-65535}',
-  'get mqtt5.username': 'Get slot 5 username',
-  'set mqtt5.username ': 'Set slot 5 custom username',
-  'get mqtt5.password': 'Get slot 5 password',
-  'set mqtt5.password ': 'Set slot 5 custom password',
-  'get mqtt5.token': 'Get slot 5 per-slot token',
-  'set mqtt5.token ': 'Set slot 5 token (required for meshrank preset)',
-  'get mqtt5.topic': 'Get slot 5 custom topic template',
-  'set mqtt5.topic ': 'Set slot 5 custom topic template e.g. {iata}/{device}/{type}',
-  'get mqtt5.audience': 'Get slot 5 JWT audience',
-  'set mqtt5.audience ': 'Set slot 5 JWT audience (enables Ed25519 auth; omit value to clear)',
-
-  // --- MQTT slot 6 ---
-  'get mqtt6.preset': 'Get slot 6 preset name',
-  'set mqtt6.preset ': 'Set slot 6 preset {analyzer-us|analyzer-eu|meshmapper|meshrank|waev|meshomatic|cascadiamesh|tennmesh|nashmesh|chimesh|meshat.se|eastidahomesh|coloradomesh|custom|none}',
-  'get mqtt6.server': 'Get slot 6 server hostname',
-  'set mqtt6.server ': 'Set slot 6 custom server hostname',
-  'get mqtt6.port': 'Get slot 6 server port',
-  'set mqtt6.port ': 'Set slot 6 custom server port {1-65535}',
-  'get mqtt6.username': 'Get slot 6 username',
-  'set mqtt6.username ': 'Set slot 6 custom username',
-  'get mqtt6.password': 'Get slot 6 password',
-  'set mqtt6.password ': 'Set slot 6 custom password',
-  'get mqtt6.token': 'Get slot 6 per-slot token',
-  'set mqtt6.token ': 'Set slot 6 token (required for meshrank preset)',
-  'get mqtt6.topic': 'Get slot 6 custom topic template',
-  'set mqtt6.topic ': 'Set slot 6 custom topic template e.g. {iata}/{device}/{type}',
-  'get mqtt6.audience': 'Get slot 6 JWT audience',
-  'set mqtt6.audience ': 'Set slot 6 JWT audience (enables Ed25519 auth; omit value to clear)',
-
-  // --- WiFi ---
-  'get wifi.ssid': 'Get WiFi SSID',
-  'set wifi.ssid ': 'Set WiFi SSID (spaces allowed, no quotes)',
-  'get wifi.pwd': 'Get WiFi password',
-  'set wifi.pwd ': 'Set WiFi password (spaces allowed; use trailing space only for open networks)',
-  'get wifi.status': 'Get WiFi connection status, IP, RSSI, and uptime',
-  'get wifi.powersave': 'Get WiFi power save mode (none/min/max)',
-  'set wifi.powersave ': 'Set WiFi power save mode {none|min|max}',
-
-  // --- Timezone ---
-  'get timezone': 'Get timezone string e.g. America/Los_Angeles',
-  'set timezone ': 'Set timezone {IANA string|abbreviation|UTC offset}',
-  'get timezone.offset': 'Get timezone offset in hours',
-  'set timezone.offset ': 'Set timezone offset in hours {-12 to +14}',
-
-  // --- Bridge ---
-  'get bridge.source': 'Get packet source (rx/tx)',
-  'set bridge.source ': 'Set packet source {rx|tx}',
-  'get bridge.enabled': 'Get bridge enabled status (on/off)',
-  'set bridge.enabled ': 'Enable/disable bridge {on|off}',
-
-  // --- SNMP ---
-  'get snmp': 'Get SNMP agent status (on/off)',
-  'set snmp ': 'Enable/disable SNMP agent {on|off} (restart required)',
-  'get snmp.community': 'Get SNMP community string',
-  'set snmp.community ': 'Set SNMP community string (restart required)',
+const state = {
+  catalog: null,
+  device: null,
+  profile: null,
+  install: "update",
+  maxStep: 1,
+  port: null,
+  cli: null,
 };
 
-async function delay(milis) {
-  return await new Promise((resolve) => setTimeout(resolve, milis));
+const flashLog = (text) => appendLog($("#flash-log"), text);
+const bootLog = (text) => appendLog($("#boot-log"), text);
+const serialLog = (text) => appendLog($("#serial-log"), text);
+
+function appendLog(element, text) {
+  const line = String(text ?? "").replace(/\r/g, "");
+  element.textContent += `${element.textContent.endsWith("\n") || !element.textContent ? "" : "\n"}${line}`;
+  element.scrollTop = element.scrollHeight;
 }
 
-function toSlug(text) {
-  return String(text).toLowerCase()
-    .replace(/[^a-z0-9.]+/g, '-')
-    .replace(/^-|-$/g, '');
+function resetLog(element, text) {
+  element.textContent = text;
+  element.scrollTop = element.scrollHeight;
 }
 
-function getGithubReleases(roleType, files) {
-  const versions = {};
-  for(const [fileType, matchRE] of Object.entries(files)) {
-    for(const versionType of github) {
-      if(versionType.type !== roleType) { continue }
-      const version = versions[versionType.version] ??= {
-        notes: versionType.notes,
-        files: []
-      };
-      for(const file of versionType.files) {
-        if(!new RegExp(matchRE).test(file.name)) { continue }
-        version.files.push({
-          type: fileType,
-          name: file.url,
-          title: file.name,
-        })
+function setProgress(stage, percent) {
+  $("#flash-progress").classList.remove("hidden");
+  $("#progress-stage").textContent = stage;
+  $("#progress-number").textContent = `${Math.round(percent)}%`;
+  $("#progress-bar").value = percent;
+}
+
+function enableThrough(step) {
+  state.maxStep = Math.max(state.maxStep, step);
+  $$(".step").forEach((button, index) => {
+    const number = index + 1;
+    button.disabled = number > state.maxStep;
+    button.classList.toggle("done", number < step && number <= state.maxStep);
+  });
+}
+
+function goToStep(step) {
+  if (step > state.maxStep) return;
+  $$(".panel").forEach((panel) => panel.classList.toggle("active", Number(panel.dataset.panel) === step));
+  $$(".step").forEach((button) => button.classList.toggle("active", Number(button.dataset.go) === step));
+  window.scrollTo({ top: $(".stepper").offsetTop - 8, behavior: "smooth" });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'"]/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
+  })[character]);
+}
+
+function renderDevices() {
+  $("#device-grid").innerHTML = state.catalog.devices.map((device) => `
+    <button class="device-card" data-device="${escapeHtml(device.id)}">
+      <span class="card-kicker">${escapeHtml(device.family)}</span>
+      <h3>${escapeHtml(device.name)}</h3>
+      <p>${escapeHtml(device.display)}</p>
+      <div class="tags"><span class="tag">${device.profiles.length} build${device.profiles.length === 1 ? "" : "s"}</span><span class="tag">${device.flash_method === "esp32" ? "Web Serial" : "UF2"}</span></div>
+    </button>
+  `).join("");
+  $$("[data-device]").forEach((card) => card.addEventListener("click", () => selectDevice(card.dataset.device)));
+}
+
+function selectDevice(id) {
+  state.device = state.catalog.devices.find((device) => device.id === id);
+  state.profile = null;
+  state.install = "update";
+  $$("[data-device]").forEach((card) => card.classList.toggle("selected", card.dataset.device === id));
+  $("#selected-device-copy").textContent = `${state.device.name} · ${state.device.display}`;
+  renderProfiles();
+  enableThrough(2);
+  goToStep(2);
+}
+
+function renderProfiles() {
+  $("#profile-grid").innerHTML = state.device.profiles.map((profile) => `
+    <button class="profile-card" data-profile="${escapeHtml(profile.id)}">
+      <span class="card-kicker">${escapeHtml(profile.transport)}</span>
+      <h3>${escapeHtml(profile.name)}</h3>
+      <p>${escapeHtml(profile.summary)}</p>
+      <div class="tags">${profile.features.map((feature) => `<span class="tag">${escapeHtml(feature)}</span>`).join("")}</div>
+    </button>
+  `).join("");
+  $$("[data-profile]").forEach((card) => card.addEventListener("click", () => selectProfile(card.dataset.profile)));
+  $("#install-mode").classList.add("hidden");
+  $("#ambiguous-confirm").classList.add("hidden");
+  $("#to-flash").disabled = true;
+}
+
+function selectProfile(id) {
+  state.profile = state.device.profiles.find((profile) => profile.id === id);
+  $$("[data-profile]").forEach((card) => card.classList.toggle("selected", card.dataset.profile === id));
+  const hasRecovery = Boolean(state.profile.recovery);
+  $("#install-mode").classList.toggle("hidden", !hasRecovery);
+  $("#ambiguous-confirm").classList.toggle("hidden", !state.device.ambiguous_with);
+  $("#model-confirm").checked = false;
+  state.install = "update";
+  const updateRadio = $('input[name="install"][value="update"]');
+  if (updateRadio) updateRadio.checked = true;
+  updateContinueState();
+}
+
+function updateContinueState() {
+  $("#to-flash").disabled = !state.profile || (Boolean(state.device?.ambiguous_with) && !$("#model-confirm").checked);
+}
+
+function currentArtifact() {
+  return state.profile?.[state.install] || state.profile?.update;
+}
+
+function renderFlashSummary() {
+  const artifact = currentArtifact();
+  $("#flash-summary").innerHTML = `
+    <div><small>Hardware</small><b>${escapeHtml(state.device.name)}</b></div>
+    <div><small>Build</small><b>${escapeHtml(state.profile.name)}</b></div>
+    <div><small>Install</small><b>${state.install === "recovery" ? "Recovery / migration" : "Normal update"}</b></div>
+    <div><small>Exact release</small><b>${escapeHtml(state.device.tag)}</b></div>
+    <div><small>File</small><b>${escapeHtml(artifact.name)}</b></div>
+    <div><small>Size</small><b>${(artifact.size / 1024).toFixed(1)} KiB</b></div>
+    <div><small>Commit</small><b>${escapeHtml(state.device.commit.slice(0, 12))}</b></div>
+    <div><small>Verification</small><b>SHA-256${state.device.flash_method === "esp32" ? " + flash MD5" : " + USB return"}</b></div>
+  `;
+}
+
+async function sha256(bytes) {
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, "0")).join("");
+}
+
+async function fetchFirmware(artifact) {
+  const candidates = [artifact.local_url, artifact.url].filter(Boolean);
+  let lastError;
+  for (const url of candidates) {
+    try {
+      flashLog(`Downloading ${artifact.name}`);
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const buffer = await response.arrayBuffer();
+      if (buffer.byteLength !== artifact.size) throw new Error(`size mismatch (${buffer.byteLength}, expected ${artifact.size})`);
+      setProgress("Verifying SHA-256", 4);
+      const actual = await sha256(buffer);
+      if (actual !== artifact.sha256.toLowerCase()) throw new Error("SHA-256 mismatch");
+      flashLog(`SHA-256 verified: ${actual}`);
+      return new Uint8Array(buffer);
+    } catch (error) {
+      lastError = error;
+      flashLog(`Download source failed: ${error.message}`);
+    }
+  }
+  throw new Error(`Firmware download failed: ${lastError?.message || "no source"}`);
+}
+
+function bytesToBinaryString(bytes) {
+  const chunks = [];
+  for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+    chunks.push(String.fromCharCode(...bytes.subarray(offset, offset + 0x8000)));
+  }
+  return chunks.join("");
+}
+
+function portMatchesDevice(port, device) {
+  const info = port.getInfo();
+  if (device.usb_vid && info.usbVendorId && info.usbVendorId !== device.usb_vid) return false;
+  if (device.usb_pid && info.usbProductId && info.usbProductId !== device.usb_pid) return false;
+  return true;
+}
+
+function usbFilters(device) {
+  if (device.usb_vid && device.usb_pid) return [{ usbVendorId: device.usb_vid, usbProductId: device.usb_pid }];
+  if (device.flash_method === "esp32") return [{ usbVendorId: 0x303a }];
+  return [];
+}
+
+async function requestMatchingPort(device) {
+  const port = await navigator.serial.requestPort({ filters: usbFilters(device) });
+  const info = port.getInfo();
+  flashLog(`USB selected: VID ${hex(info.usbVendorId)} · PID ${hex(info.usbProductId)}`);
+  if (!portMatchesDevice(port, device)) throw new Error("The selected USB device does not match this hardware profile.");
+  return port;
+}
+
+function hex(value) {
+  return value == null ? "unknown" : `0x${value.toString(16).padStart(4, "0")}`;
+}
+
+async function flashEsp32(artifact, bytes) {
+  if (!artifact.md5) throw new Error("This catalog has no device-verification MD5. The deployment is incomplete; flashing was blocked.");
+  const port = await requestMatchingPort(state.device);
+  state.port = port;
+  let transport;
+  try {
+    setProgress("Connecting to ROM bootloader", 6);
+    transport = new Transport(port, true);
+    const terminal = {
+      clean: () => {},
+      write: (message) => flashLog(message),
+      writeLine: (message) => flashLog(message),
+    };
+    const loader = new ESPLoader({ transport, baudrate: 115200, terminal });
+    await loader.main();
+    const chip = loader.chip?.CHIP_NAME || "unknown ESP32";
+    flashLog(`Detected chip: ${chip}`);
+    if (!chip.toUpperCase().includes(state.device.expected_chip.toUpperCase())) {
+      throw new Error(`Wrong chip. Selected ${state.device.expected_chip}, detected ${chip}.`);
+    }
+    const address = state.install === "recovery" ? 0 : 0x10000;
+    setProgress("Writing verified firmware", 8);
+    await loader.writeFlash({
+      fileArray: [{ data: bytesToBinaryString(bytes), address }],
+      flashSize: "keep",
+      flashMode: "keep",
+      flashFreq: "keep",
+      eraseAll: false,
+      compress: true,
+      reportProgress: (_index, written, total) => setProgress("Writing verified firmware", 8 + (written / total) * 82),
+    });
+    setProgress("Verifying flash contents", 93);
+    const actual = await loader.flashMd5sum(address, bytes.byteLength);
+    const actualMd5 = typeof actual === "string" ? actual.toLowerCase() : [...actual].map((value) => value.toString(16).padStart(2, "0")).join("");
+    if (actualMd5 !== artifact.md5.toLowerCase()) throw new Error(`Flash MD5 mismatch: device ${actualMd5}, expected ${artifact.md5}`);
+    flashLog(`Device flash MD5 verified: ${actualMd5}`);
+    setProgress("Resetting device", 98);
+    await loader.after("hard_reset");
+    await sleep(300);
+    await transport.disconnect();
+    transport = null;
+    setProgress("Flash verified", 100);
+  } finally {
+    if (transport) {
+      try { await transport.disconnect(); } catch (_error) {}
+    }
+  }
+}
+
+async function flashUf2(artifact, bytes) {
+  state.port = await requestMatchingPort(state.device);
+  setProgress("UF2 image verified", 20);
+  flashLog("RC52 identity matched. Double-press Reset now to expose the UF2 drive.");
+  if (!window.showDirectoryPicker) {
+    const blob = new Blob([bytes], { type: "application/octet-stream" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = artifact.name;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    throw new Error("This browser cannot write the UF2 drive directly. The verified UF2 was downloaded; copy it to the RC52 bootloader drive, then continue with the restart check.");
+  }
+  const directory = await window.showDirectoryPicker({ mode: "readwrite", id: "neonpocket-uf2" });
+  try {
+    const infoHandle = await directory.getFileHandle("INFO_UF2.TXT");
+    const info = await (await infoHandle.getFile()).text();
+    flashLog(`UF2 bootloader detected: ${info.split(/\r?\n/)[0] || "INFO_UF2.TXT"}`);
+  } catch (_error) {
+    throw new Error("The selected folder is not an RC52 UF2 bootloader drive (INFO_UF2.TXT was not found).");
+  }
+  setProgress("Copying application UF2", 45);
+  const firmware = await directory.getFileHandle(artifact.name, { create: true });
+  const writable = await firmware.createWritable();
+  await writable.write(bytes);
+  setProgress("Finalizing UF2", 90);
+  await writable.close();
+  setProgress("UF2 copied", 100);
+  flashLog("UF2 copy completed. The RC52 should reboot automatically.");
+}
+
+async function flashSelected() {
+  const button = $("#flash-button");
+  button.disabled = true;
+  resetLog($("#flash-log"), "Starting fail-closed flash workflow…");
+  setProgress("Downloading exact release", 1);
+  try {
+    const artifact = currentArtifact();
+    const bytes = await fetchFirmware(artifact);
+    if (state.device.flash_method === "esp32") await flashEsp32(artifact, bytes);
+    else await flashUf2(artifact, bytes);
+    flashLog("Firmware write completed. Keep USB connected.");
+    enableThrough(4);
+    goToStep(4);
+  } catch (error) {
+    flashLog(`ERROR: ${error.message}`);
+    setProgress("Stopped safely", 0);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function readBootSample(port, durationMs = 6000) {
+  await port.open({ baudRate: 115200 });
+  const decoder = new TextDecoder();
+  const reader = port.readable.getReader();
+  let output = "";
+  const deadline = Date.now() + durationMs;
+  try {
+    while (Date.now() < deadline) {
+      const result = await Promise.race([
+        reader.read(),
+        sleep(350).then(() => ({ timeout: true })),
+      ]);
+      if (result.timeout) continue;
+      if (result.done) break;
+      output += decoder.decode(result.value, { stream: true });
+      if (output.length > 24000) output = output.slice(-24000);
+    }
+  } finally {
+    try { await reader.cancel(); } catch (_error) {}
+    reader.releaseLock();
+    await port.close();
+  }
+  return output;
+}
+
+async function verifyBoot() {
+  const button = $("#verify-boot");
+  button.disabled = true;
+  resetLog($("#boot-log"), "Choose the same device after it has restarted…");
+  try {
+    const port = await navigator.serial.requestPort({ filters: usbFilters(state.device) });
+    if (!portMatchesDevice(port, state.device)) throw new Error("The selected USB device is not the flashed hardware.");
+    state.port = port;
+    bootLog(`USB returned: VID ${hex(port.getInfo().usbVendorId)} · PID ${hex(port.getInfo().usbProductId)}`);
+    bootLog("Listening briefly for startup output…");
+    const sample = await readBootSample(port);
+    if (sample.trim()) bootLog(sample.trim());
+    else bootLog("No text startup log was emitted; USB enumeration succeeded.");
+    if (/storage error|radio init failed|guru meditation|panic|assert failed/i.test(sample)) {
+      throw new Error("Startup output contains a fatal error. Do not disconnect USB.");
+    }
+    bootLog("PASS: the expected USB device returned without a detected fatal startup marker.");
+    prepareOnboarding();
+    enableThrough(5);
+    goToStep(5);
+  } catch (error) {
+    bootLog(`ERROR: ${error.message}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function prepareOnboarding() {
+  const type = state.profile.onboarding;
+  const companion = type.startsWith("companion");
+  $("#companion-onboarding").classList.toggle("hidden", !companion);
+  $("#server-onboarding").classList.toggle("hidden", companion);
+  if (companion) {
+    $("#companion-instructions").textContent = type === "companion-web"
+      ? "Read the AP name, password and address from the TFT, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the TFT shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
+      : "Open a standard MeshCore companion app, select the advertised NeonPocket device, and use the PIN shown on its screen. Radio preset, name and channels are managed through the companion app.";
+    return;
+  }
+  const network = type.includes("network");
+  const room = type.startsWith("room");
+  $("#network-fields").classList.toggle("hidden", !network);
+  $("#guest-password-field").classList.toggle("hidden", !room);
+  $("#wifi-ssid").required = network;
+  $("#mqtt-iata").required = network;
+  $("#guest-password").required = room;
+  $("#onboarding-heading").textContent = network
+    ? "The USB wizard applies radio, Wi-Fi, MQTT and security settings, reboots, verifies saved values and reports the LAN IP."
+    : "The USB wizard applies and verifies the node, radio, forwarding and security settings before deployment.";
+}
+
+class CliSession {
+  constructor(port) {
+    this.port = port;
+    this.reader = null;
+    this.writer = null;
+    this.buffer = "";
+    this.waiter = null;
+    this.running = false;
+  }
+
+  async connect() {
+    await this.port.open({ baudRate: 115200 });
+    this.writer = this.port.writable.getWriter();
+    this.reader = this.port.readable.getReader();
+    this.running = true;
+    this.readLoop();
+  }
+
+  async readLoop() {
+    const decoder = new TextDecoder();
+    try {
+      while (this.running) {
+        const { value, done } = await this.reader.read();
+        if (done) break;
+        this.buffer += decoder.decode(value, { stream: true });
+        const lines = this.buffer.split(/\r?\n/);
+        this.buffer = lines.pop();
+        lines.forEach((line) => this.onLine(line));
       }
+    } catch (error) {
+      if (this.running) serialLog(`*** Console disconnected: ${error.message}`);
     }
   }
 
-  return versions;
-}
-
-function addGithubFiles() {
-  for(const device of config.device) {
-    for(const firmware of device.firmware) {
-      const gDef = firmware.github;
-      if(!gDef?.files) { continue }
-      firmware.version = getGithubReleases(gDef.type, gDef.files);
-
-      // clean versions without files
-      for(const [verName, verValue] of Object.entries(firmware.version)) {
-        if(verValue.files.length === 0) delete firmware.version[verName]
-      }
+  onLine(line) {
+    serialLog(line);
+    if (this.waiter && /^\s*->/.test(line)) {
+      const waiter = this.waiter;
+      this.waiter = null;
+      clearTimeout(waiter.timer);
+      waiter.resolve(line.replace(/^\s*->\s*/, "").trim());
     }
   }
 
-  config.device = config.device.filter(device => device.firmware.some(firmware => Object.keys(firmware.version).length > 0 ));
+  async write(command, display = command) {
+    serialLog(`> ${display}`);
+    await this.writer.write(new TextEncoder().encode(`${command}\r\n`));
+  }
 
+  async command(command, { secret = false, timeout = 7000 } = {}) {
+    if (this.waiter) throw new Error("another CLI command is still pending");
+    const response = new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.waiter = null;
+        reject(new Error(`No CLI reply for ${secret ? "a secret setting" : command}`));
+      }, timeout);
+      this.waiter = { resolve, reject, timer };
+    });
+    await this.write(command, secret ? `${command.split(" ").slice(0, 2).join(" ")} [hidden]` : command);
+    const reply = await response;
+    if (/^(error|err|unknown|\?\?)/i.test(reply)) throw new Error(`${command.split(" ")[0]} failed: ${reply}`);
+    return reply;
+  }
+
+  async disconnect() {
+    this.running = false;
+    if (this.waiter) {
+      clearTimeout(this.waiter.timer);
+      this.waiter.reject(new Error("console disconnected"));
+      this.waiter = null;
+    }
+    try { await this.reader?.cancel(); } catch (_error) {}
+    try { this.reader?.releaseLock(); } catch (_error) {}
+    try { this.writer?.releaseLock(); } catch (_error) {}
+    try { await this.port.close(); } catch (_error) {}
+  }
+}
+
+async function connectConsole(port = null) {
+  if (state.cli?.running) return state.cli;
+  const selected = port || state.port || await navigator.serial.requestPort({ filters: usbFilters(state.device) });
+  if (!portMatchesDevice(selected, state.device)) throw new Error("The selected USB device does not match the chosen hardware.");
+  resetLog($("#serial-log"), "Opening 115200 baud MeshCore CLI…");
+  const cli = new CliSession(selected);
+  await cli.connect();
+  state.port = selected;
+  state.cli = cli;
+  $("#apply-config").disabled = false;
+  $("#send-command").disabled = false;
+  serialLog("*** Console connected");
+  return cli;
+}
+
+function formConfig() {
+  const preset = state.catalog.radio_presets[Number($("#radio-preset").value)];
+  const network = state.profile.onboarding.includes("network");
+  const room = state.profile.onboarding.startsWith("room");
+  const config = {
+    name: $("#node-name").value.trim(),
+    preset,
+    tx: $("#tx-power").value,
+    repeat: $("#repeat-mode").value,
+    admin: $("#admin-password").value,
+    guest: room ? $("#guest-password").value : "",
+    network,
+    room,
+    ssid: network ? $("#wifi-ssid").value : "",
+    wifiPassword: network ? $("#wifi-password").value : "",
+    iata: network ? $("#mqtt-iata").value.trim().toUpperCase() : "",
+    mqtt1: network ? $("#mqtt-one").value : "",
+    mqtt2: network ? $("#mqtt-two").value : "",
+  };
+  if (!config.name || /[\[\]\/\\:,?*]/.test(config.name)) throw new Error("Enter a valid node name without [ ] / \\ : , ? or *.");
+  if (network && !config.ssid) throw new Error("Enter the 2.4 GHz Wi-Fi SSID.");
+  if (network && !/^[A-Z0-9]{3}$/.test(config.iata)) throw new Error("IATA must be exactly three letters or digits.");
+  if (network && config.mqtt1 === config.mqtt2 && config.mqtt1 !== "none") throw new Error("Choose two different MQTT servers, or disable one slot.");
   return config;
 }
 
-async function digestMessage(message) {
-  const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
-  const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgUint8); // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-
-  const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join(""); // convert bytes to hex string
-
-  return hashHex;
+function configurationCommands(config) {
+  const radio = `${config.preset.freq},${config.preset.bw},${config.preset.sf},${config.preset.cr}`;
+  const commands = [
+    [`set name ${config.name}`],
+    [`set radio ${radio}`],
+    [`set tx ${config.tx}`],
+    ["set radio.rxgain on"],
+    [`set repeat ${config.repeat}`],
+    ["set path.hash.mode 2"],
+  ];
+  if (config.network) {
+    commands.push(
+      [`set mqtt.origin ${config.name}`],
+      [`set mqtt.iata ${config.iata}`],
+      ["set mqtt1.preset none"],
+      ["set mqtt2.preset none"],
+      [`set mqtt1.preset ${config.mqtt1}`],
+      [`set mqtt2.preset ${config.mqtt2}`],
+      ["set mqtt.rx on"],
+      ["set mqtt.tx advert"],
+      [`set wifi.ssid ${config.ssid}`],
+    );
+    if (config.wifiPassword) commands.push([`set wifi.pwd ${config.wifiPassword}`, { secret: true }]);
+  }
+  commands.push([`password ${config.admin}`, { secret: true }]);
+  if (config.room) commands.push([`set guest.password ${config.guest}`, { secret: true }]);
+  return commands;
 }
 
-async function blobToBinaryString(blob) {
-  const bytes = new Uint8Array(await blob.arrayBuffer())
-  let binString = '';
-
-  for (let i = 0; i < bytes.length; i++) {
-    binString += String.fromCharCode(bytes[i]);
-  }
-
-  return binString;
-}
-
-console.log(addGithubFiles());
-
-function setup() {
-  const consoleEditBox = ref();
-  const consoleWindow = ref();
-
-  const deviceFilterText = ref('');
-  const deviceFilter = ref();
-
-  // On desktop the filter box sits at the top of the flasher pane; focus it so
-  // you can type to filter right away. Skip on mobile (the flasher shares the
-  // page with the instructions there, so popping the keyboard is unwanted), and
-  // use preventScroll so focusing never scrolls the taller two-pane page.
-  onMounted(() => {
-    if (window.matchMedia('(min-width: 1024px)').matches) {
-      deviceFilter.value?.focus({ preventScroll: true });
-    }
+async function verifyConfiguration(cli, config) {
+  const expected = {
+    name: config.name,
+    radio: `${config.preset.freq},${config.preset.bw},${config.preset.sf},${config.preset.cr}`,
+    tx: String(config.tx),
+    repeat: config.repeat,
+    "path.hash.mode": "2",
+  };
+  if (config.network) Object.assign(expected, {
+    "wifi.ssid": config.ssid,
+    "mqtt.iata": config.iata,
+    "mqtt1.preset": config.mqtt1,
+    "mqtt2.preset": config.mqtt2,
+    "mqtt.rx": "on",
+    "mqtt.tx": "advert",
   });
-
-  const snackbar = reactive({
-    text: '',
-    class: '',
-    icon: '',
-  });
-
-  const selected = reactive({
-    device: null,
-    firmware: null,
-    version: null,
-    wipe: false,
-    espFlashAddress: 0x10000,
-    nrfEraserFlashingPercent: 0,
-    nrfEraserFlashing: false,
-    port: null,
-  });
-
-  const getRoleFwValue = (firmware, key) => {
-    const role = config.role[firmware.role] ?? {};
-
-    return firmware[key] ?? role[key] ?? '';
-  }
-
-  const getSelFwValue = (key) => {
-    const fwVersion = selected.firmware.version[selected.version];
-
-    return fwVersion ? fwVersion[key] || '' : '';
-  }
-
-  const getNotice = (selected) => {
-    let notice = config.notice[selected.firmware.notice] || selected.firmware.notice || '';
-
-    if(notice) {
-      notice = notice.replaceAll(/\$\{(\w+)\}/g, (_, varName) => selected.device[varName] || '');
-    }
-
-    return notice;
-  }
-
-  const formatChangeLog = (changelog) => {
-    return changelog
-      .replace(/change log:\r?\n/i, '')
-      .replace(/^[-*] /mg, '')
-      .replace(/#(\d+)$/gm, `<a target="_blank" href="https://github.com/meshcore-dev/MeshCore/pull/$1">#$1</a>`)
-//      .split(/\r?\n/)
-//      .map(l => `* ${l}`)
-//      .join('\n')
-  }
-
-  const flashing = reactive({
-    supported: 'Serial' in window || 'serial' in window.navigator,
-    instance: null,
-    locked: false,
-    percent: 0,
-    log: '',
-    error: '',
-    dfuComplete: false,
-  });
-
-  const serialCon = reactive({
-    instance: null,
-    opened: false,
-    content: '',
-    edit: '',
-  });
-
-  window.app = { selected, flashing, serialCon };
-
-  const log = {
-    clean() { flashing.log = '' },
-    write(data) { flashing.log += data },
-    writeLine(data) { flashing.log += data + '\n' }
-  };
-
-  const retry = async() => {
-    flashing.active = false;
-    flashing.log = '';
-    flashing.error = '';
-    flashing.dfuComplete = false;
-    flashing.percent = 0;
-    if(flashing.instance instanceof ESPLoader) {
-      await flashing.instance?.hr.reset();
-      await flashing.instance?.transport?.disconnect();
-    }
-  }
-
-  const close = () => {
-    location.reload()
-  }
-
-  const getFirmwarePath = (file) => {
-    // github-release-driven versions carry absolute URLs in file.name
-    // (getGithubReleases sets name = file.url); never prepend staticPath to those.
-    if (/^https?:\/\//i.test(file.name) || file.name.startsWith('/')) return file.name;
-    return `${config.staticPath}/${file.name}`;
-  }
-
-  // The rolling firmware build embeds the git short-hash in every filename and
-  // prunes older binaries from the host, so a tab left open across a rebuild can
-  // hold a filename whose binary was already deleted (HTTP 404). config.json is
-  // read once at page load, so its hash can go stale too. Re-read it (bypassing
-  // cache) to learn the current build hash.
-  const fetchCurrentFirmwareHash = async () => {
-    try {
-      const res = await fetch(`/${configName}.json?t=${Date.now()}`, { cache: 'no-store' });
-      if (res.ok) {
-        const m = (await res.text()).match(/-v[0-9.]+-([0-9a-f]{7,40})(?:-merged)?\.bin/);
-        if (m) return m[1];
-      }
-    } catch (e) {}
-    return null;
-  };
-
-  const withFirmwareHash = (name, hash) =>
-    hash ? name.replace(/(-)[0-9a-f]{7,40}(-merged)?(\.bin)$/, `$1${hash}$2$3`) : name;
-
-  // Stale-tab recovery for feed-driven (absolute-URL) firmware: re-fetch the
-  // /releases feed and find the current asset of the same shape (same env and
-  // wipe/update variant, any version/hash) on the SAME channel host — a feed
-  // URL held by an old tab outlives the release's pruned assets just like a
-  // config.json filename used to.
-  const refetchFeedUrl = async (staleUrl) => {
-    try {
-      if (!config.releasesUrl) return null;
-      const res = await fetch(`${config.releasesUrl}?t=${Date.now()}`, { cache: 'no-store' });
-      if (!res.ok) return null;
-      const shape = (n) => n.replace(/-v[0-9.]+(?:-[a-z]+)?-[0-9a-f]{7,40}((?:-merged)?\.bin)$/, '-*$1');
-      const staleHost = new URL(staleUrl).host;
-      const want = shape(staleUrl.split('/').pop());
-      for (const entry of await res.json()) {
-        for (const f of entry.files || []) {
-          if (new URL(f.url).host === staleHost && shape(f.name) === want) return f.url;
-        }
-      }
-    } catch (e) {}
-    return null;
-  };
-
-  // Download a firmware file, retrying once on a 404 (the stale-tab case
-  // above): absolute http(s) URLs come from the /releases feed and re-resolve
-  // through it; bare filenames re-read config.json's build hash. Absolute
-  // *paths* are custom/local uploads, not rolling-build assets — fetched as-is.
-  const fetchFirmwareFile = async (name) => {
-    const toUrl = (n) => (/^https?:\/\//i.test(n) || n.startsWith('/')) ? n : `${config.staticPath}/${n}`;
-    console.log('downloading: ' + toUrl(name));
-    let resp = await fetch(toUrl(name), { cache: 'no-store' });
-    if (resp.status === 404 && !name.startsWith('/')) {
-      const fresh = /^https?:\/\//i.test(name)
-        ? ((await refetchFeedUrl(name)) ?? name)
-        : withFirmwareHash(name, await fetchCurrentFirmwareHash());
-      if (fresh !== name) {
-        console.log('firmware 404; retrying with current build: ' + toUrl(fresh));
-        resp = await fetch(toUrl(fresh), { cache: 'no-store' });
-      }
-    }
-    return resp;
-  };
-
-  const firmwareHasData = (firmware) => {
-    const firstVersion = Object.keys(firmware.version)[0];
-    if(!firstVersion) return false;
-
-    return firmware.version[firstVersion].files.length > 0;
-  }
-
-  // --- URL Routing ---
-  // NOTE: the server must serve index.html for all paths (catch-all / try_files).
-
-  const deviceToSlug = (device) => toSlug([device.class, device.name].join('-'));
-
-  const firmwareToSlug = (firmware) => {
-    const title = getRoleFwValue(firmware, 'title');
-    const subTitle = getRoleFwValue(firmware, 'subTitle');
-    return toSlug(subTitle ? `${title}-${subTitle}` : title);
-  };
-
-  let initializingFromUrl = false;
-
-  const buildUrl = () => {
-    if (serialCon.opened) return '/console';
-    if (!selected.device) return '/';
-    let path = '/' + deviceToSlug(selected.device) + '/';
-    if (!selected.firmware) return path;
-    path += firmwareToSlug(selected.firmware) + '/';
-    if (selected.version) path += toSlug(selected.version);
-    return path;
-  };
-
-  const updateUrl = (replace = false) => {
-    if (initializingFromUrl) return;
-    const path = buildUrl();
-    if (window.location.pathname !== path) {
-      replace ? history.replaceState(null, '', path) : history.pushState(null, '', path);
-    }
-  };
-
-  const applyUrlPath = (path) => {
-    initializingFromUrl = true;
-    const segments = path.replace(/^\/|\/$/g, '').split('/').filter(Boolean);
-
-    if (segments.length === 0 || segments[0] === 'console') {
-      nextTick(() => { initializingFromUrl = false; });
-      return;
-    }
-
-    const [deviceSlug, roleSlug, versionSlug] = segments;
-    const matchingDevices = config.device.filter(d => deviceToSlug(d) === deviceSlug);
-    if (matchingDevices.length === 0) {
-      nextTick(() => { initializingFromUrl = false; });
-      return;
-    }
-
-    // When multiple devices share the same slug, use the firmware slug to pick the right one
-    let device, firmware;
-    if (roleSlug && matchingDevices.length > 1) {
-      for (const d of matchingDevices) {
-        const f = d.firmware.find(f => firmwareToSlug(f) === roleSlug && firmwareHasData(f));
-        if (f) { device = d; firmware = f; break; }
-      }
-    }
-    if (!device) device = matchingDevices[0];
-    selected.device = device;
-
-    if (!roleSlug) {
-      nextTick(() => { initializingFromUrl = false; });
-      return;
-    }
-
-    if (!firmware) firmware = device.firmware.find(f => firmwareToSlug(f) === roleSlug && firmwareHasData(f));
-    if (!firmware) {
-      nextTick(() => { initializingFromUrl = false; });
-      return;
-    }
-    selected.firmware = firmware;
-
-    // Use nextTick so the firmware watcher sets the default version first,
-    // then we override it with the version from the URL.
-    nextTick(() => {
-      if (versionSlug) {
-        const versionName = Object.keys(firmware.version).find(v => toSlug(v) === versionSlug);
-        if (versionName) selected.version = versionName;
-      }
-      initializingFromUrl = false;
-    });
-  };
-
-  const stepBack = () => {
-    if(selected.device && selected.firmware) {
-      if(selected.firmware.version[selected.version].customFile) {
-        selected.firmware = null;
-        selected.device = null;
-        return
-      }
-
-      selected.firmware = null;
-      return;
-    }
-
-    if(selected.device) {
-      selected.device = null;
-    }
-  }
-
-  const flasherCleanup = async () => {
-    flashing.active = false;
-    flashing.log = '';
-    flashing.error = '';
-    flashing.dfuComplete = false;
-    flashing.percent = 0;
-    selected.firmware = null;
-    selected.version = null;
-    selected.wipe = false;
-    selected.device = null;
-    selected.nrfEraserFlashingPercent = 0;
-    selected.nrfEraserFlashing = false;
-    if(flashing.instance instanceof ESPLoader) {
-      await flashing.instance?.hr.reset();
-      await flashing.instance?.transport?.disconnect();
-    }
-    else if(flashing.instance instanceof Dfu) {
-      try {
-        flashing.instance.port.close()
-      }
-      catch(e) {
-        console.error(e);
-      }
-    }
-    flashing.instance = null;
-  }
-
-  const openSerialGUI = () => {
-    window.open('https://config.meshcore.dev','meshcore_config','directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1000,height=800');
-  }
-
-  const openSerialCon = async() => {
-    const port = selected.port = await navigator.serial.requestPort();
-    const serialConsole = serialCon.instance = new SerialConsole(port);
-
-    serialCon.content =  '-------------------------------------------------------------------------\n';
-    serialCon.content += 'Welcome to MeshCore serial console.\n'
-    serialCon.content += 'Click on the cursor to get all supported commands.\n';
-    serialCon.content += '-------------------------------------------------------------------------\n\n';
-
-    serialConsole.onOutput = (text) => {
-      serialCon.content += text;
-    };
-    serialConsole.connect();
-    serialCon.opened = true;
-    await nextTick();
-
-    consoleEditBox.value.focus();
-  }
-
-  const closeSerialCon = async() => {
-    serialCon.opened = false;
-    await serialCon.instance.disconnect();
-  }
-
-  const sendCommand = async(text) => {
-    const consoleEl = consoleWindow.value;
-    serialCon.edit = '';
-    await serialCon.instance.sendCommand(text);
-    setTimeout(() => consoleEl.scrollTop = consoleEl.scrollHeight, 100);
-  }
-
-  const dfuMode = async() => {
-    await Dfu.forceDfuMode(await navigator.serial.requestPort({}))
-    flashing.dfuComplete = true;
-  }
-
-  const customFirmwareLoad = async(ev) => {
-    const firmwareFile = ev.target.files[0];
-    const type = firmwareFile.name.endsWith('.bin') ? 'esp32' : 'nrf52';
-      selected.device = {
-      name: 'Custom device',
-      type,
-    };
-    if(firmwareFile.name.endsWith('-merged.bin')) {
-      alert(
-        'You selected custom file that ends with "merged.bin".'+
-        'This will erase your flash! Proceed with caution.'+
-        'If you want just to update your firmware, please use non-merged bin.'
-      );
-
-      selected.wipe = true;
-      selected.espFlashAddress = 0;
-    }
-
-    selected.firmware = {
-      icon: 'unknown_document',
-      title: firmwareFile.name,
-      version: {},
-    }
-    selected.version = firmwareFile.name;
-    selected.firmware.version[selected.version] = {
-      customFile: true,
-      files: [{ type: 'flash', file: firmwareFile }]
-    }
-  }
-
-  const espReset = async(t) => {
-    await t.setRTS(true);
-    await delay(100)
-    await t.setRTS(false);
-  }
-
-  const nrfErase = async() => {
-    if(!(selected.device.type === 'nrf52' && selected.device.erase)) {
-      console.error('nRF erase called for non-nrf device or device.erase is not defined')
-      return;
-    }
-
-    const resp = await fetchFirmwareFile(selected.device.erase);
-    if(resp.status !== 200) {
-      alert(`Could not download the firmware file from the server, reported: HTTP ${resp.status}.\nPlease try again.`)
-      return;
-    }
-    const flashData = await resp.blob();
-
-    const port = selected.port = await navigator.serial.requestPort({});
-    const dfu = new Dfu(port);
-
-    try {
-      selected.nrfEraserFlashing = true;
-      await dfu.dfuUpdate(flashData, async (progress) => {
-        selected.nrfEraserFlashingPercent = progress;
-        if(progress === 100 && selected.nrfEraserFlashing) {
-          selected.nrfEraserFlashing = false;
-          selected.dfuComplete = false;
-          setTimeout(() => {
-            alert('Device erase firmware has been flashed and flash has been erased.\nYou can flash MeshCore now.');
-          }, 200);
-        }
-      }, 60000);
-
-    }
-    catch(e) {
-      alert(`nRF flashing erase firmware failed: ${e}.\nDid you put the device into DFU mode before attempting erasing?`);
-      selected.nrfEraserFlashing = false;
-      selected.nrfEraserFlashingPercent = 0;
-      return;
-    }
-  }
-
-  const canFlash = (device) => {
-    return device.type !== 'noflash'
-  }
-
-  const flashDevice = async() => {
-    const device = selected.device;
-    const firmware = selected.firmware.version[selected.version];
-
-    const flashFiles = firmware.files.filter(f => f.type.startsWith('flash'));
-    if(!flashFiles[0]) {
-      alert('Cannot find configuration for flash file! please report this to Discord.')
-      flasherCleanup();
-      return;
-    }
-
-    let flashData;
-    if(flashFiles[0].file) {
-      flashData = flashFiles[0].file;
-    } else {
-      let flashFile;
-      if(device.type === 'esp32') {
-        flashFile = flashFiles.find(f => f.type === (selected.wipe ? 'flash-wipe' : 'flash-update'));
-        if(selected.wipe) selected.espFlashAddress = 0x00000;
-      }
-      else {
-        flashFile = flashFiles[0];
-      }
-      console.log({flashFiles, flashFile});
-
-      const resp = await fetchFirmwareFile(flashFile.name);
-      if(resp.status !== 200) {
-        alert(`Could not download the firmware file from the server, reported: HTTP ${resp.status}.\nPlease try again.`)
-        return;
-      }
-
-      flashData = await resp.blob();
-    }
-
-    const port = selected.port = await navigator.serial.requestPort({});
-
-    if(device.type === 'esp32') {
-      let esploader;
-      let transport;
-
-      const flashOptions = {
-        terminal: log,
-        compress: true,
-        eraseAll: selected.wipe,
-        flashSize: 'keep',
-        flashMode: 'keep',
-        flashFreq: 'keep',
-        baudrate: 115200,
-        romBaudrate: 115200,
-        enableTracing: false,
-        fileArray: [{
-          data: await blobToBinaryString(flashData),
-   	  address: selected.espFlashAddress
-        }],
-        reportProgress: async (_, written, total) => {
-          flashing.percent = (written / total) * 100;
-        },
-      };
-
-      try {
-        flashing.active = true;
-        transport = new Transport(port, true);
-        flashOptions.transport = transport;
-        flashing.instance = esploader = new ESPLoader(flashOptions);
-        esploader.hr = new HardReset(transport);
-        await esploader.main();
-        await esploader.flashId();
-      }
-      catch(e) {
-        console.error(e);
-        flashing.error = `Failed to initialize. Did you place the device into firmware download mode? Detail: ${e}`;
-        esploader = null;
-        return;
-      }
-
-      try {
-        await esploader.writeFlash(flashOptions);
-        await delay(100);
-        await esploader.after('hard_reset');
-        await delay(100);
-        await espReset(transport);
-        await transport.disconnect();
-      }
-      catch(e) {
-        console.error(e);
-        flashing.error = `ESP32 flashing failed: ${e}`;
-        await espReset(transport);
-        await transport.disconnect();
-        return;
-      }
-    }
-    else if(device.type === 'nrf52') {
-      const dfu = flashing.instance = new Dfu(port);
-
-      flashing.active = true;
-
-      try {
-        await dfu.dfuUpdate(flashData, async (progress) => {
-          flashing.percent = progress;
-        }, 60000);
-
-      }
-      catch(e) {
-        console.error(e);
-        flashing.error = `nRF flashing failed: ${e}. Please reset the device and try again.`;
-        return;
-      }
-    }
-  };
-
-  const devices = computed(() => {
-    const classes = ['ripple', 'meshos', 'community', 'observer'];
-    const deviceGroups = {};
-
-    let index = 0;
-    for(const cls of classes) {
-      const devices = config.device.toSorted(
-	(a, b) => (index + a.maker + a.name).localeCompare(index + b.maker + b.name)
-      ).filter(
-        d => d.class === cls && (deviceFilterText.value == '' || d.name.toLowerCase().includes(deviceFilterText.value?.toLowerCase()))
-      )
-      if(devices.length > 0) deviceGroups[cls] = devices;
-    }
-
-    return deviceGroups;
-  });
-
-  const showMessage = (text, icon, displayMs) => {
-    snackbar.class = 'active';
-    snackbar.text = text;
-    snackbar.icon = icon || '';
-
-    setTimeout(() => {
-      snackbar.icon = '';
-      snackbar.text = '';
-      snackbar.class = '';
-    }, displayMs || 2000);
-  }
-
-  const consoleMouseUp = (ev) => {
-    if(window.getSelection().toString().length) {
-      navigator.clipboard.writeText(window.getSelection().toString())
-      showMessage('text copied to clipboard');
-    }
-    consoleEditBox.value.focus();
-  }
-
-  watch(() => selected.firmware, (firmware) => {
-    if(firmware == null) return;
-    selected.version = Object.keys(firmware.version)[0];
-  });
-
-  watch(() => selected.device, updateUrl);
-  watch(() => selected.firmware, updateUrl);
-  watch(() => selected.version, () => updateUrl(true));  // replace: version is a refinement, not a new nav step
-  watch(() => serialCon.opened, updateUrl);
-
-  window.addEventListener('popstate', () => {
-    if (serialCon.opened) closeSerialCon();
-    flashing.active = false;
-    flashing.log = '';
-    flashing.error = '';
-    selected.firmware = null;
-    selected.version = null;
-    selected.device = null;
-    applyUrlPath(window.location.pathname);
-  });
-
-  const getInitialPath = () => {
-    const params = new URLSearchParams(window.location.search);
-    const redirectPath = params.get('redirect');
-    if (!redirectPath || !redirectPath.startsWith('/')) return window.location.pathname;
-
-    history.replaceState(null, '', redirectPath);
-    return redirectPath;
-  };
-
-  applyUrlPath(getInitialPath());
-
-  return {
-    snackbar,
-    consoleEditBox, consoleWindow, consoleMouseUp,
-    config, devices, selected, flashing, deviceFilterText, deviceFilter,
-    flashDevice, flasherCleanup, dfuMode,
-    serialCon, closeSerialCon, openSerialCon,
-    sendCommand, openSerialGUI,
-    retry, close, commandReference,
-    stepBack,
-    customFirmwareLoad, getFirmwarePath,
-    getSelFwValue, getRoleFwValue, getNotice, formatChangeLog,
-    firmwareHasData,
-    canFlash, nrfErase
+  for (const [key, wanted] of Object.entries(expected)) {
+    const actual = await cli.command(`get ${key}`);
+    const normalized = (value) => value.toLowerCase().replace(/\s+/g, "");
+    if (!normalized(actual).includes(normalized(wanted))) throw new Error(`Verification failed for ${key}: device replied '${actual}'.`);
   }
 }
 
-createApp({ setup }).mount('#app');
+async function reconnectCli(port, timeout = 35000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    try {
+      const cli = new CliSession(port);
+      await cli.connect();
+      state.cli = cli;
+      serialLog("*** Device returned after reboot");
+      return cli;
+    } catch (_error) {
+      await sleep(1000);
+    }
+  }
+  throw new Error("The device did not return after reboot. Keep USB connected and press Reset once.");
+}
+
+async function applyConfiguration(event) {
+  event.preventDefault();
+  const button = $("#apply-config");
+  button.disabled = true;
+  try {
+    const config = formConfig();
+    const cli = await connectConsole();
+    serialLog("*** Applying settings. Secrets are redacted.");
+    for (const [command, options] of configurationCommands(config)) await cli.command(command, options);
+    await verifyConfiguration(cli, config);
+    serialLog("*** Saved values verified; rebooting.");
+    await cli.write("reboot");
+    await sleep(300);
+    await cli.disconnect();
+    state.cli = null;
+    const returned = await reconnectCli(state.port);
+    await verifyConfiguration(returned, config);
+    let ip = "";
+    if (config.network) {
+      const deadline = Date.now() + 50000;
+      while (Date.now() < deadline) {
+        const status = await returned.command("get wifi.status");
+        const match = status.match(/\bIP:\s*([0-9]+(?:\.[0-9]+){3})/i);
+        if (match) { ip = match[1]; break; }
+        await sleep(2000);
+      }
+      if (!ip) throw new Error("Settings were saved, but Wi-Fi did not report an IP within 50 seconds. Keep USB connected and check the SSID/password.");
+      serialLog(`*** LAN dashboard: http://${ip}/`);
+    }
+    $("#completion").classList.remove("hidden");
+    $("#completion span").textContent = ip
+      ? `Verified after reboot. LAN address: http://${ip}/ — record it before disconnecting USB.`
+      : "Verified after reboot. You can now disconnect USB and deploy this NeonPocket.";
+    $("#admin-password").value = "";
+    $("#guest-password").value = "";
+    $("#wifi-password").value = "";
+  } catch (error) {
+    serialLog(`ERROR: ${error.message}`);
+  } finally {
+    button.disabled = !state.cli?.running;
+  }
+}
+
+async function sendManualCommand() {
+  const input = $("#serial-command");
+  const command = input.value.trim();
+  if (!command) return;
+  input.value = "";
+  try {
+    const cli = await connectConsole();
+    await cli.command(command);
+  } catch (error) {
+    serialLog(`ERROR: ${error.message}`);
+  }
+}
+
+function populateOptions() {
+  $("#radio-preset").innerHTML = state.catalog.radio_presets.map((preset, index) => `<option value="${index}">${escapeHtml(preset.name)} — ${preset.freq} MHz / BW ${preset.bw} / SF${preset.sf} / CR${preset.cr}</option>`).join("");
+  const brokerOptions = state.catalog.mqtt_presets.map((preset) => `<option value="${escapeHtml(preset)}">${escapeHtml(preset)}</option>`).join("");
+  $("#mqtt-one").innerHTML = brokerOptions;
+  $("#mqtt-two").innerHTML = brokerOptions;
+  $("#mqtt-one").value = "meshcore-ca-1";
+  $("#mqtt-two").value = "meshcore-ca-2";
+}
+
+function bindEvents() {
+  $$('[data-go]').forEach((button) => button.addEventListener("click", () => goToStep(Number(button.dataset.go))));
+  $$('input[name="install"]').forEach((radio) => radio.addEventListener("change", () => { state.install = radio.value; }));
+  $("#model-confirm").addEventListener("change", updateContinueState);
+  $("#to-flash").addEventListener("click", () => {
+    state.install = $('input[name="install"]:checked')?.value || "update";
+    renderFlashSummary();
+    enableThrough(3);
+    goToStep(3);
+  });
+  $("#flash-button").addEventListener("click", flashSelected);
+  $("#verify-boot").addEventListener("click", verifyBoot);
+  $("#connect-console").addEventListener("click", async () => {
+    try { await connectConsole(); } catch (error) { serialLog(`ERROR: ${error.message}`); }
+  });
+  $("#server-onboarding").addEventListener("submit", applyConfiguration);
+  $("#send-command").addEventListener("click", sendManualCommand);
+  $("#serial-command").addEventListener("keydown", (event) => { if (event.key === "Enter") sendManualCommand(); });
+}
+
+async function init() {
+  bindEvents();
+  const issues = [];
+  if (!window.isSecureContext && location.hostname !== "localhost") issues.push("Web Serial requires HTTPS.");
+  if (!navigator.serial) issues.push("Use current desktop Chrome or Edge; this browser has no Web Serial support.");
+  if (issues.length) {
+    $("#compatibility").textContent = issues.join(" ");
+    $("#compatibility").classList.remove("hidden");
+  }
+  try {
+    const response = await fetch("/catalog.json", { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    state.catalog = await response.json();
+    $("#suite-version").textContent = `Suite ${state.catalog.suite_version}`;
+    renderDevices();
+    populateOptions();
+  } catch (error) {
+    $("#compatibility").textContent = `Firmware catalog failed to load: ${error.message}`;
+    $("#compatibility").classList.remove("hidden");
+  }
+}
+
+init();

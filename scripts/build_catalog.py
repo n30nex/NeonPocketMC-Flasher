@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""Merge the unified suite catalog with flasher-specific profile metadata."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from urllib.request import urlopen
+
+
+def load_json(source: str) -> dict:
+    if source.startswith(("http://", "https://")):
+        with urlopen(source, timeout=30) as response:
+            return json.load(response)
+    return json.loads(Path(source).read_text(encoding="utf-8"))
+
+
+def digest(path: Path, algorithm: str) -> str:
+    hasher = hashlib.new(algorithm)
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--suite", required=True, help="Unified catalog file or URL")
+    parser.add_argument("--profiles", default="profiles.json")
+    parser.add_argument("--output", default="catalog.json")
+    parser.add_argument("--firmware-dir", type=Path)
+    parser.add_argument("--firmware-base", default="/firmware/")
+    args = parser.parse_args()
+
+    suite = load_json(args.suite)
+    profiles = load_json(args.profiles)
+    products = {product["id"]: product for product in suite["products"]}
+    result = {
+        "schema": 1,
+        "suite_version": suite["suite_version"],
+        "devices": [],
+        "radio_presets": profiles["radio_presets"],
+        "mqtt_presets": profiles["mqtt_presets"],
+    }
+
+    for device in profiles["devices"]:
+        product = products.get(device["product"])
+        if not product:
+            raise SystemExit(f"missing suite product: {device['product']}")
+        artifacts = {artifact["name"]: artifact for artifact in product["artifacts"]}
+        output_device = {key: value for key, value in device.items() if key != "profiles"}
+        output_device.update({
+            "repository": product["repository"],
+            "release": product["release"],
+            "tag": product["tag"],
+            "commit": product["commit"],
+            "profiles": [],
+        })
+        for profile in device["profiles"]:
+            output_profile = dict(profile)
+            for kind in ("update", "recovery"):
+                name = profile.get(kind)
+                if not name:
+                    continue
+                artifact = artifacts.get(name)
+                if not artifact:
+                    raise SystemExit(f"missing artifact {name} for {device['id']}/{profile['id']}")
+                output_artifact = dict(artifact)
+                if args.firmware_dir:
+                    path = args.firmware_dir / name
+                    if not path.is_file():
+                        raise SystemExit(f"missing staged firmware: {path}")
+                    if path.stat().st_size != artifact["size"]:
+                        raise SystemExit(f"size mismatch: {path}")
+                    if digest(path, "sha256") != artifact["sha256"]:
+                        raise SystemExit(f"SHA-256 mismatch: {path}")
+                    output_artifact["md5"] = digest(path, "md5")
+                    output_artifact["local_url"] = args.firmware_base.rstrip("/") + "/" + name
+                output_profile[kind] = output_artifact
+            output_device["profiles"].append(output_profile)
+        result["devices"].append(output_device)
+
+    Path(args.output).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
