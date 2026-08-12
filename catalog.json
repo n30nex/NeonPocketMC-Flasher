@@ -33,7 +33,7 @@
             "sha256": "573c99cba9d92728e5c3a463abdbe3c824636bac637489e4ceb4cb9ac2c01702",
             "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/download/v1.0.0-rc.2/NeonPocketMC-Heltec-V3-BLE-app.bin",
             "md5": "286ea987dc372b91beb6935400025bb5",
-            "local_url": "/firmware/NeonPocketMC-Heltec-V3-BLE-app.bin"
+            "local_url": "/firmware/573c99cba9d92728e5c3a463abdbe3c824636bac637489e4ceb4cb9ac2c01702/NeonPocketMC-Heltec-V3-BLE-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-Heltec-V3-BLE-recovery-preserves-settings.bin",
@@ -41,7 +41,7 @@
             "sha256": "54ab2cfc2cc81d6b9b10c3eb59545d32be0fdae2230d0e58792b362e38424211",
             "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/download/v1.0.0-rc.2/NeonPocketMC-Heltec-V3-BLE-recovery-preserves-settings.bin",
             "md5": "46a9b324e454d5ccb038e84eccbe1783",
-            "local_url": "/firmware/NeonPocketMC-Heltec-V3-BLE-recovery-preserves-settings.bin"
+            "local_url": "/firmware/54ab2cfc2cc81d6b9b10c3eb59545d32be0fdae2230d0e58792b362e38424211/NeonPocketMC-Heltec-V3-BLE-recovery-preserves-settings.bin"
           },
           "onboarding": "companion"
         }
@@ -78,7 +78,7 @@
             "sha256": "4078ab2d99f6df8bc69715cbd2f707ef004d437c9a931ecc67c4ec3462bfc17d",
             "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v1.0.0-rc.2/NeonPocketMC-Heltec-V4-BLE-app.bin",
             "md5": "ee469174650a60086d5f0c8634f46af7",
-            "local_url": "/firmware/NeonPocketMC-Heltec-V4-BLE-app.bin"
+            "local_url": "/firmware/4078ab2d99f6df8bc69715cbd2f707ef004d437c9a931ecc67c4ec3462bfc17d/NeonPocketMC-Heltec-V4-BLE-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-Heltec-V4-BLE-recovery-preserves-settings.bin",
@@ -86,7 +86,7 @@
             "sha256": "ca86a37de4b37184071d6dcdb0ec09801dc1964816b07a5a9809680efc495d37",
             "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v1.0.0-rc.2/NeonPocketMC-Heltec-V4-BLE-recovery-preserves-settings.bin",
             "md5": "346519580f73c851a99272aac54db3ef",
-            "local_url": "/firmware/NeonPocketMC-Heltec-V4-BLE-recovery-preserves-settings.bin"
+            "local_url": "/firmware/ca86a37de4b37184071d6dcdb0ec09801dc1964816b07a5a9809680efc495d37/NeonPocketMC-Heltec-V4-BLE-recovery-preserves-settings.bin"
           },
           "onboarding": "companion"
         }
@@ -123,7 +123,7 @@
             "sha256": "1c96365a9d837870bd1578c9eeb7a2a49806cb6fac554f0ed89aef7903ae561c",
             "url": "https://github.com/n30nex/NeonPocketMC-RC52/releases/download/v1.1.0-rc.3/NeonPocketMC-RC52-1.1-RC3.uf2",
             "md5": "3c7c602f062906fce1b6d57bee0eb98c",
-            "local_url": "/firmware/NeonPocketMC-RC52-1.1-RC3.uf2"
+            "local_url": "/firmware/1c96365a9d837870bd1578c9eeb7a2a49806cb6fac554f0ed89aef7903ae561c/NeonPocketMC-RC52-1.1-RC3.uf2"
           },
           "onboarding": "companion"
         }
@@ -159,7 +159,7 @@
             "sha256": "253cce4d6019a586e64f68348454e9151c22304ae2bf53f086d7f42092abb54b",
             "url": "https://github.com/n30nex/NeonPocketMC-RC52-Repeater/releases/download/v1.1.0-rc.2/NeonPocketMC-RC52-Repeater-v1.1.0-rc.2.uf2",
             "md5": "7a65baf70f487fbcc0642ee2eed0b282",
-            "local_url": "/firmware/NeonPocketMC-RC52-Repeater-v1.1.0-rc.2.uf2"
+            "local_url": "/firmware/253cce4d6019a586e64f68348454e9151c22304ae2bf53f086d7f42092abb54b/NeonPocketMC-RC52-Repeater-v1.1.0-rc.2.uf2"
           },
           "onboarding": "server-core"
         },
@@ -179,7 +179,7 @@
             "sha256": "74a4ef93e53f6a3a378c08e71cd33aa2b78a154554dd7b304af3f22d3875b439",
             "url": "https://github.com/n30nex/NeonPocketMC-RC52-Repeater/releases/download/v1.1.0-rc.2/NeonPocketMC-RC52-Room-Server-Headless-v1.1.0-rc.2.uf2",
             "md5": "3568019a9978efd8b8c9b16e60065e0b",
-            "local_url": "/firmware/NeonPocketMC-RC52-Room-Server-Headless-v1.1.0-rc.2.uf2"
+            "local_url": "/firmware/74a4ef93e53f6a3a378c08e71cd33aa2b78a154554dd7b304af3f22d3875b439/NeonPocketMC-RC52-Room-Server-Headless-v1.1.0-rc.2.uf2"
           },
           "onboarding": "room-core"
         },
@@ -199,7 +199,7 @@
             "sha256": "a67c63cf273fb47159dd1ddfbb893cc3511c628e1277809f64ab353ea00bc1c9",
             "url": "https://github.com/n30nex/NeonPocketMC-RC52-Repeater/releases/download/v1.1.0-rc.2/NeonPocketMC-RC52-Room-Server-TFT-v1.1.0-rc.2.uf2",
             "md5": "40c2f902ba4827b12f54227f1d5183f0",
-            "local_url": "/firmware/NeonPocketMC-RC52-Room-Server-TFT-v1.1.0-rc.2.uf2"
+            "local_url": "/firmware/a67c63cf273fb47159dd1ddfbb893cc3511c628e1277809f64ab353ea00bc1c9/NeonPocketMC-RC52-Room-Server-TFT-v1.1.0-rc.2.uf2"
           },
           "onboarding": "room-core"
         }
@@ -238,7 +238,7 @@
             "sha256": "b43eac8ddb61683a4ec7bff675b0df2c8416fc55834a5fddfe12f00f3cb8e573",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.2/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-app.bin",
             "md5": "87acd684c5fc6cb4a876ea250407be60",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-app.bin"
+            "local_url": "/firmware/b43eac8ddb61683a4ec7bff675b0df2c8416fc55834a5fddfe12f00f3cb8e573/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-recovery-preserves-settings.bin",
@@ -246,7 +246,7 @@
             "sha256": "a40cf11a06673a9d968513c3a1dd6833113b76536ab34d2e5663ed6dfcd3b8a8",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.2/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-recovery-preserves-settings.bin",
             "md5": "a364ea2a2533251e8e35fa66dc38fdf8",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-recovery-preserves-settings.bin"
+            "local_url": "/firmware/a40cf11a06673a9d968513c3a1dd6833113b76536ab34d2e5663ed6dfcd3b8a8/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-recovery-preserves-settings.bin"
           },
           "onboarding": "companion"
         },
@@ -268,7 +268,7 @@
             "sha256": "e25b4f323bb494b20018db57d06553f4982925f92d79ee5db71a97aa7980cacc",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.2/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-app.bin",
             "md5": "389d9042b14b32656245ba1e9e8bdecb",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-app.bin"
+            "local_url": "/firmware/e25b4f323bb494b20018db57d06553f4982925f92d79ee5db71a97aa7980cacc/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-recovery-preserves-settings.bin",
@@ -276,7 +276,7 @@
             "sha256": "789fa0ceabe8e61d939fc39093ab0e6190887a2e0a951d10331d1862bc5e5744",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.2/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-recovery-preserves-settings.bin",
             "md5": "d05ba4821a6f3b09cb2ada00096342a5",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-recovery-preserves-settings.bin"
+            "local_url": "/firmware/789fa0ceabe8e61d939fc39093ab0e6190887a2e0a951d10331d1862bc5e5744/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-recovery-preserves-settings.bin"
           },
           "onboarding": "companion-web"
         }
@@ -315,7 +315,7 @@
             "sha256": "863a17a34f28c92b899e455f2be0439feccf93b577765e448db91c1141443c83",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-app.bin",
             "md5": "c98563c8c56c2eb9c03f2e63fad729ab",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-app.bin"
+            "local_url": "/firmware/863a17a34f28c92b899e455f2be0439feccf93b577765e448db91c1141443c83/NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
@@ -323,7 +323,7 @@
             "sha256": "02374ecfbaa165e176919fc73dd7d7109ce9ff1d1b365b46461609a032d89210",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
             "md5": "49b9b3d3765bfd4068c21304da78268f",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
+            "local_url": "/firmware/02374ecfbaa165e176919fc73dd7d7109ce9ff1d1b365b46461609a032d89210/NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
           },
           "onboarding": "server-network"
         },
@@ -343,7 +343,7 @@
             "sha256": "685549d59ffd8fdab1a097751009ae22855539c03c2967f996c03fea55857174",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-app.bin",
             "md5": "a3269f517fb43716dfcc12811f86b628",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-app.bin"
+            "local_url": "/firmware/685549d59ffd8fdab1a097751009ae22855539c03c2967f996c03fea55857174/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
@@ -351,7 +351,7 @@
             "sha256": "0808b83e9ac4e26d4270f51056083b929645d83d76fe38e6134e8a0d48111132",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
             "md5": "3ba60165ce1c9be292d1eb25dabfbebe",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
+            "local_url": "/firmware/0808b83e9ac4e26d4270f51056083b929645d83d76fe38e6134e8a0d48111132/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
           },
           "onboarding": "room-core"
         },
@@ -371,7 +371,7 @@
             "sha256": "073847e2937c30abd1b68ccade6007e481d2c3aab80cbdc30d4a17e429d2b90b",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-app.bin",
             "md5": "102b94dcfa6c81d500888c1be5e12ab1",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-app.bin"
+            "local_url": "/firmware/073847e2937c30abd1b68ccade6007e481d2c3aab80cbdc30d4a17e429d2b90b/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
@@ -379,7 +379,7 @@
             "sha256": "fdae9fce19dc329e8ac6fd3ea2dad8780f236d6721e7a921a7ff045272744f69",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
             "md5": "f3ca646fefa90cda3c9014d942b22d9f",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
+            "local_url": "/firmware/fdae9fce19dc329e8ac6fd3ea2dad8780f236d6721e7a921a7ff045272744f69/NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
           },
           "onboarding": "room-core"
         },
@@ -400,7 +400,7 @@
             "sha256": "683bc97fae158d33d27746f3c47d68c57d206b5a336d9c2d935ef6ecc8cfb553",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-app.bin",
             "md5": "e01d78a785ef27ba8189b226fd5e232c",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-app.bin"
+            "local_url": "/firmware/683bc97fae158d33d27746f3c47d68c57d206b5a336d9c2d935ef6ecc8cfb553/NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
@@ -408,7 +408,7 @@
             "sha256": "c4a4c6007081d104e98b8ad9f6253edcfcc03fb168bd1daf45b614c68b7788a0",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
             "md5": "a1b3d31086c22b3e67a7bda75b02684c",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
+            "local_url": "/firmware/c4a4c6007081d104e98b8ad9f6253edcfcc03fb168bd1daf45b614c68b7788a0/NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
           },
           "onboarding": "room-network"
         },
@@ -430,7 +430,7 @@
             "sha256": "36613136ceb610dd5f5b2a40f781be3299a15a0a154f3efb3a6c14058d49ac43",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-app.bin",
             "md5": "609b3a7f4ed60ba8b5483d1931374353",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-app.bin"
+            "local_url": "/firmware/36613136ceb610dd5f5b2a40f781be3299a15a0a154f3efb3a6c14058d49ac43/NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
@@ -438,7 +438,7 @@
             "sha256": "09a57738d39ff6ac63562cb7feffe16255450121d482367ba9fdee9c07bb3110",
             "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Repeater/releases/download/v1.3.0-rc.1/NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
             "md5": "15494589cd750c510b4c6f0c95115aa3",
-            "local_url": "/firmware/NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
+            "local_url": "/firmware/09a57738d39ff6ac63562cb7feffe16255450121d482367ba9fdee9c07bb3110/NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
           },
           "onboarding": "room-network"
         }

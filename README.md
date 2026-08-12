@@ -48,7 +48,9 @@ node --check flasher.js
 python -m http.server 8877 --bind 127.0.0.1
 ```
 
-`profiles.json` owns product/profile behavior. `catalog.json` is the exact deployed release snapshot. The Pages workflow refreshes the unified suite catalog, downloads every selected image, verifies size and SHA-256, calculates the flash MD5, then publishes firmware and catalog together on the same origin.
+`profiles.json` owns product/profile behavior. `catalog.json` is the exact deployed release snapshot. The packaging workflow refreshes the unified suite catalog, downloads every selected image once to verify size/SHA-256 and calculate flash MD5, then emits a small Pi bundle without firmware binaries.
+
+Production runs on the Canadaverse Pi 5 behind the existing Cloudflare Tunnel. Firmware stays in the product GitHub releases; the Pi streams only catalog-pinned release assets through a same-origin endpoint so the browser can verify SHA-256 before writing and MD5 after writing. The container listens on the internal Docker network at port 8080 and is reached publicly as `https://flasher.canadaverse.org`.
 
 ## License and attribution
 

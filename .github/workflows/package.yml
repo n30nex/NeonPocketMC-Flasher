@@ -1,0 +1,44 @@
+name: Package Pi Flasher
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Fetch exact unified catalog
+        run: curl --fail --location --retry 3 https://raw.githubusercontent.com/n30nex/NeonPocketMC/main/catalog.json --output suite-catalog.json
+      - name: Download once for digest verification
+        run: python scripts/sync_firmware.py --suite suite-catalog.json --output "$RUNNER_TEMP/firmware"
+      - name: Build GitHub-backed catalog
+        run: python scripts/build_catalog.py --suite suite-catalog.json --profiles profiles.json --output catalog.json --firmware-dir "$RUNNER_TEMP/firmware" --firmware-base /firmware/
+      - name: Assemble Pi bundle
+        run: |
+          mkdir -p bundle/site/css bundle/site/lib bundle/site/assets
+          cp index.html flasher.js LICENSE catalog.json bundle/site/
+          cp css/flasher.css bundle/site/css/
+          cp lib/esp32.js bundle/site/lib/
+          cp assets/neonpocketmc-mark.png assets/neonpocketmc-mark-64.png bundle/site/assets/
+          cp deploy/Dockerfile deploy/server.py bundle/
+      - name: Verify exact bundle
+        run: |
+          python scripts/verify_site.py
+          python bundle/server.py --site bundle/site --self-test
+          node --check flasher.js
+          git diff --check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NeonPocketMC-Flasher-Pi-${{ github.sha }}
+          path: bundle
+          if-no-files-found: error
+          retention-days: 30
