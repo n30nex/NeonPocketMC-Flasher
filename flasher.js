@@ -351,9 +351,19 @@ function prepareOnboarding() {
   $("#companion-onboarding").classList.toggle("hidden", !companion);
   $("#server-onboarding").classList.toggle("hidden", companion);
   if (companion) {
-    $("#companion-instructions").textContent = type === "companion-web"
+    const usb = type === "companion-usb";
+    const web = type === "companion-web";
+    $("#companion-instructions").textContent = web
       ? "Read the AP name, password and address from the TFT, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the TFT shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
-      : "Open a standard MeshCore companion app, select the advertised NeonPocket device, and use the PIN shown on its screen. Radio preset, name and channels are managed through the companion app.";
+      : usb
+        ? "Keep USB connected and open a desktop MeshCore companion that supports the standard serial transport. Select the NeonPocket serial device; this is the binary companion protocol, not the text CLI."
+        : "Open a standard MeshCore companion app, select the advertised NeonPocket device, and use the PIN shown on its screen. Radio preset, name and channels are managed through the companion app.";
+    $("#companion-check-connect").textContent = usb
+      ? " My desktop companion connected to the NeonPocket serial device."
+      : web
+        ? " I connected to the setup AP or the displayed local-network address."
+        : " I paired or connected using the PIN shown by the device.";
+    $("#companion-check-sync").textContent = " My identity, contacts and channels loaded correctly.";
     return;
   }
   const network = type.includes("network");

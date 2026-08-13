@@ -26,8 +26,7 @@
     <section class="hero">
       <div>
         <p class="eyebrow">FLASH · VERIFY · CONFIGURE</p>
-        <h1>Your NeonPocket,<br><span>ready before unplugging.</span></h1>
-        <p class="hero-copy">Pick the exact hardware and role. The flasher verifies the download, checks the connected chip, writes the firmware, verifies the result, and guides final USB setup.</p>
+        <p class="hero-copy">Choose a device and build. Flash, restart, configure.</p>
       </div>
       <div class="hero-orbit" aria-hidden="true">
         <img src="/assets/neonpocketmc-mark.png" alt="">
@@ -47,26 +46,26 @@
 
     <section class="panel active" data-panel="1">
       <div class="panel-heading">
-        <div><p class="eyebrow">STEP 1</p><h2>Choose your hardware</h2></div>
-        <p>Model selection is checked again against the USB chip before an ESP image can be written.</p>
+        <div><p class="eyebrow">STEP 1</p><h2>Choose device</h2></div>
+        <p>USB hardware is checked before flashing.</p>
       </div>
       <div id="device-grid" class="card-grid"></div>
     </section>
 
     <section class="panel" data-panel="2">
       <div class="panel-heading">
-        <div><p class="eyebrow">STEP 2</p><h2>Choose what it becomes</h2></div>
+        <div><p class="eyebrow">STEP 2</p><h2>Choose build</h2></div>
         <p id="selected-device-copy"></p>
       </div>
       <div id="profile-grid" class="card-grid profile-grid"></div>
       <div id="install-mode" class="install-mode hidden">
         <label class="choice selected">
           <input type="radio" name="install" value="update" checked>
-          <span><b>Normal update</b><small>Application only. Preserves bootloader, partitions, identity and settings.</small></span>
+          <span><b>Update</b><small>Preserves identity and settings.</small></span>
         </label>
         <label class="choice">
           <input type="radio" name="install" value="recovery">
-          <span><b>Recovery / migration</b><small>Replaces the boot and partition layout. MeshCore storage is preserved, but NVS and BLE bonds may reset.</small></span>
+          <span><b>Recovery</b><small>Preserves MeshCore storage. Resets NVS and BLE bonds.</small></span>
         </label>
       </div>
       <div id="ambiguous-confirm" class="confirm-box hidden">
@@ -77,8 +76,8 @@
 
     <section class="panel" data-panel="3">
       <div class="panel-heading">
-        <div><p class="eyebrow">STEP 3</p><h2>Connect and flash</h2></div>
-        <p>No settings are uploaded to a server. Firmware is downloaded and verified in this browser before USB writing begins.</p>
+        <div><p class="eyebrow">STEP 3</p><h2>Flash</h2></div>
+        <p>Firmware is verified in this browser.</p>
       </div>
       <div id="flash-summary" class="summary-card"></div>
       <div class="safety-strip"><b>Before flashing</b><span>Attach the LoRa antenna. Use a data-capable USB cable. Close serial monitors and companion apps.</span></div>
@@ -95,13 +94,13 @@
 
     <section class="panel" data-panel="4">
       <div class="panel-heading">
-        <div><p class="eyebrow">STEP 4</p><h2>Restart, but stay connected</h2></div>
-        <p>The firmware bytes are verified. Now prove the device comes back over USB before configuration.</p>
+        <div><p class="eyebrow">STEP 4</p><h2>Restart</h2></div>
+        <p>Keep USB connected.</p>
       </div>
       <ol class="restart-list">
-        <li><b>Keep USB connected.</b> Do not unplug or move the device yet.</li>
-        <li><b>Press Reset once.</b> For RC52, wait until the UF2 drive disappears and the normal serial device returns.</li>
-        <li><b>Check the screen or status LED.</b> A screen build should show the NeonPocket startup and then its home/status page.</li>
+        <li><b>Press Reset once.</b></li>
+        <li><b>Wait for USB to return.</b></li>
+        <li><b>Check the screen or status LED.</b></li>
       </ol>
       <pre id="boot-log" class="terminal">Waiting for the restart check.</pre>
       <div class="actions"><button id="verify-boot" class="primary">Check USB return <span>✓</span></button></div>
@@ -109,8 +108,8 @@
 
     <section class="panel" data-panel="5">
       <div class="panel-heading">
-        <div><p class="eyebrow">STEP 5</p><h2>Finish onboarding</h2></div>
-        <p id="onboarding-heading">The final steps depend on the selected role.</p>
+        <div><p class="eyebrow">STEP 5</p><h2>Configure</h2></div>
+        <p id="onboarding-heading">Finish setup.</p>
       </div>
 
       <div id="companion-onboarding" class="onboarding hidden">
@@ -119,8 +118,8 @@
         <p id="companion-instructions"></p>
         <div class="checklist">
           <label><input type="checkbox"> The NeonPocket home/status screen is visible.</label>
-          <label><input type="checkbox"> I paired or connected using the PIN shown by the device.</label>
-          <label><input type="checkbox"> My identity, contacts and channels loaded correctly.</label>
+          <label><input type="checkbox"><span id="companion-check-connect"> I paired or connected using the PIN shown by the device.</span></label>
+          <label><input type="checkbox"><span id="companion-check-sync"> My identity, contacts and channels loaded correctly.</span></label>
         </div>
       </div>
 
@@ -165,7 +164,7 @@
         <pre id="serial-log" class="terminal">Console not connected.</pre>
         <div class="console-input"><input id="serial-command" placeholder="Enter a MeshCore CLI command"><button id="send-command" class="secondary" type="button" disabled>Send</button></div>
       </details>
-      <div id="completion" class="completion hidden"><b>Setup complete.</b><span>You can now disconnect USB and deploy or use this NeonPocket.</span></div>
+      <div id="completion" class="completion hidden"><b>Done.</b><span>You can disconnect USB.</span></div>
     </section>
   </main>
 

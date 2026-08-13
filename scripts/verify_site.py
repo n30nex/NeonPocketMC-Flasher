@@ -25,7 +25,7 @@ def main() -> int:
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
     require(len(catalog["devices"]) == 6, "expected six hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 13, f"expected 13 profiles, found {profile_count}")
+    require(profile_count == 17, f"expected 17 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -36,7 +36,7 @@ def main() -> int:
     for device in catalog["devices"]:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
-            require(profile["onboarding"] in ("companion", "companion-web", "server-core", "server-network", "room-core", "room-network"), f"bad onboarding: {profile['id']}")
+            require(profile["onboarding"] in ("companion", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network"), f"bad onboarding: {profile['id']}")
             for kind in ("update", "recovery"):
                 if kind not in profile:
                     continue
@@ -49,7 +49,7 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 22, f"expected 22 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 29, f"expected 29 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     for contract in (

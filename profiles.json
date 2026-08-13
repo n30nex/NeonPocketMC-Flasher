@@ -20,6 +20,16 @@
           "update": "NeonPocketMC-Heltec-V3-BLE-app.bin",
           "recovery": "NeonPocketMC-Heltec-V3-BLE-recovery-preserves-settings.bin",
           "onboarding": "companion"
+        },
+        {
+          "id": "usb-companion-oled",
+          "name": "USB Companion + OLED",
+          "summary": "Wired desktop companion with the NeonPocket OLED interface.",
+          "transport": "Native USB",
+          "features": ["OLED", "USB companion", "messages", "nearby radios"],
+          "update": "NeonPocketMC-Heltec-V3-USB-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V3-USB-recovery-preserves-settings.bin",
+          "onboarding": "companion-usb"
         }
       ]
     },
@@ -42,6 +52,16 @@
           "update": "NeonPocketMC-Heltec-V4-BLE-app.bin",
           "recovery": "NeonPocketMC-Heltec-V4-BLE-recovery-preserves-settings.bin",
           "onboarding": "companion"
+        },
+        {
+          "id": "usb-companion-oled",
+          "name": "USB Companion + OLED",
+          "summary": "Wired desktop companion with the NeonPocket OLED interface.",
+          "transport": "Native USB",
+          "features": ["OLED", "USB companion", "messages", "nearby radios"],
+          "update": "NeonPocketMC-Heltec-V4-USB-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V4-USB-recovery-preserves-settings.bin",
+          "onboarding": "companion-usb"
         }
       ]
     },
@@ -61,8 +81,17 @@
           "summary": "Low-power phone companion with the full NeonPocket TFT interface.",
           "transport": "BLE",
           "features": ["TFT", "BLE", "messages", "nearby radios"],
-          "update": "NeonPocketMC-RC52-1.1-RC3.uf2",
+          "update": "NeonPocketMC-RC52-1.1-RC4-BLE.uf2",
           "onboarding": "companion"
+        },
+        {
+          "id": "usb-companion-tft",
+          "name": "USB Companion + TFT",
+          "summary": "Low-power wired desktop companion with the full NeonPocket TFT interface.",
+          "transport": "Native USB",
+          "features": ["TFT", "USB companion", "messages", "nearby radios"],
+          "update": "NeonPocketMC-RC52-1.1-RC4-USB.uf2",
+          "onboarding": "companion-usb"
         }
       ]
     },
@@ -122,9 +151,19 @@
           "summary": "The full standalone NeonPocket experience for standard companion apps.",
           "transport": "BLE",
           "features": ["TFT", "BLE", "history", "composer", "network explorer"],
-          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-BLE-recovery-preserves-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-BLE-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-BLE-recovery-preserves-settings.bin",
           "onboarding": "companion"
+        },
+        {
+          "id": "usb-companion-tft",
+          "name": "Ultimate USB Companion",
+          "summary": "The full standalone NeonPocket experience over native USB serial.",
+          "transport": "Native USB",
+          "features": ["TFT", "USB companion", "history", "composer", "network explorer"],
+          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-USB-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-USB-recovery-preserves-settings.bin",
+          "onboarding": "companion-usb"
         },
         {
           "id": "web-ap-companion-tft",
@@ -132,8 +171,8 @@
           "summary": "AP onboarding, LAN WebUI and trusted-LAN TCP companion access.",
           "transport": "Wi-Fi + WebUI",
           "features": ["TFT", "WebUI", "AP onboarding", "LAN TCP", "signed OTA"],
-          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.2-Web-recovery-preserves-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-Web-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-Web-recovery-preserves-settings.bin",
           "onboarding": "companion-web"
         }
       ]
