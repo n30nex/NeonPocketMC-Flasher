@@ -6,16 +6,17 @@ Guided browser flashing and USB onboarding for the [NeonPocketMC firmware suite]
 
 ## What it does
 
-1. Selects the exact Heltec V3, V4, RadioCore RC52, or RadioCore RCC6 hardware.
+1. Selects the exact Heltec V3, V4, RadioCore RC52, RadioCore RCC6, or SenseCAP Indicator D1L hardware.
 2. Selects a released companion, repeater, observer, or Room Server profile.
 3. Verifies the exact release file with SHA-256 before touching USB.
 4. Detects ESP32-C6 versus ESP32-S3 in ROM and blocks the wrong family.
-5. Writes ESP application-only updates at `0x10000`, or an explicitly selected recovery image at `0x0`.
+5. Writes each ESP image at its release-owned address: `0x10000` for NeonPocket updates, `0x20000` for DeskOS updates, or `0x0` for an explicitly selected recovery/clean image.
 6. Reads the written ESP range back through the ROM MD5 command and compares it with the deployed manifest.
 7. Identifies RC52 by USB VID/PID and writes the verified application UF2 through its existing bootloader drive.
-8. Requires the expected USB device to return after restart.
+8. Requires the expected USB device to return after restart; DeskOS must also report the exact release commit and healthy board, UI, and storage state.
 9. Runs a profile-aware 115200-baud USB wizard for name, legal radio preset, TX power, repeat mode, three-byte hashes, local passwords, Wi-Fi, and built-in MQTT presets.
 10. Reboots server profiles, verifies saved settings, and reports the LAN IP before USB is disconnected.
+11. Offers the separately verified DeskOS RP2040 bridge UF2 through an explicit BOOTSEL-drive picker without touching the SD card.
 
 No password is saved by the page, browser storage, repository, or server. Secret CLI commands are redacted from the visible console.
 
@@ -29,14 +30,17 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RCC6 Ultimate Wi-Fi/Web companion with TFT
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT
+- SenseCAP Indicator D1L DeskOS touch companion, including safe update, deliberate fresh install, and optional RP2040 SD bridge update
 
-Normal updates preserve bootloader, partitions, identity, contacts, channels, and settings. Recovery images are an explicit expert path: they replace the boot/partition regions and may reset NVS/BLE bonds even when MeshCore storage is preserved.
+Normal updates preserve bootloader, partitions, identity, contacts, channels, and settings. Recovery images are an explicit expert path: they replace the boot/partition regions and may reset NVS/BLE bonds even when MeshCore storage is preserved. The D1L full 8 MB image is a destructive clean install and requires a separate confirmation because it replaces the existing DeskOS identity and history.
 
 ## Browser requirements
 
 Use current desktop Chrome or Edge over HTTPS. Web Serial is not available in Firefox or iOS browsers. Keep a tuned LoRa antenna attached before transmitting.
 
 For RC52, double-press Reset when instructed and select the bootloader drive containing `INFO_UF2.TXT`. The site copies only the application UF2; it does not replace the SoftDevice or bootloader.
+
+For the D1L RP2040 bridge, hold BOOTSEL while reconnecting the RP2040 USB side, then select the drive containing `INFO_UF2.TXT`. The bridge step is separate from the ESP32-S3 firmware and never formats the SD card.
 
 ## Development
 

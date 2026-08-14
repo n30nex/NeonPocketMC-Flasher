@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "suite_version": "1.5.0-rc.1",
+  "suite_version": "1.6.0-rc.1",
   "devices": [
     {
       "id": "heltec-v3",
@@ -550,6 +550,63 @@
             "local_url": "/firmware/09a57738d39ff6ac63562cb7feffe16255450121d482367ba9fdee9c07bb3110/NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin"
           },
           "onboarding": "room-network"
+        }
+      ]
+    },
+    {
+      "id": "deskos-d1l",
+      "product": "deskos-d1l-client",
+      "name": "SenseCAP Indicator D1L",
+      "family": "ESP32-S3 + RP2040",
+      "display": "480x480 touch display",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-S3",
+      "usb_vid": 6790,
+      "usb_pid": 29987,
+      "repository": "https://github.com/n30nex/DeskOS-MeshCore",
+      "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.7.5",
+      "tag": "v1.7.5",
+      "commit": "b719faaed93032211988c00b6a5c0c0ee74ef60b",
+      "profiles": [
+        {
+          "id": "deskos-full-feature",
+          "name": "DeskOS Full Feature",
+          "summary": "Standalone MeshCore desk client with touch UI, messages, maps, and repeater administration.",
+          "transport": "USB + Wi-Fi",
+          "features": [
+            "480x480 touch",
+            "MeshCore client",
+            "repeater admin",
+            "maps",
+            "SD history"
+          ],
+          "update": {
+            "name": "MeshCore-DeskOS-D1L-1.7.5-UPDATE-existing-deskos-at-0x20000.bin",
+            "size": 2178768,
+            "sha256": "e3dfbf3d3f0f0e339489436ff98ee9eba39ce7f356c192c2612ae552824d835b",
+            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.5/MeshCore-DeskOS-D1L-1.7.5-UPDATE-existing-deskos-at-0x20000.bin",
+            "address": 131072,
+            "md5": "ff8567a189922441bbea6b78baeb70cd",
+            "local_url": "/firmware/e3dfbf3d3f0f0e339489436ff98ee9eba39ce7f356c192c2612ae552824d835b/MeshCore-DeskOS-D1L-1.7.5-UPDATE-existing-deskos-at-0x20000.bin"
+          },
+          "recovery": {
+            "name": "MeshCore-DeskOS-D1L-1.7.5-FRESH-CLEAN-full-8mb-at-0x0.bin",
+            "size": 8388608,
+            "sha256": "e5e79bfd76f3dca526978b63261fe23e5be8253f92883579eeeb59d1aea8829c",
+            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.5/MeshCore-DeskOS-D1L-1.7.5-FRESH-CLEAN-full-8mb-at-0x0.bin",
+            "address": 0,
+            "md5": "4d531e4db0f59603f065558647e06e8f",
+            "local_url": "/firmware/e5e79bfd76f3dca526978b63261fe23e5be8253f92883579eeeb59d1aea8829c/MeshCore-DeskOS-D1L-1.7.5-FRESH-CLEAN-full-8mb-at-0x0.bin"
+          },
+          "bridge": {
+            "name": "MeshCore-DeskOS-D1L-1.7.5-RP2040-UPDATE-OR-FRESH.uf2",
+            "size": 305152,
+            "sha256": "404f5c2a15df28fdafe2f556eb69b3b7b635594c88f3273868a6d2cfc3f2225f",
+            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.5/MeshCore-DeskOS-D1L-1.7.5-RP2040-UPDATE-OR-FRESH.uf2",
+            "md5": "57a791141fda561bf21d36df01f42432",
+            "local_url": "/firmware/404f5c2a15df28fdafe2f556eb69b3b7b635594c88f3273868a6d2cfc3f2225f/MeshCore-DeskOS-D1L-1.7.5-RP2040-UPDATE-OR-FRESH.uf2"
+          },
+          "onboarding": "deskos"
         }
       ]
     }

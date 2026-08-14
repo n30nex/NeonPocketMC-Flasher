@@ -61,12 +61,15 @@
       <div id="install-mode" class="install-mode hidden">
         <label class="choice selected">
           <input type="radio" name="install" value="update" checked>
-          <span><b>Update</b><small>Preserves identity and settings.</small></span>
+          <span><b id="update-mode-title">Update</b><small id="update-mode-copy">Preserves identity and settings.</small></span>
         </label>
         <label class="choice">
           <input type="radio" name="install" value="recovery">
-          <span><b>Recovery</b><small>Preserves MeshCore storage. Resets NVS and BLE bonds.</small></span>
+          <span><b id="recovery-mode-title">Recovery</b><small id="recovery-mode-copy">Preserves MeshCore storage. Resets NVS and BLE bonds.</small></span>
         </label>
+      </div>
+      <div id="deskos-clean-confirm" class="confirm-box danger hidden">
+        <label><input id="deskos-clean-checkbox" type="checkbox"> Fresh clean install deletes the existing DeskOS identity, contacts, settings, and history. I understand this cannot be undone.</label>
       </div>
       <div id="ambiguous-confirm" class="confirm-box hidden">
         <label><input id="model-confirm" type="checkbox"> I physically checked the board label and selected the correct model. ESP32-S3 alone cannot distinguish V3 from V4.</label>
@@ -121,6 +124,25 @@
           <label><input type="checkbox"><span id="companion-check-connect"> I paired or connected using the PIN shown by the device.</span></label>
           <label><input type="checkbox"><span id="companion-check-sync"> My identity, contacts and channels loaded correctly.</span></label>
         </div>
+      </div>
+
+      <div id="deskos-onboarding" class="onboarding hidden">
+        <div class="success-mark">✓</div>
+        <h3>DeskOS identity verified</h3>
+        <p>The exact release answered over USB after restart. DeskOS is ready; the RP2040 SD bridge is a separate optional update.</p>
+        <div class="deskos-status">
+          <div><small>Release</small><b id="deskos-release">Checking…</b></div>
+          <div><small>Build</small><b id="deskos-build">Checking…</b></div>
+          <div><small>Health</small><b id="deskos-health">Checking…</b></div>
+        </div>
+        <div class="bridge-band">
+          <div>
+            <b>RP2040 SD bridge</b>
+            <p>Hold BOOTSEL while reconnecting the RP2040 USB side, then choose the drive that contains <code>INFO_UF2.TXT</code>. This does not format the SD card.</p>
+          </div>
+          <button id="deskos-bridge-button" class="secondary" type="button">Install verified bridge UF2</button>
+        </div>
+        <pre id="deskos-log" class="terminal">DeskOS verification will appear here.</pre>
       </div>
 
       <form id="server-onboarding" class="onboarding hidden">
