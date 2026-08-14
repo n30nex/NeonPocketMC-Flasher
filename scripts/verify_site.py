@@ -88,8 +88,8 @@ def main() -> int:
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
-    require(deskos["tag"] == "v1.7.5", "wrong DeskOS release")
-    require(deskos["commit"] == "b719faaed93032211988c00b6a5c0c0ee74ef60b", "wrong DeskOS commit")
+    require(deskos["tag"] == "v1.7.6", "wrong DeskOS release")
+    require(deskos["commit"] == "92f838b120cf6e5586d2c69eae207a58b344cd75", "wrong DeskOS commit")
     deskos_profile = deskos["profiles"][0]
     require(deskos_profile["update"]["address"] == 0x20000, "DeskOS update must use 0x20000")
     require(deskos_profile["recovery"]["address"] == 0, "DeskOS clean image must use 0x0")
