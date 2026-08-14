@@ -16,7 +16,8 @@ Guided browser flashing and USB onboarding for the [NeonPocketMC firmware suite]
 8. Requires the expected USB device to return after restart; DeskOS must also report the exact release commit and healthy board, UI, and storage state.
 9. Runs a profile-aware 115200-baud USB wizard for name, legal radio preset, TX power, repeat mode, three-byte hashes, local passwords, Wi-Fi, and built-in MQTT presets.
 10. Reboots server profiles, verifies saved settings, and reports the LAN IP before USB is disconnected.
-11. Offers the separately verified DeskOS RP2040 bridge UF2 through an explicit BOOTSEL-drive picker without touching the SD card.
+11. Installs the separately verified DeskOS RP2040 bridge through an explicit BOOTSEL-drive picker, then verifies bridge readiness from DeskOS.
+12. Prepares an existing FAT32 DeskOS SD card by adding only missing, checksum-verified files and folders; it refuses to replace different files and never formats or deletes content.
 
 No password is saved by the page, browser storage, repository, or server. Secret CLI commands are redacted from the visible console.
 
@@ -30,7 +31,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RCC6 Ultimate Wi-Fi/Web companion with TFT
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT
-- SenseCAP Indicator D1L DeskOS touch companion, including safe update, deliberate fresh install, and optional RP2040 SD bridge update
+- SenseCAP Indicator D1L DeskOS touch companion, including safe update, deliberate fresh install, RP2040 bridge setup, and non-destructive SD preparation
 
 Normal updates preserve bootloader, partitions, identity, contacts, channels, and settings. Recovery images are an explicit expert path: they replace the boot/partition regions and may reset NVS/BLE bonds even when MeshCore storage is preserved. The D1L full 8 MB image is a destructive clean install and requires a separate confirmation because it replaces the existing DeskOS identity and history.
 
@@ -40,7 +41,7 @@ Use current desktop Chrome or Edge over HTTPS. Web Serial is not available in Fi
 
 For RC52, double-press Reset when instructed and select the bootloader drive containing `INFO_UF2.TXT`. The site copies only the application UF2; it does not replace the SoftDevice or bootloader.
 
-For the D1L RP2040 bridge, hold BOOTSEL while reconnecting the RP2040 USB side, then select the drive containing `INFO_UF2.TXT`. The bridge step is separate from the ESP32-S3 firmware and never formats the SD card.
+For the D1L RP2040 bridge, hold BOOTSEL while reconnecting the RP2040 USB side, then select the drive containing `INFO_UF2.TXT`. Reconnect the ESP32 side and use **Verify bridge** afterward. For SD setup, select the root of an already-formatted FAT32 microSD card. Both workflows are additive and never format the card.
 
 ## Development
 

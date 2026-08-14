@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "device": "deskos-d1l",
+  "payload_revision": 1,
+  "directories": [
+    "deskos/stores/messages/public",
+    "deskos/stores/messages/dm",
+    "deskos/stores/nodes",
+    "deskos/stores/contacts",
+    "deskos/stores/read_state",
+    "deskos/stores/routes",
+    "deskos/stores/packet_log",
+    "deskos/exports",
+    "deskos/map/tiles"
+  ],
+  "files": [
+    {
+      "target": "deskos/manifest.json",
+      "url": "/assets/deskos-sd/deskos/manifest.json",
+      "size": 177,
+      "sha256": "fba92722974ed53fbc2bf8a092152f2e45422b1fe45d0836e1f9f8fce8e6a057"
+    },
+    {
+      "target": "deskos/README.txt",
+      "url": "/assets/deskos-sd/deskos/README.txt",
+      "size": 749,
+      "sha256": "29f35b2c9695cd9397af31a44ee9244900ca37467c7a99ceaf0468b42847e1f8"
+    },
+    {
+      "target": "deskos/map/manifest.json",
+      "url": "/assets/deskos-sd/deskos/map/manifest.json",
+      "size": 233,
+      "sha256": "e58f506e316ad1946ee785645e3e3753a4696c56fe97a7c0e6d02c7e82f11640"
+    },
+    {
+      "target": "deskos/map/tiles/README.txt",
+      "url": "/assets/deskos-sd/deskos/map/tiles/README.txt",
+      "size": 355,
+      "sha256": "53e4f813b68b1498c6741730e394626e26779c2e175b69849d304ff1e7406385"
+    },
+    {
+      "target": "deskos/map/offline-provider.json",
+      "url": "/assets/deskos-sd/deskos/map/offline-provider.json",
+      "size": 603,
+      "sha256": "2510e0ea63cdaae4025cedfc00cd5a5774b999f142024a392cfada605df57f5c"
+    }
+  ]
+}

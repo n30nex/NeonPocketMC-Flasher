@@ -128,19 +128,46 @@
 
       <div id="deskos-onboarding" class="onboarding hidden">
         <div class="success-mark">✓</div>
-        <h3>DeskOS identity verified</h3>
-        <p>The exact release answered over USB after restart. DeskOS is ready; the RP2040 SD bridge is a separate optional update.</p>
+        <h3>Complete DeskOS setup</h3>
+        <p>The exact ESP32 release answered over USB. Finish or verify the bridge and SD steps below so maps and retained history work too.</p>
         <div class="deskos-status">
           <div><small>Release</small><b id="deskos-release">Checking…</b></div>
           <div><small>Build</small><b id="deskos-build">Checking…</b></div>
           <div><small>Health</small><b id="deskos-health">Checking…</b></div>
         </div>
-        <div class="bridge-band">
-          <div>
-            <b>RP2040 SD bridge</b>
-            <p>Hold BOOTSEL while reconnecting the RP2040 USB side, then choose the drive that contains <code>INFO_UF2.TXT</code>. This does not format the SD card.</p>
-          </div>
-          <button id="deskos-bridge-button" class="secondary" type="button">Install verified bridge UF2</button>
+        <div class="deskos-setup-list">
+          <section class="deskos-step-band">
+            <span class="deskos-step-number">1</span>
+            <div>
+              <b>ESP32 DeskOS firmware</b>
+              <p>The selected release, commit, board, interface, and storage response were checked over USB.</p>
+            </div>
+            <span id="deskos-firmware-state" class="setup-state ready">Verified</span>
+          </section>
+          <section class="deskos-step-band">
+            <span class="deskos-step-number">2</span>
+            <div>
+              <b>RP2040 SD bridge</b>
+              <p>Hold BOOTSEL while reconnecting the RP2040 USB side, then select its drive containing <code>INFO_UF2.TXT</code>.</p>
+            </div>
+            <div class="setup-actions">
+              <span id="deskos-bridge-state" class="setup-state pending">Not checked</span>
+              <button id="deskos-bridge-button" class="secondary" type="button">Install bridge</button>
+              <button id="deskos-bridge-verify" class="secondary" type="button">Verify bridge</button>
+            </div>
+          </section>
+          <section class="deskos-step-band">
+            <span class="deskos-step-number">3</span>
+            <div>
+              <b>DeskOS SD card</b>
+              <p>Select an already-formatted FAT32 card. The flasher only adds missing DeskOS folders and verified files; it never formats, deletes, or replaces different files.</p>
+            </div>
+            <div class="setup-actions">
+              <span id="deskos-sd-state" class="setup-state pending">Not checked</span>
+              <button id="deskos-sd-button" class="secondary" type="button">Prepare SD card</button>
+              <button id="deskos-sd-verify" class="secondary" type="button">Verify in DeskOS</button>
+            </div>
+          </section>
         </div>
         <pre id="deskos-log" class="terminal">DeskOS verification will appear here.</pre>
       </div>
