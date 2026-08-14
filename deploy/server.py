@@ -21,7 +21,7 @@ def load_artifacts(catalog_path: Path) -> dict[tuple[str, str], dict]:
     artifacts: dict[tuple[str, str], dict] = {}
     for device in catalog["devices"]:
         for profile in device["profiles"]:
-            for kind in ("update", "recovery"):
+            for kind in ("update", "recovery", "bridge"):
                 artifact = profile.get(kind)
                 if not artifact:
                     continue

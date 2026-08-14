@@ -60,7 +60,7 @@ def main() -> int:
         })
         for profile in device["profiles"]:
             output_profile = dict(profile)
-            for kind in ("update", "recovery"):
+            for kind in ("update", "recovery", "bridge"):
                 name = profile.get(kind)
                 if not name:
                     continue
@@ -68,6 +68,9 @@ def main() -> int:
                 if not artifact:
                     raise SystemExit(f"missing artifact {name} for {device['id']}/{profile['id']}")
                 output_artifact = dict(artifact)
+                address = profile.get(f"{kind}_address")
+                if address is not None:
+                    output_artifact["address"] = address
                 if args.firmware_dir:
                     path = args.firmware_dir / name
                     if not path.is_file():
@@ -85,6 +88,7 @@ def main() -> int:
                         + name
                     )
                 output_profile[kind] = output_artifact
+                output_profile.pop(f"{kind}_address", None)
             output_device["profiles"].append(output_profile)
         result["devices"].append(output_device)
 

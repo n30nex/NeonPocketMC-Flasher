@@ -12,11 +12,14 @@ const state = {
   maxStep: 1,
   port: null,
   cli: null,
+  deskosVerified: null,
+  stepperTop: null,
 };
 
 const flashLog = (text) => appendLog($("#flash-log"), text);
 const bootLog = (text) => appendLog($("#boot-log"), text);
 const serialLog = (text) => appendLog($("#serial-log"), text);
+const deskosLog = (text) => appendLog($("#deskos-log"), text);
 
 function appendLog(element, text) {
   const line = String(text ?? "").replace(/\r/g, "");
@@ -49,7 +52,8 @@ function goToStep(step) {
   if (step > state.maxStep) return;
   $$(".panel").forEach((panel) => panel.classList.toggle("active", Number(panel.dataset.panel) === step));
   $$(".step").forEach((button) => button.classList.toggle("active", Number(button.dataset.go) === step));
-  window.scrollTo({ top: $(".stepper").offsetTop - 8, behavior: "smooth" });
+  const top = state.stepperTop ?? $(".stepper").offsetTop;
+  window.scrollTo({ top: Math.max(0, top - 8), behavior: "smooth" });
 }
 
 function escapeHtml(value) {
@@ -74,6 +78,7 @@ function selectDevice(id) {
   state.device = state.catalog.devices.find((device) => device.id === id);
   state.profile = null;
   state.install = "update";
+  state.deskosVerified = null;
   $$("[data-device]").forEach((card) => card.classList.toggle("selected", card.dataset.device === id));
   $("#selected-device-copy").textContent = `${state.device.name} · ${state.device.display}`;
   renderProfiles();
@@ -92,6 +97,7 @@ function renderProfiles() {
   `).join("");
   $$("[data-profile]").forEach((card) => card.addEventListener("click", () => selectProfile(card.dataset.profile)));
   $("#install-mode").classList.add("hidden");
+  $("#deskos-clean-confirm").classList.add("hidden");
   $("#ambiguous-confirm").classList.add("hidden");
   $("#to-flash").disabled = true;
 }
@@ -100,9 +106,15 @@ function selectProfile(id) {
   state.profile = state.device.profiles.find((profile) => profile.id === id);
   $$("[data-profile]").forEach((card) => card.classList.toggle("selected", card.dataset.profile === id));
   const hasRecovery = Boolean(state.profile.recovery);
+  const deskos = state.device.id === "deskos-d1l";
   $("#install-mode").classList.toggle("hidden", !hasRecovery);
   $("#ambiguous-confirm").classList.toggle("hidden", !state.device.ambiguous_with);
+  $("#update-mode-title").textContent = deskos ? "Update DeskOS" : "Update";
+  $("#update-mode-copy").textContent = deskos ? "Keeps the existing DeskOS identity, contacts, settings, and history." : "Preserves identity and settings.";
+  $("#recovery-mode-title").textContent = deskos ? "Fresh clean install" : "Recovery";
+  $("#recovery-mode-copy").textContent = deskos ? "Replaces the complete 8 MB image and starts with a new DeskOS identity." : "Preserves MeshCore storage. Resets NVS and BLE bonds.";
   $("#model-confirm").checked = false;
+  $("#deskos-clean-checkbox").checked = false;
   state.install = "update";
   const updateRadio = $('input[name="install"][value="update"]');
   if (updateRadio) updateRadio.checked = true;
@@ -110,7 +122,17 @@ function selectProfile(id) {
 }
 
 function updateContinueState() {
-  $("#to-flash").disabled = !state.profile || (Boolean(state.device?.ambiguous_with) && !$("#model-confirm").checked);
+  const deskosClean = state.device?.id === "deskos-d1l" && state.install === "recovery";
+  $("#deskos-clean-confirm").classList.toggle("hidden", !deskosClean);
+  $("#to-flash").disabled = !state.profile
+    || (Boolean(state.device?.ambiguous_with) && !$("#model-confirm").checked)
+    || (deskosClean && !$("#deskos-clean-checkbox").checked);
+}
+
+function selectInstallMode(value) {
+  state.install = value;
+  if (value !== "recovery") $("#deskos-clean-checkbox").checked = false;
+  updateContinueState();
 }
 
 function currentArtifact() {
@@ -119,14 +141,19 @@ function currentArtifact() {
 
 function renderFlashSummary() {
   const artifact = currentArtifact();
+  const address = artifact.address ?? (state.install === "recovery" ? 0 : 0x10000);
+  const installLabel = state.device.id === "deskos-d1l" && state.install === "recovery"
+    ? "Fresh clean install"
+    : state.install === "recovery" ? "Recovery / migration" : "Normal update";
   $("#flash-summary").innerHTML = `
     <div><small>Hardware</small><b>${escapeHtml(state.device.name)}</b></div>
     <div><small>Build</small><b>${escapeHtml(state.profile.name)}</b></div>
-    <div><small>Install</small><b>${state.install === "recovery" ? "Recovery / migration" : "Normal update"}</b></div>
+    <div><small>Install</small><b>${installLabel}</b></div>
     <div><small>Exact release</small><b>${escapeHtml(state.device.tag)}</b></div>
     <div><small>File</small><b>${escapeHtml(artifact.name)}</b></div>
     <div><small>Size</small><b>${(artifact.size / 1024).toFixed(1)} KiB</b></div>
     <div><small>Commit</small><b>${escapeHtml(state.device.commit.slice(0, 12))}</b></div>
+    <div><small>Flash address</small><b>0x${Number(address).toString(16)}</b></div>
     <div><small>Verification</small><b>SHA-256${state.device.flash_method === "esp32" ? " + flash MD5" : " + USB return"}</b></div>
   `;
 }
@@ -136,24 +163,24 @@ async function sha256(bytes) {
   return [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, "0")).join("");
 }
 
-async function fetchFirmware(artifact) {
+async function fetchFirmware(artifact, { log = flashLog, showProgress = true } = {}) {
   const candidates = [artifact.local_url, artifact.url].filter(Boolean);
   let lastError;
   for (const url of candidates) {
     try {
-      flashLog(`Downloading ${artifact.name}`);
+      log(`Downloading ${artifact.name}`);
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const buffer = await response.arrayBuffer();
       if (buffer.byteLength !== artifact.size) throw new Error(`size mismatch (${buffer.byteLength}, expected ${artifact.size})`);
-      setProgress("Verifying SHA-256", 4);
+      if (showProgress) setProgress("Verifying SHA-256", 4);
       const actual = await sha256(buffer);
       if (actual !== artifact.sha256.toLowerCase()) throw new Error("SHA-256 mismatch");
-      flashLog(`SHA-256 verified: ${actual}`);
+      log(`SHA-256 verified: ${actual}`);
       return new Uint8Array(buffer);
     } catch (error) {
       lastError = error;
-      flashLog(`Download source failed: ${error.message}`);
+      log(`Download source failed: ${error.message}`);
     }
   }
   throw new Error(`Firmware download failed: ${lastError?.message || "no source"}`);
@@ -212,7 +239,7 @@ async function flashEsp32(artifact, bytes) {
     if (!chip.toUpperCase().includes(state.device.expected_chip.toUpperCase())) {
       throw new Error(`Wrong chip. Selected ${state.device.expected_chip}, detected ${chip}.`);
     }
-    const address = state.install === "recovery" ? 0 : 0x10000;
+    const address = artifact.address ?? (state.install === "recovery" ? 0 : 0x10000);
     setProgress("Writing verified firmware", 8);
     await loader.writeFlash({
       fileArray: [{ data: bytesToBinaryString(bytes), address }],
@@ -318,6 +345,47 @@ async function readBootSample(port, durationMs = 6000) {
   return output;
 }
 
+function parseCliJson(reply, command) {
+  try {
+    return JSON.parse(reply);
+  } catch (_error) {
+    throw new Error(`DeskOS returned an unreadable ${command} reply.`);
+  }
+}
+
+async function verifyDeskOsIdentity(port) {
+  resetLog($("#deskos-log"), "Checking the installed DeskOS identity over USB…");
+  let cli;
+  try {
+    cli = await connectConsole(port);
+    const version = parseCliJson(await cli.command("version", { timeout: 12000 }), "version");
+    const expectedVersion = state.device.tag.replace(/^v/, "");
+    if (!version.ok || version.firmware !== "MeshCore DeskOS D1L") throw new Error("The connected device did not identify itself as DeskOS D1L.");
+    if (version.version !== expectedVersion) throw new Error(`Wrong DeskOS version: device ${version.version}, expected ${expectedVersion}.`);
+    if (version.build_commit !== state.device.commit) throw new Error("DeskOS build commit does not match the selected release.");
+
+    const health = parseCliJson(await cli.command("health", { timeout: 12000 }), "health");
+    if (!health.ok || !health.board_ready || !health.ui_ready) throw new Error("DeskOS started, but its board or interface is not ready.");
+    const storage = parseCliJson(await cli.command("storage status", { timeout: 12000 }), "storage status");
+    if (!storage.ok) throw new Error("DeskOS started, but storage is not ready.");
+
+    state.deskosVerified = { version, health, storage };
+    $("#deskos-release").textContent = `v${version.version}`;
+    $("#deskos-build").textContent = version.build_commit.slice(0, 12);
+    $("#deskos-health").textContent = storage.data_enabled ? "UI and SD ready" : "UI ready; SD optional";
+    deskosLog(`PASS: DeskOS ${version.version}`);
+    deskosLog(`PASS: exact build ${version.build_commit}`);
+    deskosLog(`PASS: board and interface ready`);
+    deskosLog(storage.data_enabled ? "PASS: SD storage ready" : "PASS: DeskOS is healthy without SD-backed storage");
+  } catch (error) {
+    if (cli) {
+      try { await cli.disconnect(); } catch (_disconnectError) {}
+    }
+    state.cli = null;
+    throw error;
+  }
+}
+
 async function verifyBoot() {
   const button = $("#verify-boot");
   button.disabled = true;
@@ -334,6 +402,11 @@ async function verifyBoot() {
     if (/storage error|radio init failed|guru meditation|panic|assert failed/i.test(sample)) {
       throw new Error("Startup output contains a fatal error. Do not disconnect USB.");
     }
+    if (state.device.id === "deskos-d1l") {
+      bootLog("Verifying the exact DeskOS release and health…");
+      await verifyDeskOsIdentity(port);
+      bootLog(`PASS: DeskOS ${state.deskosVerified.version.version} matches ${state.device.commit.slice(0, 12)}.`);
+    }
     bootLog("PASS: the expected USB device returned without a detected fatal startup marker.");
     prepareOnboarding();
     enableThrough(5);
@@ -347,9 +420,15 @@ async function verifyBoot() {
 
 function prepareOnboarding() {
   const type = state.profile.onboarding;
+  const deskos = type === "deskos";
   const companion = type.startsWith("companion");
   $("#companion-onboarding").classList.toggle("hidden", !companion);
-  $("#server-onboarding").classList.toggle("hidden", companion);
+  $("#deskos-onboarding").classList.toggle("hidden", !deskos);
+  $("#server-onboarding").classList.toggle("hidden", companion || deskos);
+  if (deskos) {
+    $("#onboarding-heading").textContent = "The exact DeskOS release is verified. Update the separate SD bridge only when needed.";
+    return;
+  }
   if (companion) {
     const usb = type === "companion-usb";
     const web = type === "companion-web";
@@ -621,6 +700,47 @@ async function sendManualCommand() {
   }
 }
 
+async function installDeskOsBridge() {
+  const button = $("#deskos-bridge-button");
+  const artifact = state.profile?.bridge;
+  if (!artifact) return;
+  button.disabled = true;
+  resetLog($("#deskos-log"), "Preparing the verified RP2040 SD bridge…");
+  try {
+    const bytes = await fetchFirmware(artifact, { log: deskosLog, showProgress: false });
+    if (!window.showDirectoryPicker) {
+      const blob = new Blob([bytes], { type: "application/octet-stream" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = artifact.name;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      deskosLog("The verified UF2 was downloaded. Copy it to the RP2040 BOOTSEL drive manually.");
+      return;
+    }
+
+    const directory = await window.showDirectoryPicker({ mode: "readwrite", id: "deskos-rp2040-uf2" });
+    let info;
+    try {
+      const infoHandle = await directory.getFileHandle("INFO_UF2.TXT");
+      info = await (await infoHandle.getFile()).text();
+    } catch (_error) {
+      throw new Error("That folder is not an RP2040 BOOTSEL drive; INFO_UF2.TXT was not found.");
+    }
+    deskosLog(`RP2040 bootloader found: ${info.split(/\r?\n/)[0] || "INFO_UF2.TXT"}`);
+    const firmware = await directory.getFileHandle(artifact.name, { create: true });
+    const writable = await firmware.createWritable();
+    await writable.write(bytes);
+    await writable.close();
+    deskosLog("PASS: verified RP2040 bridge copied. The bridge should restart automatically.");
+    deskosLog("The SD card was not formatted or written by this site.");
+  } catch (error) {
+    deskosLog(`ERROR: ${error.message}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
 function populateOptions() {
   $("#radio-preset").innerHTML = state.catalog.radio_presets.map((preset, index) => `<option value="${index}">${escapeHtml(preset.name)} — ${preset.freq} MHz / BW ${preset.bw} / SF${preset.sf} / CR${preset.cr}</option>`).join("");
   const brokerOptions = state.catalog.mqtt_presets.map((preset) => `<option value="${escapeHtml(preset)}">${escapeHtml(preset)}</option>`).join("");
@@ -632,8 +752,9 @@ function populateOptions() {
 
 function bindEvents() {
   $$('[data-go]').forEach((button) => button.addEventListener("click", () => goToStep(Number(button.dataset.go))));
-  $$('input[name="install"]').forEach((radio) => radio.addEventListener("change", () => { state.install = radio.value; }));
+  $$('input[name="install"]').forEach((radio) => radio.addEventListener("change", () => selectInstallMode(radio.value)));
   $("#model-confirm").addEventListener("change", updateContinueState);
+  $("#deskos-clean-checkbox").addEventListener("change", updateContinueState);
   $("#to-flash").addEventListener("click", () => {
     state.install = $('input[name="install"]:checked')?.value || "update";
     renderFlashSummary();
@@ -647,10 +768,12 @@ function bindEvents() {
   });
   $("#server-onboarding").addEventListener("submit", applyConfiguration);
   $("#send-command").addEventListener("click", sendManualCommand);
+  $("#deskos-bridge-button").addEventListener("click", installDeskOsBridge);
   $("#serial-command").addEventListener("keydown", (event) => { if (event.key === "Enter") sendManualCommand(); });
 }
 
 async function init() {
+  state.stepperTop = $(".stepper").offsetTop;
   bindEvents();
   const issues = [];
   if (!window.isSecureContext && location.hostname !== "localhost") issues.push("Web Serial requires HTTPS.");

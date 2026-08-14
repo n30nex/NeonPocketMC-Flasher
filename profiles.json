@@ -239,6 +239,32 @@
           "onboarding": "room-network"
         }
       ]
+    },
+    {
+      "id": "deskos-d1l",
+      "product": "deskos-d1l-client",
+      "name": "SenseCAP Indicator D1L",
+      "family": "ESP32-S3 + RP2040",
+      "display": "480x480 touch display",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-S3",
+      "usb_vid": 6790,
+      "usb_pid": 29987,
+      "profiles": [
+        {
+          "id": "deskos-full-feature",
+          "name": "DeskOS Full Feature",
+          "summary": "Standalone MeshCore desk client with touch UI, messages, maps, and repeater administration.",
+          "transport": "USB + Wi-Fi",
+          "features": ["480x480 touch", "MeshCore client", "repeater admin", "maps", "SD history"],
+          "update": "MeshCore-DeskOS-D1L-1.7.5-UPDATE-existing-deskos-at-0x20000.bin",
+          "update_address": 131072,
+          "recovery": "MeshCore-DeskOS-D1L-1.7.5-FRESH-CLEAN-full-8mb-at-0x0.bin",
+          "recovery_address": 0,
+          "bridge": "MeshCore-DeskOS-D1L-1.7.5-RP2040-UPDATE-OR-FRESH.uf2",
+          "onboarding": "deskos"
+        }
+      ]
     }
   ],
   "radio_presets": [
