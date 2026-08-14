@@ -13,6 +13,7 @@ const state = {
   port: null,
   cli: null,
   deskosVerified: null,
+  deskosSdBundle: null,
   stepperTop: null,
 };
 
@@ -79,6 +80,7 @@ function selectDevice(id) {
   state.profile = null;
   state.install = "update";
   state.deskosVerified = null;
+  state.deskosSdBundle = null;
   $$("[data-device]").forEach((card) => card.classList.toggle("selected", card.dataset.device === id));
   $("#selected-device-copy").textContent = `${state.device.name} · ${state.device.display}`;
   renderProfiles();
@@ -184,6 +186,54 @@ async function fetchFirmware(artifact, { log = flashLog, showProgress = true } =
     }
   }
   throw new Error(`Firmware download failed: ${lastError?.message || "no source"}`);
+}
+
+function downloadBytes(bytes, name) {
+  const blob = new Blob([bytes], { type: "application/octet-stream" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
+function setDeskOsSetupState(id, text, kind = "pending") {
+  const element = $(id);
+  if (!element) return;
+  element.textContent = text;
+  element.classList.remove("pending", "working", "ready", "error");
+  element.classList.add(kind);
+}
+
+function reflectDeskOsStorage(storage) {
+  const bridgeReady = storage?.rp2040_bridge_ready === true
+    && storage?.rp2040_protocol_supported !== false;
+  const sdReady = bridgeReady && storage?.present === true
+    && storage?.mounted === true && storage?.data_root_ready === true;
+  setDeskOsSetupState(
+    "#deskos-bridge-state",
+    bridgeReady ? "Bridge ready" : "Needs verification",
+    bridgeReady ? "ready" : "pending",
+  );
+  let sdText = "Needs setup";
+  let sdKind = "pending";
+  if (storage?.needs_fat32 === true) {
+    sdText = "FAT32 required";
+    sdKind = "error";
+  } else if (sdReady) {
+    sdText = "SD ready";
+    sdKind = "ready";
+  }
+  setDeskOsSetupState("#deskos-sd-state", sdText, sdKind);
+  return { bridgeReady, sdReady };
+}
+
+async function disconnectDeskOsConsole() {
+  if (state.cli) {
+    try { await state.cli.disconnect(); } catch (_error) {}
+  }
+  state.cli = null;
+  state.port = null;
 }
 
 function bytesToBinaryString(bytes) {
@@ -372,7 +422,8 @@ async function verifyDeskOsIdentity(port) {
     state.deskosVerified = { version, health, storage };
     $("#deskos-release").textContent = `v${version.version}`;
     $("#deskos-build").textContent = version.build_commit.slice(0, 12);
-    $("#deskos-health").textContent = storage.data_enabled ? "UI and SD ready" : "UI ready; SD optional";
+    const setup = reflectDeskOsStorage(storage);
+    $("#deskos-health").textContent = setup.sdReady ? "Firmware and SD ready" : "Firmware ready; finish setup";
     deskosLog(`PASS: DeskOS ${version.version}`);
     deskosLog(`PASS: exact build ${version.build_commit}`);
     deskosLog(`PASS: board and interface ready`);
@@ -426,7 +477,7 @@ function prepareOnboarding() {
   $("#deskos-onboarding").classList.toggle("hidden", !deskos);
   $("#server-onboarding").classList.toggle("hidden", companion || deskos);
   if (deskos) {
-    $("#onboarding-heading").textContent = "The exact DeskOS release is verified. Update the separate SD bridge only when needed.";
+    $("#onboarding-heading").textContent = "The exact DeskOS release is verified. Complete or verify its bridge and SD card.";
     return;
   }
   if (companion) {
@@ -706,20 +757,19 @@ async function installDeskOsBridge() {
   if (!artifact) return;
   button.disabled = true;
   resetLog($("#deskos-log"), "Preparing the verified RP2040 SD bridge…");
+  setDeskOsSetupState("#deskos-bridge-state", "Waiting for drive", "working");
   try {
-    const bytes = await fetchFirmware(artifact, { log: deskosLog, showProgress: false });
     if (!window.showDirectoryPicker) {
-      const blob = new Blob([bytes], { type: "application/octet-stream" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = artifact.name;
-      link.click();
-      URL.revokeObjectURL(link.href);
+      const bytes = await fetchFirmware(artifact, { log: deskosLog, showProgress: false });
+      downloadBytes(bytes, artifact.name);
       deskosLog("The verified UF2 was downloaded. Copy it to the RP2040 BOOTSEL drive manually.");
+      setDeskOsSetupState("#deskos-bridge-state", "Manual copy needed", "working");
       return;
     }
 
+    // Browser pickers must be opened directly from this click, before network work.
     const directory = await window.showDirectoryPicker({ mode: "readwrite", id: "deskos-rp2040-uf2" });
+    await disconnectDeskOsConsole();
     let info;
     try {
       const infoHandle = await directory.getFileHandle("INFO_UF2.TXT");
@@ -727,15 +777,215 @@ async function installDeskOsBridge() {
     } catch (_error) {
       throw new Error("That folder is not an RP2040 BOOTSEL drive; INFO_UF2.TXT was not found.");
     }
+    if (!/RP2040|RPI-RP2|UF2/i.test(info)) {
+      throw new Error("The selected UF2 drive did not identify as an RP2040.");
+    }
     deskosLog(`RP2040 bootloader found: ${info.split(/\r?\n/)[0] || "INFO_UF2.TXT"}`);
+    const bytes = await fetchFirmware(artifact, { log: deskosLog, showProgress: false });
     const firmware = await directory.getFileHandle(artifact.name, { create: true });
     const writable = await firmware.createWritable();
     await writable.write(bytes);
     await writable.close();
-    deskosLog("PASS: verified RP2040 bridge copied. The bridge should restart automatically.");
+    deskosLog("PASS: verified RP2040 bridge UF2 sent. The bridge should restart automatically.");
+    deskosLog("Reconnect the ESP32 USB side, then choose Verify bridge.");
     deskosLog("The SD card was not formatted or written by this site.");
+    setDeskOsSetupState("#deskos-bridge-state", "UF2 sent; verify", "working");
   } catch (error) {
-    deskosLog(`ERROR: ${error.message}`);
+    if (error.name === "AbortError") {
+      deskosLog("Bridge install cancelled; nothing was changed.");
+      setDeskOsSetupState("#deskos-bridge-state", "Not checked", "pending");
+    } else {
+      deskosLog(`ERROR: ${error.message}`);
+      setDeskOsSetupState("#deskos-bridge-state", "Install stopped", "error");
+    }
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function fetchDeskOsSdBundle() {
+  if (state.deskosSdBundle) return state.deskosSdBundle;
+  const response = await fetch("/assets/deskos-sd/bundle.json", { cache: "no-store" });
+  if (!response.ok) throw new Error(`SD setup package returned HTTP ${response.status}.`);
+  const bundle = await response.json();
+  const safePath = /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/;
+  if (bundle.schema !== 1 || bundle.device !== "deskos-d1l"
+      || !Array.isArray(bundle.directories) || !Array.isArray(bundle.files)
+      || bundle.directories.length > 32 || bundle.files.length > 16) {
+    throw new Error("The SD setup package is malformed.");
+  }
+  for (const path of bundle.directories) {
+    if (!safePath.test(path) || !path.startsWith("deskos/")) {
+      throw new Error("The SD setup package contains an unsafe directory.");
+    }
+  }
+  for (const file of bundle.files) {
+    if (!safePath.test(file.target) || !file.target.startsWith("deskos/")
+        || !String(file.url).startsWith("/assets/deskos-sd/")
+        || !/^[0-9a-f]{64}$/.test(file.sha256)
+        || !Number.isInteger(file.size) || file.size < 1 || file.size > 65536) {
+      throw new Error("The SD setup package contains an unsafe file.");
+    }
+  }
+  state.deskosSdBundle = bundle;
+  return bundle;
+}
+
+async function fetchDeskOsSdFile(file) {
+  const response = await fetch(file.url, { cache: "no-store" });
+  if (!response.ok) throw new Error(`${file.target} returned HTTP ${response.status}.`);
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength !== file.size || await sha256(bytes) !== file.sha256) {
+    throw new Error(`${file.target} failed its size or SHA-256 check.`);
+  }
+  return bytes;
+}
+
+async function directoryForPath(root, parts, create = false) {
+  let current = root;
+  for (const part of parts) {
+    current = await current.getDirectoryHandle(part, { create });
+  }
+  return current;
+}
+
+async function existingFileHandle(directory, name) {
+  try {
+    return await directory.getFileHandle(name);
+  } catch (error) {
+    if (error.name === "NotFoundError") return null;
+    throw error;
+  }
+}
+
+async function writeDeskOsSdFile(root, file, bytes) {
+  const parts = file.target.split("/");
+  const name = parts.pop();
+  const directory = await directoryForPath(root, parts, true);
+  let handle = await existingFileHandle(directory, name);
+  if (handle) {
+    const existing = new Uint8Array(await (await handle.getFile()).arrayBuffer());
+    if (existing.byteLength !== bytes.byteLength || await sha256(existing) !== file.sha256) {
+      throw new Error(`Refusing to replace a different existing file: ${file.target}`);
+    }
+    return "already correct";
+  }
+
+  let created = false;
+  try {
+    handle = await directory.getFileHandle(name, { create: true });
+    created = true;
+    const writable = await handle.createWritable();
+    await writable.write(bytes);
+    await writable.close();
+    const written = new Uint8Array(await (await handle.getFile()).arrayBuffer());
+    if (written.byteLength !== bytes.byteLength || await sha256(written) !== file.sha256) {
+      throw new Error(`Read-back verification failed: ${file.target}`);
+    }
+    return "written and verified";
+  } catch (error) {
+    if (created) {
+      try { await directory.removeEntry(name); } catch (_cleanupError) {}
+    }
+    throw error;
+  }
+}
+
+async function prepareDeskOsSdCard() {
+  const button = $("#deskos-sd-button");
+  button.disabled = true;
+  resetLog($("#deskos-log"), "Preparing a DeskOS SD card without formatting or deleting…");
+  setDeskOsSetupState("#deskos-sd-state", "Waiting for card", "working");
+  try {
+    if (!window.showDirectoryPicker) {
+      throw new Error("SD setup requires Chrome or Edge with directory access. The release package still includes the desktop SD setup scripts.");
+    }
+    // Keep this picker before downloads so the browser sees the button gesture.
+    const root = await window.showDirectoryPicker({ mode: "readwrite", id: "deskos-sd-card" });
+    try {
+      await root.getFileHandle("INFO_UF2.TXT");
+      throw new Error("That is the RP2040 bootloader drive, not the microSD card.");
+    } catch (error) {
+      if (error.name !== "NotFoundError") throw error;
+    }
+
+    const bundle = await fetchDeskOsSdBundle();
+    deskosLog(`SD setup package revision ${bundle.payload_revision} accepted.`);
+    for (const path of bundle.directories) {
+      await directoryForPath(root, path.split("/"), true);
+    }
+    for (const file of bundle.files) {
+      const bytes = await fetchDeskOsSdFile(file);
+      const result = await writeDeskOsSdFile(root, file, bytes);
+      deskosLog(`PASS: ${file.target} — ${result}`);
+    }
+    deskosLog("PASS: DeskOS folders and files read back correctly. No existing file was replaced.");
+    deskosLog("Insert the card into the D1L, reconnect the ESP32 side, then choose Verify in DeskOS.");
+    setDeskOsSetupState("#deskos-sd-state", "Prepared; verify", "working");
+  } catch (error) {
+    if (error.name === "AbortError") {
+      deskosLog("SD setup cancelled; nothing was changed.");
+      setDeskOsSetupState("#deskos-sd-state", "Not checked", "pending");
+    } else {
+      deskosLog(`ERROR: ${error.message}`);
+      setDeskOsSetupState("#deskos-sd-state", "Setup stopped", "error");
+    }
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function verifyDeskOsStorage(kind) {
+  const button = kind === "bridge" ? $("#deskos-bridge-verify") : $("#deskos-sd-verify");
+  button.disabled = true;
+  setDeskOsSetupState(
+    kind === "bridge" ? "#deskos-bridge-state" : "#deskos-sd-state",
+    "Checking DeskOS",
+    "working",
+  );
+  try {
+    const selected = await navigator.serial.requestPort({ filters: usbFilters(state.device) });
+    if (!portMatchesDevice(selected, state.device)) {
+      throw new Error("The selected USB device is not the DeskOS ESP32 side.");
+    }
+    await disconnectDeskOsConsole();
+    const cli = await connectConsole(selected);
+    let storage = null;
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      storage = parseCliJson(
+        await cli.command("storage status", { timeout: 12000 }),
+        "storage status",
+      );
+      const result = reflectDeskOsStorage(storage);
+      if (result.bridgeReady && (kind === "bridge" || result.sdReady)) break;
+      await sleep(1500);
+    }
+    const result = reflectDeskOsStorage(storage);
+    if (!result.bridgeReady) {
+      throw new Error("DeskOS cannot reach the RP2040 bridge yet. Recheck BOOTSEL flashing and the ESP32 cable.");
+    }
+    deskosLog("PASS: DeskOS reports the RP2040 bridge protocol ready.");
+    if (kind === "sd") {
+      if (!result.sdReady) {
+        throw new Error(storage?.needs_fat32
+          ? "DeskOS found the card, but it is not FAT32. Format it on a computer, then prepare it again."
+          : "DeskOS has not mounted the prepared card yet. Reseat it, wait a few seconds, and retry.");
+      }
+      deskosLog("PASS: DeskOS reports the SD card mounted with its data root ready.");
+    }
+    $("#deskos-health").textContent = result.sdReady ? "Firmware and SD ready" : "Firmware and bridge ready";
+  } catch (error) {
+    if (error.name === "NotFoundError" || error.name === "AbortError") {
+      deskosLog("DeskOS verification cancelled; nothing was changed.");
+      reflectDeskOsStorage(state.deskosVerified?.storage);
+    } else {
+      deskosLog(`ERROR: ${error.message}`);
+      setDeskOsSetupState(
+        kind === "bridge" ? "#deskos-bridge-state" : "#deskos-sd-state",
+        "Check failed",
+        "error",
+      );
+    }
   } finally {
     button.disabled = false;
   }
@@ -769,6 +1019,9 @@ function bindEvents() {
   $("#server-onboarding").addEventListener("submit", applyConfiguration);
   $("#send-command").addEventListener("click", sendManualCommand);
   $("#deskos-bridge-button").addEventListener("click", installDeskOsBridge);
+  $("#deskos-bridge-verify").addEventListener("click", () => verifyDeskOsStorage("bridge"));
+  $("#deskos-sd-button").addEventListener("click", prepareDeskOsSdCard);
+  $("#deskos-sd-verify").addEventListener("click", () => verifyDeskOsStorage("sd"));
   $("#serial-command").addEventListener("keydown", (event) => { if (event.key === "Enter") sendManualCommand(); });
 }
 
@@ -778,6 +1031,7 @@ async function init() {
   const issues = [];
   if (!window.isSecureContext && location.hostname !== "localhost") issues.push("Web Serial requires HTTPS.");
   if (!navigator.serial) issues.push("Use current desktop Chrome or Edge; this browser has no Web Serial support.");
+  if (!window.showDirectoryPicker) issues.push("Direct UF2 and SD setup require desktop Chrome or Edge directory access.");
   if (issues.length) {
     $("#compatibility").textContent = issues.join(" ");
     $("#compatibility").classList.remove("hidden");

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -29,8 +30,41 @@ def main() -> int:
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
-    for required_id in ("device-grid", "profile-grid", "flash-button", "verify-boot", "server-onboarding", "deskos-onboarding", "deskos-bridge-button"):
+    for required_id in (
+        "device-grid",
+        "profile-grid",
+        "flash-button",
+        "verify-boot",
+        "server-onboarding",
+        "deskos-onboarding",
+        "deskos-bridge-button",
+        "deskos-bridge-verify",
+        "deskos-sd-button",
+        "deskos-sd-verify",
+    ):
         require(required_id in ids, f"missing HTML control: {required_id}")
+
+    sd_bundle = json.loads(
+        (ROOT / "assets/deskos-sd/bundle.json").read_text(encoding="utf-8")
+    )
+    require(sd_bundle.get("schema") == 1, "bad DeskOS SD bundle schema")
+    require(sd_bundle.get("device") == "deskos-d1l", "bad DeskOS SD device")
+    require(len(sd_bundle.get("directories", [])) == 9, "bad DeskOS SD directory count")
+    require(len(sd_bundle.get("files", [])) == 5, "bad DeskOS SD file count")
+    targets = set()
+    for file in sd_bundle["files"]:
+        target = file["target"]
+        require(target.startswith("deskos/") and ".." not in target, f"unsafe SD target: {target}")
+        require(target not in targets, f"duplicate SD target: {target}")
+        targets.add(target)
+        source = ROOT / file["url"].lstrip("/")
+        require(source.is_file(), f"missing SD source: {source}")
+        payload = source.read_bytes()
+        require(len(payload) == file["size"], f"SD source size mismatch: {target}")
+        require(
+            hashlib.sha256(payload).hexdigest() == file["sha256"],
+            f"SD source SHA-256 mismatch: {target}",
+        )
 
     artifacts = []
     for device in catalog["devices"]:
@@ -69,10 +103,28 @@ def main() -> int:
         "INFO_UF2.TXT",
         "Passwords remain in this tab only",
         "Fresh clean install deletes the existing DeskOS identity",
-        "DeskOS identity verified",
+        "Complete DeskOS setup",
+        "Prepare SD card",
+        "No existing file was replaced",
         "artifact.address",
     ):
         require(contract in html + js, f"missing safety contract: {contract}")
+    bridge = js.split("async function installDeskOsBridge", 1)[1].split(
+        "async function fetchDeskOsSdBundle", 1
+    )[0]
+    require(
+        bridge.index("const directory = await window.showDirectoryPicker")
+        < bridge.rindex("fetchFirmware"),
+        "DeskOS bridge picker must precede the firmware download",
+    )
+    sd_setup = js.split("async function prepareDeskOsSdCard", 1)[1].split(
+        "async function verifyDeskOsStorage", 1
+    )[0]
+    require(
+        sd_setup.index("showDirectoryPicker") < sd_setup.index("fetchDeskOsSdBundle"),
+        "DeskOS SD picker must precede package downloads",
+    )
+    require("Refusing to replace a different existing file" in js, "SD setup must fail closed")
     require("eraseAll: false" in js, "ESP updates must not erase the whole flash")
     require("localStorage" not in js and "sessionStorage" not in js, "credentials/state must not be browser-persisted")
     print(f"Verified flasher: 7 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
