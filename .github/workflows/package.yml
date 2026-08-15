@@ -25,7 +25,7 @@ jobs:
       - name: Assemble Pi bundle
         run: |
           mkdir -p bundle/site/css bundle/site/lib bundle/site/assets
-          cp index.html flasher.js LICENSE catalog.json bundle/site/
+          cp index.html flasher.js scene.js LICENSE catalog.json bundle/site/
           cp css/flasher.css bundle/site/css/
           cp lib/esp32.js bundle/site/lib/
           cp assets/neonpocketmc-mark.png assets/neonpocketmc-mark-64.png bundle/site/assets/
@@ -36,6 +36,7 @@ jobs:
           python scripts/verify_site.py
           python bundle/server.py --site bundle/site --self-test
           node --check flasher.js
+          node --check scene.js
           git diff --check
       - uses: actions/upload-artifact@v4
         with:

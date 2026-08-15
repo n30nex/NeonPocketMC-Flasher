@@ -149,6 +149,7 @@ function renderFlashSummary() {
   const artifact = currentArtifact();
   const releaseTag = state.profile.tag || state.device.tag;
   const releaseCommit = state.profile.commit || state.device.commit;
+  const validation = state.profile.validation;
   const address = artifact.address ?? (state.install === "recovery" ? 0 : 0x10000);
   const installLabel = state.device.id === "deskos-d1l" && state.install === "recovery"
     ? "Fresh clean install"
@@ -163,6 +164,7 @@ function renderFlashSummary() {
     <div><small>Commit</small><b>${escapeHtml(releaseCommit.slice(0, 12))}</b></div>
     <div><small>Flash address</small><b>0x${Number(address).toString(16)}</b></div>
     <div><small>Verification</small><b>SHA-256${state.device.flash_method === "esp32" ? " + flash MD5" : " + USB return"}</b></div>
+    ${validation ? `<div class="validation-evidence"><small>Hardware evidence</small><a href="${escapeHtml(validation.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(validation.label)} ↗</a></div>` : ""}
   `;
 }
 
