@@ -319,11 +319,11 @@
           "summary": "Standalone MeshCore desk client with touch UI, messages, maps, and repeater administration.",
           "transport": "USB + Wi-Fi",
           "features": ["480x480 touch", "MeshCore client", "repeater admin", "maps", "SD history"],
-          "update": "MeshCore-DeskOS-D1L-1.7.6-UPDATE-existing-deskos-at-0x20000.bin",
+          "update": "MeshCore-DeskOS-D1L-1.7.8-UPDATE-existing-deskos-at-0x20000.bin",
           "update_address": 131072,
-          "recovery": "MeshCore-DeskOS-D1L-1.7.6-FRESH-CLEAN-full-8mb-at-0x0.bin",
+          "recovery": "MeshCore-DeskOS-D1L-1.7.8-FRESH-CLEAN-full-8mb-at-0x0.bin",
           "recovery_address": 0,
-          "bridge": "MeshCore-DeskOS-D1L-1.7.6-RP2040-UPDATE-OR-FRESH.uf2",
+          "bridge": "MeshCore-DeskOS-D1L-1.7.8-RP2040-UPDATE-OR-FRESH.uf2",
           "onboarding": "deskos"
         }
       ]
