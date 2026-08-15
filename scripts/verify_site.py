@@ -26,7 +26,7 @@ def main() -> int:
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
     require(len(catalog["devices"]) == 7, "expected seven hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 18, f"expected 18 profiles, found {profile_count}")
+    require(profile_count == 21, f"expected 21 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -36,6 +36,7 @@ def main() -> int:
         "flash-button",
         "verify-boot",
         "server-onboarding",
+        "wdg-onboarding",
         "deskos-onboarding",
         "deskos-bridge-button",
         "deskos-bridge-verify",
@@ -70,7 +71,7 @@ def main() -> int:
     for device in catalog["devices"]:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
-            require(profile["onboarding"] in ("companion", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "deskos"), f"bad onboarding: {profile['id']}")
+            require(profile["onboarding"] in ("companion", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "deskos", "wdg-sidecar"), f"bad onboarding: {profile['id']}")
             for kind in ("update", "recovery", "bridge"):
                 if kind not in profile:
                     continue
@@ -83,7 +84,7 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 32, f"expected 32 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 35, f"expected 35 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
@@ -126,6 +127,18 @@ def main() -> int:
     )
     require("Refusing to replace a different existing file" in js, "SD setup must fail closed")
     require("eraseAll: false" in js, "ESP updates must not erase the whole flash")
+    wdg_profiles = [
+        (device, profile)
+        for device in catalog["devices"]
+        for profile in device["profiles"]
+        if profile["id"] == "wdg-mesh-sidecar"
+    ]
+    require(len(wdg_profiles) == 3, "expected RCC6, V3 and V4 WDG profiles")
+    for device, profile in wdg_profiles:
+        require(profile["update"]["address"] == 0x10000, f"WDG update address is unsafe: {device['id']}")
+        require("recovery" not in profile, f"WDG profile must be app-only: {device['id']}")
+    v4_wdg = next(profile for device, profile in wdg_profiles if device["id"] == "heltec-v4")
+    require("hardware validation pending" in v4_wdg["summary"].lower(), "V4 status must fail closed")
     require("localStorage" not in js and "sessionStorage" not in js, "credentials/state must not be browser-persisted")
     print(f"Verified flasher: 7 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
     return 0

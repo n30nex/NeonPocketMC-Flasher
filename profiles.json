@@ -1,5 +1,34 @@
 {
   "schema": 1,
+  "products": [
+    {
+      "id": "wdg-mesh-sidecar",
+      "repository": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar",
+      "release": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/tag/v1.0.0-rc.1",
+      "tag": "v1.0.0-rc.1",
+      "commit": "96f5e6a659cdff38ca36936979942f15f38ddfab",
+      "artifacts": [
+        {
+          "name": "Canadaverse-WDG-Mesh-RCC6-v1.0.0-rc.1-app.bin",
+          "size": 1645888,
+          "sha256": "ad74fc6a7dd40bbd82376c3a980e04778d466faa0eb525457ac8c69c130af892",
+          "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.1/Canadaverse-WDG-Mesh-RCC6-v1.0.0-rc.1-app.bin"
+        },
+        {
+          "name": "Canadaverse-WDG-Mesh-Heltec-V3-v1.0.0-rc.1-app.bin",
+          "size": 1273600,
+          "sha256": "f53a44ee3507d8b9591f81beabb44e8aa3c7183cab35d1dc161343ed9a178291",
+          "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.1/Canadaverse-WDG-Mesh-Heltec-V3-v1.0.0-rc.1-app.bin"
+        },
+        {
+          "name": "Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.1-app.bin",
+          "size": 1252208,
+          "sha256": "dcbca6df674a6baf6cc8fdf1a622a284051d8a813b941b6a12c2e7f3e3953c0d",
+          "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.1/Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.1-app.bin"
+        }
+      ]
+    }
+  ],
   "devices": [
     {
       "id": "heltec-v3",
@@ -30,6 +59,17 @@
           "update": "NeonPocketMC-Heltec-V3-USB-app.bin",
           "recovery": "NeonPocketMC-Heltec-V3-USB-recovery-preserves-settings.bin",
           "onboarding": "companion-usb"
+        },
+        {
+          "id": "wdg-mesh-sidecar",
+          "product": "wdg-mesh-sidecar",
+          "name": "WDG Mesh Sidecar",
+          "summary": "Live-only Canada MeshCore collection beside a Biscuit or other Wi-Fi wardriver.",
+          "transport": "BLE + Wi-Fi",
+          "features": ["OLED", "Biscuit BLE", "MeshCore Canada", "WDGWars live-only"],
+          "update": "Canadaverse-WDG-Mesh-Heltec-V3-v1.0.0-rc.1-app.bin",
+          "update_address": 65536,
+          "onboarding": "wdg-sidecar"
         }
       ]
     },
@@ -62,6 +102,17 @@
           "update": "NeonPocketMC-Heltec-V4-USB-app.bin",
           "recovery": "NeonPocketMC-Heltec-V4-USB-recovery-preserves-settings.bin",
           "onboarding": "companion-usb"
+        },
+        {
+          "id": "wdg-mesh-sidecar",
+          "product": "wdg-mesh-sidecar",
+          "name": "WDG Mesh Sidecar (RC)",
+          "summary": "Hardware validation pending: CI-built live-only Canada MeshCore sidecar for WDGWars.",
+          "transport": "BLE + Wi-Fi",
+          "features": ["OLED", "Biscuit BLE", "MeshCore Canada", "WDGWars live-only", "unvalidated hardware"],
+          "update": "Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.1-app.bin",
+          "update_address": 65536,
+          "onboarding": "wdg-sidecar"
         }
       ]
     },
@@ -174,6 +225,17 @@
           "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-Web-app.bin",
           "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-Web-recovery-preserves-settings.bin",
           "onboarding": "companion-web"
+        },
+        {
+          "id": "wdg-mesh-sidecar",
+          "product": "wdg-mesh-sidecar",
+          "name": "WDG Mesh Sidecar",
+          "summary": "Live-only Canada MeshCore collection beside a Biscuit or other Wi-Fi wardriver.",
+          "transport": "BLE + Wi-Fi",
+          "features": ["TFT", "Biscuit BLE", "MeshCore Canada", "WDGWars live-only"],
+          "update": "Canadaverse-WDG-Mesh-RCC6-v1.0.0-rc.1-app.bin",
+          "update_address": 65536,
+          "onboarding": "wdg-sidecar"
         }
       ]
     },

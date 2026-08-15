@@ -19,7 +19,7 @@ jobs:
       - name: Fetch exact unified catalog
         run: curl --fail --location --retry 3 https://raw.githubusercontent.com/n30nex/NeonPocketMC/main/catalog.json --output suite-catalog.json
       - name: Download once for digest verification
-        run: python scripts/sync_firmware.py --suite suite-catalog.json --output "$RUNNER_TEMP/firmware"
+        run: python scripts/sync_firmware.py --suite suite-catalog.json --profiles profiles.json --output "$RUNNER_TEMP/firmware"
       - name: Build GitHub-backed catalog
         run: python scripts/build_catalog.py --suite suite-catalog.json --profiles profiles.json --output catalog.json --firmware-dir "$RUNNER_TEMP/firmware" --firmware-base /firmware/
       - name: Assemble Pi bundle

@@ -21,12 +21,17 @@ def sha256(path: Path) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--suite", required=True)
+    parser.add_argument("--profiles")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     suite = json.loads(Path(args.suite).read_text(encoding="utf-8"))
+    products = list(suite["products"])
+    if args.profiles:
+        profiles = json.loads(Path(args.profiles).read_text(encoding="utf-8"))
+        products.extend(profiles.get("products", []))
     args.output.mkdir(parents=True, exist_ok=True)
 
-    for product in suite["products"]:
+    for product in products:
         for artifact in product["artifacts"]:
             name = artifact["name"]
             if not name.endswith((".bin", ".uf2")):

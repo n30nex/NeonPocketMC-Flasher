@@ -7,10 +7,10 @@ Guided browser flashing and USB onboarding for the [NeonPocketMC firmware suite]
 ## What it does
 
 1. Selects the exact Heltec V3, V4, RadioCore RC52, RadioCore RCC6, or SenseCAP Indicator D1L hardware.
-2. Selects a released companion, repeater, observer, or Room Server profile.
+2. Selects a released companion, repeater, observer, Room Server, or WDG Mesh Sidecar profile.
 3. Verifies the exact release file with SHA-256 before touching USB.
 4. Detects ESP32-C6 versus ESP32-S3 in ROM and blocks the wrong family.
-5. Writes each ESP image at its release-owned address: `0x10000` for NeonPocket updates, `0x20000` for DeskOS updates, or `0x0` for an explicitly selected recovery/clean image.
+5. Writes each ESP image at its release-owned address: `0x10000` for NeonPocket and WDG Sidecar updates, `0x20000` for DeskOS updates, or `0x0` for an explicitly selected recovery/clean image.
 6. Reads the written ESP range back through the ROM MD5 command and compares it with the deployed manifest.
 7. Identifies RC52 by USB VID/PID and writes the verified application UF2 through its existing bootloader drive.
 8. Requires the expected USB device to return after restart; DeskOS must also report the exact release commit and healthy board, UI, and storage state.
@@ -29,11 +29,14 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RC52 Room Server, headless or TFT
 - RCC6 Ultimate BLE or native-USB companion with TFT
 - RCC6 Ultimate Wi-Fi/Web companion with TFT
+- RCC6, Heltec V3, and Heltec V4 WDG Mesh Sidecar for Biscuit-compatible live MeshCore collection (V4 hardware validation pending)
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT
 - SenseCAP Indicator D1L DeskOS touch companion, including safe update, deliberate fresh install, RP2040 bridge setup, and non-destructive SD preparation
 
 Normal updates preserve bootloader, partitions, identity, contacts, channels, and settings. Recovery images are an explicit expert path: they replace the boot/partition regions and may reset NVS/BLE bonds even when MeshCore storage is preserved. The D1L full 8 MB image is a destructive clean install and requires a separate confirmation because it replaces the existing DeskOS identity and history.
+
+The WDG Mesh Sidecar profile is deliberately live-only. It has no WiGLE import, historical scan, stored upload backlog, catch-up, migration, or backfill path. After flashing, use the device's temporary setup Wi-Fi to store a 2.4 GHz hotspot and WDGWars API key directly on the device; the flasher does not receive or store either credential.
 
 ## Browser requirements
 
