@@ -22,6 +22,8 @@ def main() -> int:
     profiles = json.loads((ROOT / "profiles.json").read_text(encoding="utf-8"))
     html = (ROOT / "index.html").read_text(encoding="utf-8")
     js = (ROOT / "flasher.js").read_text(encoding="utf-8")
+    scene_js = (ROOT / "scene.js").read_text(encoding="utf-8")
+    css = (ROOT / "css" / "flasher.css").read_text(encoding="utf-8")
 
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
     require(len(catalog["devices"]) == 7, "expected seven hardware selections")
@@ -143,7 +145,29 @@ def main() -> int:
         require(profile["update"]["address"] == 0x10000, f"WDG update address is unsafe: {device['id']}")
         require("recovery" not in profile, f"WDG profile must be app-only: {device['id']}")
     v4_wdg = next(profile for device, profile in wdg_profiles if device["id"] == "heltec-v4")
-    require("hardware validation pending" in v4_wdg["summary"].lower(), "V4 status must fail closed")
+    require("hardware validated" in v4_wdg["summary"].lower(), "V4 validation status missing")
+    require("unvalidated hardware" not in v4_wdg["features"], "stale V4 validation warning")
+    require(v4_wdg["tag"] == "v1.0.0-rc.2", "wrong validated V4 release")
+    require(v4_wdg["commit"] == "ecf1db13c153f90d38a40bca01f8d766b3342281", "wrong validated V4 commit")
+    require(v4_wdg["update"]["size"] == 1_253_264, "wrong validated V4 artifact size")
+    require(v4_wdg["update"]["sha256"] == "33fd2036a378fd44ea5035a52dff909f316c789aba7338e2aa63e6451e07885b", "wrong validated V4 artifact digest")
+    require(v4_wdg["validation"] == {
+        "label": "Physical V4 validation evidence",
+        "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/blob/main/evidence/V4_HARDWARE_VALIDATION.md",
+    }, "wrong V4 evidence link")
+    require(all(profile["tag"] == "v1.0.0-rc.1" for device, profile in wdg_profiles if device["id"] != "heltec-v4"), "V3/RCC6 must remain on RC1")
+    require("validation-evidence" in js, "V4 evidence is not rendered")
+    for scene_contract in (
+        "scene-ticker",
+        "scanline-drift",
+        "ticker-scroll",
+        "card-decode",
+        "prefers-reduced-motion: reduce",
+        "scene-canvas",
+    ):
+        require(scene_contract in html + css + scene_js, f"missing scene effect: {scene_contract}")
+    require("pointer-events: none" in css, "scene canvas must not intercept flashing input")
+    require("pointermove" in scene_js and "pointerdown" in scene_js, "cursor trail or ripple missing")
     require("localStorage" not in js and "sessionStorage" not in js, "credentials/state must not be browser-persisted")
     print(f"Verified flasher: 7 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
     return 0

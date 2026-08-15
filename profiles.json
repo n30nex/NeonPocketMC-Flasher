@@ -27,6 +27,21 @@
           "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.1/Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.1-app.bin"
         }
       ]
+    },
+    {
+      "id": "wdg-mesh-sidecar-v4-rc2",
+      "repository": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar",
+      "release": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/tag/v1.0.0-rc.2",
+      "tag": "v1.0.0-rc.2",
+      "commit": "ecf1db13c153f90d38a40bca01f8d766b3342281",
+      "artifacts": [
+        {
+          "name": "Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.2-app.bin",
+          "size": 1253264,
+          "sha256": "33fd2036a378fd44ea5035a52dff909f316c789aba7338e2aa63e6451e07885b",
+          "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.2/Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.2-app.bin"
+        }
+      ]
     }
   ],
   "devices": [
@@ -105,14 +120,18 @@
         },
         {
           "id": "wdg-mesh-sidecar",
-          "product": "wdg-mesh-sidecar",
-          "name": "WDG Mesh Sidecar (RC)",
-          "summary": "Hardware validation pending: CI-built live-only Canada MeshCore sidecar for WDGWars.",
+          "product": "wdg-mesh-sidecar-v4-rc2",
+          "name": "WDG Mesh Sidecar",
+          "summary": "Hardware validated on a physical V4: live-only Canada MeshCore sidecar for WDGWars.",
           "transport": "BLE + Wi-Fi",
-          "features": ["OLED", "Biscuit BLE", "MeshCore Canada", "WDGWars live-only", "unvalidated hardware"],
-          "update": "Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.1-app.bin",
+          "features": ["OLED", "Biscuit BLE", "MeshCore Canada", "WDGWars live-only", "hardware tested"],
+          "update": "Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.2-app.bin",
           "update_address": 65536,
-          "onboarding": "wdg-sidecar"
+          "onboarding": "wdg-sidecar",
+          "validation": {
+            "label": "Physical V4 validation evidence",
+            "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/blob/main/evidence/V4_HARDWARE_VALIDATION.md"
+          }
         }
       ]
     },
