@@ -157,6 +157,7 @@ def main() -> int:
     }, "wrong V4 evidence link")
     require(all(profile["tag"] == "v1.0.0-rc.1" for device, profile in wdg_profiles if device["id"] != "heltec-v4"), "V3/RCC6 must remain on RC1")
     require("validation-evidence" in js, "V4 evidence is not rendered")
+    require("flasher.js?v=20260815v4evidence1" in html, "flasher JS cache bust is stale")
     for scene_contract in (
         "scene-ticker",
         "scanline-drift",
