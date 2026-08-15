@@ -37,6 +37,8 @@ def main() -> int:
     suite = load_json(args.suite)
     profiles = load_json(args.profiles)
     products = {product["id"]: product for product in suite["products"]}
+    for product in profiles.get("products", []):
+        products[product["id"]] = product
     result = {
         "schema": 1,
         "suite_version": suite["suite_version"],
@@ -49,7 +51,6 @@ def main() -> int:
         product = products.get(device["product"])
         if not product:
             raise SystemExit(f"missing suite product: {device['product']}")
-        artifacts = {artifact["name"]: artifact for artifact in product["artifacts"]}
         output_device = {key: value for key, value in device.items() if key != "profiles"}
         output_device.update({
             "repository": product["repository"],
@@ -59,12 +60,28 @@ def main() -> int:
             "profiles": [],
         })
         for profile in device["profiles"]:
+            profile_product = products.get(profile.get("product", device["product"]))
+            if not profile_product:
+                raise SystemExit(
+                    f"missing profile product for {device['id']}/{profile['id']}"
+                )
+            profile_artifacts = {
+                artifact["name"]: artifact
+                for artifact in profile_product["artifacts"]
+            }
             output_profile = dict(profile)
+            if profile_product["id"] != product["id"]:
+                output_profile.update({
+                    "repository": profile_product["repository"],
+                    "release": profile_product["release"],
+                    "tag": profile_product["tag"],
+                    "commit": profile_product["commit"],
+                })
             for kind in ("update", "recovery", "bridge"):
                 name = profile.get(kind)
                 if not name:
                     continue
-                artifact = artifacts.get(name)
+                artifact = profile_artifacts.get(name)
                 if not artifact:
                     raise SystemExit(f"missing artifact {name} for {device['id']}/{profile['id']}")
                 output_artifact = dict(artifact)

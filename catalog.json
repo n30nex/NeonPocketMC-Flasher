@@ -73,6 +73,33 @@
             "local_url": "/firmware/dd601a8ef38817576bf49653dfa76fd05d74b53ded21759b3edfe8accef8035f/NeonPocketMC-Heltec-V3-USB-recovery-preserves-settings.bin"
           },
           "onboarding": "companion-usb"
+        },
+        {
+          "id": "wdg-mesh-sidecar",
+          "product": "wdg-mesh-sidecar",
+          "name": "WDG Mesh Sidecar",
+          "summary": "Live-only Canada MeshCore collection beside a Biscuit or other Wi-Fi wardriver.",
+          "transport": "BLE + Wi-Fi",
+          "features": [
+            "OLED",
+            "Biscuit BLE",
+            "MeshCore Canada",
+            "WDGWars live-only"
+          ],
+          "update": {
+            "name": "Canadaverse-WDG-Mesh-Heltec-V3-v1.0.0-rc.1-app.bin",
+            "size": 1273600,
+            "sha256": "f53a44ee3507d8b9591f81beabb44e8aa3c7183cab35d1dc161343ed9a178291",
+            "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.1/Canadaverse-WDG-Mesh-Heltec-V3-v1.0.0-rc.1-app.bin",
+            "address": 65536,
+            "md5": "84fd0fcede8ea4165ea9ec3efc471ea0",
+            "local_url": "/firmware/f53a44ee3507d8b9591f81beabb44e8aa3c7183cab35d1dc161343ed9a178291/Canadaverse-WDG-Mesh-Heltec-V3-v1.0.0-rc.1-app.bin"
+          },
+          "onboarding": "wdg-sidecar",
+          "repository": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar",
+          "release": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/tag/v1.0.0-rc.1",
+          "tag": "v1.0.0-rc.1",
+          "commit": "96f5e6a659cdff38ca36936979942f15f38ddfab"
         }
       ]
     },
@@ -147,6 +174,34 @@
             "local_url": "/firmware/9e3ec619d0eb1e88ea7470cdf23dd237973d68e648f4eb4f9b9d61887e974931/NeonPocketMC-Heltec-V4-USB-recovery-preserves-settings.bin"
           },
           "onboarding": "companion-usb"
+        },
+        {
+          "id": "wdg-mesh-sidecar",
+          "product": "wdg-mesh-sidecar",
+          "name": "WDG Mesh Sidecar (RC)",
+          "summary": "Hardware validation pending: CI-built live-only Canada MeshCore sidecar for WDGWars.",
+          "transport": "BLE + Wi-Fi",
+          "features": [
+            "OLED",
+            "Biscuit BLE",
+            "MeshCore Canada",
+            "WDGWars live-only",
+            "unvalidated hardware"
+          ],
+          "update": {
+            "name": "Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.1-app.bin",
+            "size": 1252208,
+            "sha256": "dcbca6df674a6baf6cc8fdf1a622a284051d8a813b941b6a12c2e7f3e3953c0d",
+            "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.1/Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.1-app.bin",
+            "address": 65536,
+            "md5": "5dea423a2faa1710bac53abd42cd85a3",
+            "local_url": "/firmware/dcbca6df674a6baf6cc8fdf1a622a284051d8a813b941b6a12c2e7f3e3953c0d/Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.1-app.bin"
+          },
+          "onboarding": "wdg-sidecar",
+          "repository": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar",
+          "release": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/tag/v1.0.0-rc.1",
+          "tag": "v1.0.0-rc.1",
+          "commit": "96f5e6a659cdff38ca36936979942f15f38ddfab"
         }
       ]
     },
@@ -388,6 +443,33 @@
             "local_url": "/firmware/b338e1537989fcf832ebd64925e310eaf66a2cda42bcd414eabcf2199b0f7b86/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.3-Web-recovery-preserves-settings.bin"
           },
           "onboarding": "companion-web"
+        },
+        {
+          "id": "wdg-mesh-sidecar",
+          "product": "wdg-mesh-sidecar",
+          "name": "WDG Mesh Sidecar",
+          "summary": "Live-only Canada MeshCore collection beside a Biscuit or other Wi-Fi wardriver.",
+          "transport": "BLE + Wi-Fi",
+          "features": [
+            "TFT",
+            "Biscuit BLE",
+            "MeshCore Canada",
+            "WDGWars live-only"
+          ],
+          "update": {
+            "name": "Canadaverse-WDG-Mesh-RCC6-v1.0.0-rc.1-app.bin",
+            "size": 1645888,
+            "sha256": "ad74fc6a7dd40bbd82376c3a980e04778d466faa0eb525457ac8c69c130af892",
+            "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.1/Canadaverse-WDG-Mesh-RCC6-v1.0.0-rc.1-app.bin",
+            "address": 65536,
+            "md5": "6717302ce34571951782ff325a300c8d",
+            "local_url": "/firmware/ad74fc6a7dd40bbd82376c3a980e04778d466faa0eb525457ac8c69c130af892/Canadaverse-WDG-Mesh-RCC6-v1.0.0-rc.1-app.bin"
+          },
+          "onboarding": "wdg-sidecar",
+          "repository": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar",
+          "release": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/tag/v1.0.0-rc.1",
+          "tag": "v1.0.0-rc.1",
+          "commit": "96f5e6a659cdff38ca36936979942f15f38ddfab"
         }
       ]
     },

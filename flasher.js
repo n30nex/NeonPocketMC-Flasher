@@ -143,6 +143,8 @@ function currentArtifact() {
 
 function renderFlashSummary() {
   const artifact = currentArtifact();
+  const releaseTag = state.profile.tag || state.device.tag;
+  const releaseCommit = state.profile.commit || state.device.commit;
   const address = artifact.address ?? (state.install === "recovery" ? 0 : 0x10000);
   const installLabel = state.device.id === "deskos-d1l" && state.install === "recovery"
     ? "Fresh clean install"
@@ -151,10 +153,10 @@ function renderFlashSummary() {
     <div><small>Hardware</small><b>${escapeHtml(state.device.name)}</b></div>
     <div><small>Build</small><b>${escapeHtml(state.profile.name)}</b></div>
     <div><small>Install</small><b>${installLabel}</b></div>
-    <div><small>Exact release</small><b>${escapeHtml(state.device.tag)}</b></div>
+    <div><small>Exact release</small><b>${escapeHtml(releaseTag)}</b></div>
     <div><small>File</small><b>${escapeHtml(artifact.name)}</b></div>
     <div><small>Size</small><b>${(artifact.size / 1024).toFixed(1)} KiB</b></div>
-    <div><small>Commit</small><b>${escapeHtml(state.device.commit.slice(0, 12))}</b></div>
+    <div><small>Commit</small><b>${escapeHtml(releaseCommit.slice(0, 12))}</b></div>
     <div><small>Flash address</small><b>0x${Number(address).toString(16)}</b></div>
     <div><small>Verification</small><b>SHA-256${state.device.flash_method === "esp32" ? " + flash MD5" : " + USB return"}</b></div>
   `;
@@ -472,10 +474,16 @@ async function verifyBoot() {
 function prepareOnboarding() {
   const type = state.profile.onboarding;
   const deskos = type === "deskos";
+  const wdgSidecar = type === "wdg-sidecar";
   const companion = type.startsWith("companion");
   $("#companion-onboarding").classList.toggle("hidden", !companion);
   $("#deskos-onboarding").classList.toggle("hidden", !deskos);
-  $("#server-onboarding").classList.toggle("hidden", companion || deskos);
+  $("#wdg-onboarding").classList.toggle("hidden", !wdgSidecar);
+  $("#server-onboarding").classList.toggle("hidden", companion || deskos || wdgSidecar);
+  if (wdgSidecar) {
+    $("#onboarding-heading").textContent = "Firmware verified. Configure the live-only WDG Mesh Sidecar.";
+    return;
+  }
   if (deskos) {
     $("#onboarding-heading").textContent = "The exact DeskOS release is verified. Complete or verify its bridge and SD card.";
     return;
