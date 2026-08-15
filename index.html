@@ -69,7 +69,7 @@
         </label>
       </div>
       <div id="deskos-clean-confirm" class="confirm-box danger hidden">
-        <label><input id="deskos-clean-checkbox" type="checkbox"> Fresh clean install deletes the existing DeskOS identity, contacts, settings, and history. I understand this cannot be undone.</label>
+        <label><input id="deskos-clean-checkbox" type="checkbox"> Fresh clean install deletes the existing DeskOS identity, contacts, settings, and history. It also requires the RP2040 SD bridge and a prepared FAT32 card; flashing the ESP32 alone will not enable storage. I understand this cannot be undone.</label>
       </div>
       <div id="ambiguous-confirm" class="confirm-box hidden">
         <label><input id="model-confirm" type="checkbox"> I physically checked the board label and selected the correct model. ESP32-S3 alone cannot distinguish V3 from V4.</label>
@@ -140,9 +140,18 @@
       </div>
 
       <div id="deskos-onboarding" class="onboarding hidden">
-        <div class="success-mark">✓</div>
+        <div id="deskos-success-mark" class="success-mark pending" aria-hidden="true">!</div>
         <h3>Complete DeskOS setup</h3>
-        <p>The exact ESP32 release answered over USB. Finish or verify the bridge and SD steps below so maps and retained history work too.</p>
+        <p>The ESP32 is only one part of a D1L clean install. DeskOS is not fully installed until the RP2040 bridge and FAT32 SD card pass device-side verification.</p>
+        <div id="deskos-install-status" class="deskos-install-status incomplete" role="status" aria-live="polite">
+          <div>
+            <small id="deskos-install-count">DeskOS install · 1 of 3</small>
+            <b id="deskos-install-title">ESP32 ready; storage setup is required</b>
+            <span id="deskos-install-copy">Next, install the RP2040 SD bridge. Do not close this page yet.</span>
+          </div>
+          <progress id="deskos-install-progress" max="3" value="1">1 of 3</progress>
+          <button id="deskos-required-action" class="primary" type="button">Install RP2040 bridge</button>
+        </div>
         <div class="deskos-status">
           <div><small>Release</small><b id="deskos-release">Checking…</b></div>
           <div><small>Build</small><b id="deskos-build">Checking…</b></div>
