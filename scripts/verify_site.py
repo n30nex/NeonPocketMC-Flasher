@@ -42,6 +42,8 @@ def main() -> int:
         "deskos-bridge-verify",
         "deskos-sd-button",
         "deskos-sd-verify",
+        "deskos-install-progress",
+        "deskos-required-action",
     ):
         require(required_id in ids, f"missing HTML control: {required_id}")
 
@@ -104,6 +106,7 @@ def main() -> int:
         "INFO_UF2.TXT",
         "Passwords remain in this tab only",
         "Fresh clean install deletes the existing DeskOS identity",
+        "flashing the ESP32 alone will not enable storage",
         "Complete DeskOS setup",
         "Prepare SD card",
         "No existing file was replaced",
@@ -126,6 +129,8 @@ def main() -> int:
         "DeskOS SD picker must precede package downloads",
     )
     require("Refusing to replace a different existing file" in js, "SD setup must fail closed")
+    require("Installation complete" in js, "DeskOS clean install must have an explicit completion gate")
+    require("completeCount === 3" in js, "DeskOS completion must require all three installation stages")
     require("eraseAll: false" in js, "ESP updates must not erase the whole flash")
     wdg_profiles = [
         (device, profile)

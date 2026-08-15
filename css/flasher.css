@@ -115,11 +115,16 @@ progress::-webkit-progress-bar { background: #111a33; } progress::-webkit-progre
 #deskos-onboarding { max-width: 960px; margin: auto; }
 #deskos-onboarding > h3, #deskos-onboarding > p { text-align: center; }
 .success-mark { margin: auto; width: 66px; height: 66px; border-radius: 50%; display: grid; place-items: center; color: #07140a; background: var(--lime); box-shadow: 0 0 35px rgba(156,255,56,.24); font-size: 30px; font-weight: 900; }
+.success-mark.pending { color: #211800; background: var(--yellow); box-shadow: 0 0 35px rgba(255,216,77,.2); }
 .onboarding h3 { font-size: 24px; margin: 18px 0 8px; }.onboarding > p { color: var(--muted); line-height: 1.65; }
 .checklist { display: grid; gap: 10px; text-align: left; margin-top: 22px; }.checklist label { border: 1px solid var(--line); border-radius: 12px; padding: 13px; }.checklist input { accent-color: var(--lime); }
 .deskos-status { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 22px 0; overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: var(--line); text-align: left; }
 .deskos-status div { display: grid; gap: 5px; min-width: 0; padding: 14px; background: rgba(4,9,24,.94); }
 .deskos-status small { color: var(--muted); }.deskos-status b { overflow-wrap: anywhere; }
+.deskos-install-status { display: grid; grid-template-columns: minmax(0, 1fr) 180px; align-items: center; gap: 14px 18px; padding: 17px; border: 1px solid rgba(255,216,77,.35); border-radius: 14px; background: rgba(255,216,77,.07); }
+.deskos-install-status > div { display: grid; gap: 4px; }.deskos-install-status small { color: var(--yellow); font-weight: 800; text-transform: uppercase; }.deskos-install-status b { font-size: 17px; }.deskos-install-status span { color: var(--muted); font-size: 13px; line-height: 1.45; }
+.deskos-install-status progress { grid-column: 1 / -1; height: 10px; }.deskos-install-status button { grid-column: 2; grid-row: 1; min-height: 54px; }
+.deskos-install-status.complete { border-color: rgba(156,255,56,.35); background: rgba(156,255,56,.08); }.deskos-install-status.complete small { color: var(--lime); }
 .deskos-setup-list { margin: 20px 0; border-top: 1px solid var(--line); }
 .deskos-step-band { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); text-align: left; }
 .deskos-step-number { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid rgba(101,209,255,.34); border-radius: 11px; color: var(--blue-soft); font-weight: 850; }
@@ -153,7 +158,7 @@ footer span { margin-right: auto; } footer a { color: var(--blue-soft); text-dec
   .site-header, main, footer { width: min(100% - 22px, 1180px); }.header-status { display: none; }.hero { min-height: 130px; }.hero-copy { font-size: 14px; }
   .stepper { top: 6px; }.step { gap: 0; }.step span { display: none; }.step b { width: 29px; height: 29px; }
   .panel { padding: 18px; border-radius: 17px; }.card-grid, .install-mode, .field-grid, .summary-card { grid-template-columns: 1fr; }.device-card, .profile-card { min-height: auto; }
-  .safety-strip { grid-template-columns: 1fr; }.deskos-status { grid-template-columns: 1fr; }.deskos-step-band { grid-template-columns: 42px minmax(0, 1fr); }.setup-actions { grid-column: 1 / -1; grid-template-columns: 1fr; min-width: 0; }.setup-actions button { min-height: 48px; }.setup-state { grid-column: 1 / -1; justify-self: stretch; justify-content: center; }.actions.split { flex-wrap: wrap; }.actions.split button { flex: 1; }
+  .safety-strip { grid-template-columns: 1fr; }.deskos-status { grid-template-columns: 1fr; }.deskos-install-status { grid-template-columns: 1fr; }.deskos-install-status button { grid-column: 1; grid-row: auto; }.deskos-step-band { grid-template-columns: 42px minmax(0, 1fr); }.setup-actions { grid-column: 1 / -1; grid-template-columns: 1fr; min-width: 0; }.setup-actions button { min-height: 48px; }.setup-state { grid-column: 1 / -1; justify-self: stretch; justify-content: center; }.actions.split { flex-wrap: wrap; }.actions.split button { flex: 1; }
   .console-input { grid-template-columns: 1fr; } footer { flex-wrap: wrap; padding: 25px 0; } footer span { flex-basis: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; scroll-behavior: auto !important; } }

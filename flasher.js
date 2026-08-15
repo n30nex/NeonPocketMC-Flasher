@@ -14,6 +14,8 @@ const state = {
   cli: null,
   deskosVerified: null,
   deskosSdBundle: null,
+  deskosBridgeSent: false,
+  deskosSdPrepared: false,
   stepperTop: null,
 };
 
@@ -81,6 +83,8 @@ function selectDevice(id) {
   state.install = "update";
   state.deskosVerified = null;
   state.deskosSdBundle = null;
+  state.deskosBridgeSent = false;
+  state.deskosSdPrepared = false;
   $$("[data-device]").forEach((card) => card.classList.toggle("selected", card.dataset.device === id));
   $("#selected-device-copy").textContent = `${state.device.name} · ${state.device.display}`;
   renderProfiles();
@@ -114,7 +118,7 @@ function selectProfile(id) {
   $("#update-mode-title").textContent = deskos ? "Update DeskOS" : "Update";
   $("#update-mode-copy").textContent = deskos ? "Keeps the existing DeskOS identity, contacts, settings, and history." : "Preserves identity and settings.";
   $("#recovery-mode-title").textContent = deskos ? "Fresh clean install" : "Recovery";
-  $("#recovery-mode-copy").textContent = deskos ? "Replaces the complete 8 MB image and starts with a new DeskOS identity." : "Preserves MeshCore storage. Resets NVS and BLE bonds.";
+  $("#recovery-mode-copy").textContent = deskos ? "Installs a new ESP32 image, then requires the RP2040 bridge and FAT32 SD card." : "Preserves MeshCore storage. Resets NVS and BLE bonds.";
   $("#model-confirm").checked = false;
   $("#deskos-clean-checkbox").checked = false;
   state.install = "update";
@@ -207,6 +211,39 @@ function setDeskOsSetupState(id, text, kind = "pending") {
   element.classList.add(kind);
 }
 
+function updateDeskOsCompletion({ bridgeReady = false, sdReady = false } = {}) {
+  const completeCount = 1 + Number(bridgeReady) + Number(sdReady);
+  const complete = completeCount === 3;
+  const cleanInstall = state.install === "recovery";
+  $("#deskos-install-count").textContent = `${cleanInstall ? "Fresh DeskOS install" : "DeskOS setup"} · ${completeCount} of 3`;
+  $("#deskos-install-progress").value = completeCount;
+  $("#deskos-install-progress").textContent = `${completeCount} of 3`;
+  $("#deskos-install-status").classList.toggle("complete", complete);
+  $("#deskos-install-status").classList.toggle("incomplete", !complete);
+  $("#deskos-success-mark").classList.toggle("pending", !complete);
+  $("#deskos-success-mark").textContent = complete ? "✓" : "!";
+
+  const action = $("#deskos-required-action");
+  action.disabled = complete;
+  if (complete) {
+    $("#deskos-install-title").textContent = "DeskOS installation complete";
+    $("#deskos-install-copy").textContent = "The ESP32 firmware, RP2040 bridge, and FAT32 SD storage are verified on the D1L.";
+    action.textContent = "Installation complete";
+  } else if (!bridgeReady) {
+    $("#deskos-install-title").textContent = "ESP32 ready; RP2040 bridge required";
+    $("#deskos-install-copy").textContent = state.deskosBridgeSent
+      ? "Reconnect the ESP32 USB side, then verify the bridge."
+      : "Hold BOOTSEL while reconnecting the RP2040 side, then select its RPI-RP2 drive.";
+    action.textContent = state.deskosBridgeSent ? "Verify RP2040 bridge" : "Install RP2040 bridge";
+  } else {
+    $("#deskos-install-title").textContent = "Bridge ready; FAT32 SD card required";
+    $("#deskos-install-copy").textContent = state.deskosSdPrepared
+      ? "Insert the prepared card, reconnect the ESP32 side, then verify storage."
+      : "Select the FAT32 card in its reader. Existing files will not be replaced.";
+    action.textContent = state.deskosSdPrepared ? "Verify SD card in DeskOS" : "Prepare FAT32 SD card";
+  }
+}
+
 function reflectDeskOsStorage(storage) {
   const bridgeReady = storage?.rp2040_bridge_ready === true
     && storage?.rp2040_protocol_supported !== false;
@@ -227,6 +264,7 @@ function reflectDeskOsStorage(storage) {
     sdKind = "ready";
   }
   setDeskOsSetupState("#deskos-sd-state", sdText, sdKind);
+  updateDeskOsCompletion({ bridgeReady, sdReady });
   return { bridgeReady, sdReady };
 }
 
@@ -485,7 +523,9 @@ function prepareOnboarding() {
     return;
   }
   if (deskos) {
-    $("#onboarding-heading").textContent = "The exact DeskOS release is verified. Complete or verify its bridge and SD card.";
+    $("#onboarding-heading").textContent = "The exact ESP32 release is verified. Complete the remaining D1L installation stages.";
+    reflectDeskOsStorage(state.deskosVerified?.storage);
+    requestAnimationFrame(() => $("#deskos-required-action").focus({ preventScroll: true }));
     return;
   }
   if (companion) {
@@ -771,7 +811,9 @@ async function installDeskOsBridge() {
       const bytes = await fetchFirmware(artifact, { log: deskosLog, showProgress: false });
       downloadBytes(bytes, artifact.name);
       deskosLog("The verified UF2 was downloaded. Copy it to the RP2040 BOOTSEL drive manually.");
+      state.deskosBridgeSent = true;
       setDeskOsSetupState("#deskos-bridge-state", "Manual copy needed", "working");
+      updateDeskOsCompletion();
       return;
     }
 
@@ -797,7 +839,9 @@ async function installDeskOsBridge() {
     deskosLog("PASS: verified RP2040 bridge UF2 sent. The bridge should restart automatically.");
     deskosLog("Reconnect the ESP32 USB side, then choose Verify bridge.");
     deskosLog("The SD card was not formatted or written by this site.");
+    state.deskosBridgeSent = true;
     setDeskOsSetupState("#deskos-bridge-state", "UF2 sent; verify", "working");
+    updateDeskOsCompletion();
   } catch (error) {
     if (error.name === "AbortError") {
       deskosLog("Bridge install cancelled; nothing was changed.");
@@ -929,7 +973,9 @@ async function prepareDeskOsSdCard() {
     }
     deskosLog("PASS: DeskOS folders and files read back correctly. No existing file was replaced.");
     deskosLog("Insert the card into the D1L, reconnect the ESP32 side, then choose Verify in DeskOS.");
+    state.deskosSdPrepared = true;
     setDeskOsSetupState("#deskos-sd-state", "Prepared; verify", "working");
+    updateDeskOsCompletion({ bridgeReady: true });
   } catch (error) {
     if (error.name === "AbortError") {
       deskosLog("SD setup cancelled; nothing was changed.");
@@ -969,6 +1015,7 @@ async function verifyDeskOsStorage(kind) {
       await sleep(1500);
     }
     const result = reflectDeskOsStorage(storage);
+    state.deskosVerified = { ...(state.deskosVerified || {}), storage };
     if (!result.bridgeReady) {
       throw new Error("DeskOS cannot reach the RP2040 bridge yet. Recheck BOOTSEL flashing and the ESP32 cable.");
     }
@@ -996,6 +1043,21 @@ async function verifyDeskOsStorage(kind) {
     }
   } finally {
     button.disabled = false;
+  }
+}
+
+async function runRequiredDeskOsAction() {
+  const storage = state.deskosVerified?.storage;
+  const bridgeReady = storage?.rp2040_bridge_ready === true
+    && storage?.rp2040_protocol_supported !== false;
+  const sdReady = bridgeReady && storage?.present === true
+    && storage?.mounted === true && storage?.data_root_ready === true;
+  if (!bridgeReady) {
+    if (state.deskosBridgeSent) await verifyDeskOsStorage("bridge");
+    else await installDeskOsBridge();
+  } else if (!sdReady) {
+    if (state.deskosSdPrepared) await verifyDeskOsStorage("sd");
+    else await prepareDeskOsSdCard();
   }
 }
 
@@ -1030,6 +1092,7 @@ function bindEvents() {
   $("#deskos-bridge-verify").addEventListener("click", () => verifyDeskOsStorage("bridge"));
   $("#deskos-sd-button").addEventListener("click", prepareDeskOsSdCard);
   $("#deskos-sd-verify").addEventListener("click", () => verifyDeskOsStorage("sd"));
+  $("#deskos-required-action").addEventListener("click", runRequiredDeskOsAction);
   $("#serial-command").addEventListener("keydown", (event) => { if (event.key === "Enter") sendManualCommand(); });
 }
 
