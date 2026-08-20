@@ -534,8 +534,11 @@ function prepareOnboarding() {
     const usb = type === "companion-usb";
     const web = type === "companion-web";
     const headless = type === "companion-headless";
-    $("#companion-instructions").textContent = web
-      ? "Read the AP name, password and address from the TFT, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the TFT shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
+    const headlessWeb = web && state.device.id === "rcc6-headless-companion";
+    $("#companion-instructions").textContent = headlessWeb
+      ? "Keep USB connected after restart and open the 115200-baud serial console below. It prints the setup AP name, password and address. Complete Local Wi-Fi Setup in the WebUI; after the device joins your LAN, the console prints its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
+      : web
+        ? "Read the AP name, password and address from the TFT, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the TFT shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
       : usb
         ? "Keep USB connected and open a desktop MeshCore companion that supports the standard serial transport. Select the NeonPocket serial device; this is the binary companion protocol, not the text CLI."
         : headless
