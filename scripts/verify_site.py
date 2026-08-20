@@ -26,9 +26,9 @@ def main() -> int:
     css = (ROOT / "css" / "flasher.css").read_text(encoding="utf-8")
 
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
-    require(len(catalog["devices"]) == 7, "expected seven hardware selections")
+    require(len(catalog["devices"]) == 8, "expected eight hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 21, f"expected 21 profiles, found {profile_count}")
+    require(profile_count == 22, f"expected 22 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -75,7 +75,7 @@ def main() -> int:
     for device in catalog["devices"]:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
-            require(profile["onboarding"] in ("companion", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "deskos", "wdg-sidecar"), f"bad onboarding: {profile['id']}")
+            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "deskos", "wdg-sidecar"), f"bad onboarding: {profile['id']}")
             for kind in ("update", "recovery", "bridge"):
                 if kind not in profile:
                     continue
@@ -88,7 +88,7 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 35, f"expected 35 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 36, f"expected 36 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
@@ -170,7 +170,7 @@ def main() -> int:
     require("pointer-events: none" in css, "scene canvas must not intercept flashing input")
     require("pointermove" in scene_js and "pointerdown" in scene_js, "cursor trail or ripple missing")
     require("localStorage" not in js and "sessionStorage" not in js, "credentials/state must not be browser-persisted")
-    print(f"Verified flasher: 7 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
+    print(f"Verified flasher: 8 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
     return 0
 
 

@@ -166,6 +166,27 @@
       ]
     },
     {
+      "id": "rc52-headless-companion",
+      "product": "rc52-headless-companion",
+      "name": "RadioCore RC52 Headless Companion",
+      "family": "nRF52840",
+      "display": "No TFT — screenless",
+      "flash_method": "uf2",
+      "usb_vid": 9114,
+      "usb_pid": 32881,
+      "profiles": [
+        {
+          "id": "ble-companion-headless",
+          "name": "BLE Companion — Headless",
+          "summary": "Screenless phone companion with fixed pairing PIN 123456.",
+          "transport": "BLE",
+          "features": ["headless", "BLE", "PIN 123456", "low power"],
+          "update": "NeonPocketMC-RC52-Headless-1.0-RC1-BLE.uf2",
+          "onboarding": "companion-headless"
+        }
+      ]
+    },
+    {
       "id": "rc52-server",
       "product": "rc52-server",
       "name": "RadioCore RC52 Server",
