@@ -6,15 +6,15 @@ Guided browser flashing and USB onboarding for the [NeonPocketMC firmware suite]
 
 ## What it does
 
-1. Selects the exact Heltec V3, V4, RadioCore RC52, RadioCore RCC6, or SenseCAP Indicator D1L hardware.
-2. Selects a released companion, repeater, observer, Room Server, or WDG Mesh Sidecar profile.
+1. Selects the exact Heltec V3/V4, RAK4631, RAK3401 1 W, Xiao ESP32-S3/nRF52840, RadioCore RC52/RCC6, or SenseCAP Indicator D1L hardware.
+2. Selects a released companion, repeater, ULP Solar Repeater, observer, Room Server, or WDG Mesh Sidecar profile.
 3. Verifies the exact release file with SHA-256 before touching USB.
 4. Detects ESP32-C6 versus ESP32-S3 in ROM and blocks the wrong family.
 5. Writes each ESP image at its release-owned address: `0x10000` for NeonPocket and WDG Sidecar updates, `0x20000` for DeskOS updates, or `0x0` for an explicitly selected recovery/clean image.
 6. Reads the written ESP range back through the ROM MD5 command and compares it with the deployed manifest.
 7. Identifies RC52 by USB VID/PID and writes the verified application UF2 through its existing bootloader drive.
 8. Requires the expected USB device to return after restart; DeskOS must also report the exact release commit and healthy board, UI, and storage state.
-9. Runs a profile-aware 115200-baud USB wizard for name, legal radio preset, TX power, repeat mode, three-byte hashes, local passwords, Wi-Fi, and built-in MQTT presets.
+9. Runs a profile-aware 115200-baud USB wizard for name, legal radio preset, TX power, repeat mode, three-byte hashes, local passwords, Wi-Fi, MQTT presets, and ULP power profile.
 10. Reboots server profiles, verifies saved settings, and reports the LAN IP before USB is disconnected.
 11. Installs the separately verified DeskOS RP2040 bridge through an explicit BOOTSEL-drive picker, then verifies bridge readiness from DeskOS.
 12. Prepares an existing FAT32 DeskOS SD card by adding only missing, checksum-verified files and folders; it refuses to replace different files and never formats or deletes content.
@@ -34,6 +34,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RCC6, Heltec V3, and Heltec V4 WDG Mesh Sidecar for Biscuit-compatible live MeshCore collection (V4 RC2 physically validated with public evidence)
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT
+- Experimental ULP Solar Repeater builds for V3, V4, RAK4631, RAK3401 1 W, Xiao ESP32-S3, Xiao nRF52840, and headless/TFT RCC6/RC52
 - SenseCAP Indicator D1L DeskOS touch companion, including safe update, deliberate fresh install, RP2040 bridge setup, and non-destructive SD preparation
 
 Normal updates preserve bootloader, partitions, identity, contacts, channels, and settings. Recovery images are an explicit expert path: they replace the boot/partition regions and may reset NVS/BLE bonds even when MeshCore storage is preserved. The D1L full 8 MB image is a destructive clean install and requires a separate confirmation because it replaces the existing DeskOS identity and history. A clean D1L install has three required stages: ESP32 firmware, RP2040 SD bridge, and a prepared FAT32 card. The web wizard remains incomplete until DeskOS verifies all three; flashing only the ESP32 cannot enable the SD slot.
@@ -47,6 +48,8 @@ Use current desktop Chrome or Edge over HTTPS. Web Serial is not available in Fi
 Heltec V3 connects through its Silicon Labs CP2102 USB-to-UART bridge. On macOS, if the V3 does not appear in the Chrome or Edge port chooser, install the current [CP210x VCP driver](https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers?tab=downloads), reconnect the board with a data-capable cable, and close any app already using the serial port.
 
 For RC52, double-press Reset when instructed and select the bootloader drive containing `INFO_UF2.TXT`. The site copies only the application UF2; it does not replace the SoftDevice or bootloader.
+
+ULP Solar Repeater builds start new installs in the balanced EasySkyMesh power profile. The wizard can select balanced, conservative, maximum-saving, or continuous receive and verifies it after reboot. RX duty cycling can miss packets. Solar hardware still needs a protected battery and an external MPPT/charge controller matched to the panel and cell.
 
 For the D1L RP2040 bridge, hold BOOTSEL while reconnecting the RP2040 USB side, then select the drive containing `INFO_UF2.TXT`. Reconnect the ESP32 side and use **Verify bridge** afterward. For SD setup, select the root of an already-formatted FAT32 microSD card. Both workflows are additive and never format the card.
 
@@ -66,4 +69,4 @@ Production runs on the Canadaverse Pi 5 behind the existing Cloudflare Tunnel. F
 
 ## License and attribution
 
-MIT. This repository began from `agessaman/flasher.meshcore.io` and retains its MIT license and copyright notice. NeonPocketMC additions are copyright n30nex/Canadaverse contributors. MeshCore and Heltec are independent projects; this is community firmware and not an official service of either project.
+MIT. This repository began from `agessaman/flasher.meshcore.io` and retains its MIT license and copyright notice. NeonPocketMC ULP profiles use and attribute IoTThinks' EasySkyMesh power-saving work. NeonPocketMC additions are copyright n30nex/Canadaverse contributors. MeshCore, EasySkyMesh, and the hardware vendors are independent projects; this is not an official service of any of them.

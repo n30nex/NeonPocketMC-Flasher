@@ -26,9 +26,9 @@ def main() -> int:
     css = (ROOT / "css" / "flasher.css").read_text(encoding="utf-8")
 
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
-    require(len(catalog["devices"]) == 9, "expected nine hardware selections")
+    require(len(catalog["devices"]) == 13, "expected thirteen hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 25, f"expected 25 profiles, found {profile_count}")
+    require(profile_count == 35, f"expected 35 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -38,6 +38,9 @@ def main() -> int:
         "flash-button",
         "verify-boot",
         "server-onboarding",
+        "ulp-fields",
+        "ulp-profile",
+        "ulp-note",
         "wdg-onboarding",
         "deskos-onboarding",
         "deskos-bridge-button",
@@ -75,7 +78,7 @@ def main() -> int:
     for device in catalog["devices"]:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
-            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "deskos", "wdg-sidecar"), f"bad onboarding: {profile['id']}")
+            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar"), f"bad onboarding: {profile['id']}")
             for kind in ("update", "recovery", "bridge"):
                 if kind not in profile:
                     continue
@@ -88,7 +91,7 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 42, f"expected 42 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 57, f"expected 57 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     heltec_v3 = next(device for device in catalog["devices"] if device["id"] == "heltec-v3")
@@ -163,8 +166,30 @@ def main() -> int:
         "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/blob/main/evidence/V4_HARDWARE_VALIDATION.md",
     }, "wrong V4 evidence link")
     require(all(profile["tag"] == "v1.0.0-rc.1" for device, profile in wdg_profiles if device["id"] != "heltec-v4"), "V3/RCC6 must remain on RC1")
+    ulp_profiles = [
+        (device, profile)
+        for device in catalog["devices"]
+        for profile in device["profiles"]
+        if profile["onboarding"] == "ulp-repeater"
+    ]
+    require(len(ulp_profiles) == 10, "expected ten ULP Solar Repeater profiles")
+    require({device["id"] for device, profile in ulp_profiles} == {
+        "heltec-v3", "heltec-v4", "rc52-server", "rcc6-server", "rak4631-ulp",
+        "rak3401-1w-ulp", "xiao-esp32s3-ulp", "xiao-nrf52840-ulp",
+    }, "wrong ULP hardware matrix")
+    for device, profile in ulp_profiles:
+        require(profile.get("tag", device["tag"]) == "v1.0.0-rc.1", f"wrong ULP release: {device['id']}")
+        require(profile.get("commit", device["commit"]) == "f05eff932e52236d35b68e0646850458e3785f97", f"wrong ULP source: {device['id']}")
+        require("EasySkyMesh" in profile["features"], f"ULP attribution missing: {device['id']}")
+        if device["flash_method"] == "esp32":
+            require(profile["update"]["address"] == 0x10000, f"unsafe ULP update address: {device['id']}")
+            require(profile["recovery"]["address"] == 0, f"wrong ULP recovery address: {device['id']}")
+        else:
+            require(profile["update"]["name"].endswith(".uf2"), f"nRF ULP update must be UF2: {device['id']}")
+    for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "external MPPT/charge controller"):
+        require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260820macv31" in html, "flasher JS cache bust is stale")
+    require("flasher.js?v=20260820ulp2" in html, "flasher JS cache bust is stale")
     for scene_contract in (
         "scene-ticker",
         "scanline-drift",
@@ -177,7 +202,7 @@ def main() -> int:
     require("pointer-events: none" in css, "scene canvas must not intercept flashing input")
     require("pointermove" in scene_js and "pointerdown" in scene_js, "cursor trail or ripple missing")
     require("localStorage" not in js and "sessionStorage" not in js, "credentials/state must not be browser-persisted")
-    print(f"Verified flasher: 9 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
+    print(f"Verified flasher: 13 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
     return 0
 
 

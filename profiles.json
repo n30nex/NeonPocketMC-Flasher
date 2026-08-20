@@ -78,6 +78,19 @@
           "onboarding": "companion-usb"
         },
         {
+          "id": "ulp-solar-repeater-oled",
+          "product": "ulp-solar-repeaters",
+          "name": "ULP Solar Repeater + OLED",
+          "summary": "Default-on EasySkyMesh power saving with guided USB setup.",
+          "transport": "USB CLI",
+          "features": ["OLED", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
+          "update": "NeonPocketMC-ULP-Heltec-V3-v1.0.0-rc.1-app.bin",
+          "update_address": 65536,
+          "recovery": "NeonPocketMC-ULP-Heltec-V3-v1.0.0-rc.1-full-recovery.bin",
+          "recovery_address": 0,
+          "onboarding": "ulp-repeater"
+        },
+        {
           "id": "wdg-mesh-sidecar",
           "product": "wdg-mesh-sidecar",
           "name": "WDG Mesh Sidecar",
@@ -119,6 +132,19 @@
           "update": "NeonPocketMC-Heltec-V4-USB-app.bin",
           "recovery": "NeonPocketMC-Heltec-V4-USB-recovery-preserves-settings.bin",
           "onboarding": "companion-usb"
+        },
+        {
+          "id": "ulp-solar-repeater-oled",
+          "product": "ulp-solar-repeaters",
+          "name": "ULP Solar Repeater + OLED",
+          "summary": "Default-on EasySkyMesh power saving with guided USB setup.",
+          "transport": "USB CLI",
+          "features": ["OLED", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
+          "update": "NeonPocketMC-ULP-Heltec-V4-v1.0.0-rc.1-app.bin",
+          "update_address": 65536,
+          "recovery": "NeonPocketMC-ULP-Heltec-V4-v1.0.0-rc.1-full-recovery.bin",
+          "recovery_address": 0,
+          "onboarding": "ulp-repeater"
         },
         {
           "id": "wdg-mesh-sidecar",
@@ -206,6 +232,26 @@
           "features": ["headless", "repeater", "low power"],
           "update": "NeonPocketMC-RC52-Repeater-v1.1.0-rc.2.uf2",
           "onboarding": "server-core"
+        },
+        {
+          "id": "ulp-solar-repeater-headless",
+          "product": "ulp-solar-repeaters",
+          "name": "ULP Solar Repeater — Headless",
+          "summary": "Default-on EasySkyMesh power saving for battery or regulated-solar deployments.",
+          "transport": "USB CLI",
+          "features": ["headless", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
+          "update": "NeonPocketMC-ULP-RC52-Headless-v1.0.0-rc.1.uf2",
+          "onboarding": "ulp-repeater"
+        },
+        {
+          "id": "ulp-solar-repeater-tft",
+          "product": "ulp-solar-repeaters",
+          "name": "ULP Solar Repeater + TFT",
+          "summary": "Low-power repeater with the 220x128 status display and automatic screen timeout.",
+          "transport": "USB CLI",
+          "features": ["TFT", "ULP", "repeater", "EasySkyMesh", "auto-off display"],
+          "update": "NeonPocketMC-ULP-RC52-TFT-v1.0.0-rc.1.uf2",
+          "onboarding": "ulp-repeater"
         },
         {
           "id": "room-server-headless",
@@ -336,6 +382,32 @@
       "usb_pid": 4097,
       "profiles": [
         {
+          "id": "ulp-solar-repeater-headless",
+          "product": "ulp-solar-repeaters",
+          "name": "ULP Solar Repeater — Headless",
+          "summary": "Default-on EasySkyMesh power saving for battery or regulated-solar deployments.",
+          "transport": "USB CLI",
+          "features": ["headless", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
+          "update": "NeonPocketMC-ULP-RCC6-Headless-v1.0.0-rc.1-app.bin",
+          "update_address": 65536,
+          "recovery": "NeonPocketMC-ULP-RCC6-Headless-v1.0.0-rc.1-full-recovery.bin",
+          "recovery_address": 0,
+          "onboarding": "ulp-repeater"
+        },
+        {
+          "id": "ulp-solar-repeater-tft",
+          "product": "ulp-solar-repeaters",
+          "name": "ULP Solar Repeater + TFT",
+          "summary": "Low-power repeater with the 220x128 status display and automatic screen timeout.",
+          "transport": "USB CLI",
+          "features": ["TFT", "ULP", "repeater", "EasySkyMesh", "auto-off display"],
+          "update": "NeonPocketMC-ULP-RCC6-TFT-v1.0.0-rc.1-app.bin",
+          "update_address": 65536,
+          "recovery": "NeonPocketMC-ULP-RCC6-TFT-v1.0.0-rc.1-full-recovery.bin",
+          "recovery_address": 0,
+          "onboarding": "ulp-repeater"
+        },
+        {
           "id": "mqtt-observer-repeater",
           "name": "MQTT Observer + Repeater",
           "summary": "Wi-Fi observer dashboard with MQTT ingestion and optional repeating.",
@@ -384,6 +456,86 @@
           "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-app.bin",
           "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.1-full-recovery-preserves-meshcore-settings.bin",
           "onboarding": "room-network"
+        }
+      ]
+    },
+    {
+      "id": "rak4631-ulp",
+      "product": "ulp-solar-repeaters",
+      "name": "RAK4631 ULP Solar Repeater",
+      "family": "nRF52840",
+      "display": "Optional SSD1306",
+      "flash_method": "uf2",
+      "profiles": [
+        {
+          "id": "ulp-solar-repeater",
+          "name": "ULP Solar Repeater",
+          "summary": "Default-on EasySkyMesh power saving for the RAK4631 WisBlock.",
+          "transport": "USB CLI",
+          "features": ["ULP", "repeater", "EasySkyMesh", "solar/battery"],
+          "update": "NeonPocketMC-ULP-RAK4631-v1.0.0-rc.1.uf2",
+          "onboarding": "ulp-repeater"
+        }
+      ]
+    },
+    {
+      "id": "rak3401-1w-ulp",
+      "product": "ulp-solar-repeaters",
+      "name": "RAK3401 + RAK13302 1 W ULP Repeater",
+      "family": "nRF52840",
+      "display": "Optional SSD1306",
+      "flash_method": "uf2",
+      "profiles": [
+        {
+          "id": "ulp-solar-repeater",
+          "name": "ULP Solar Repeater — 1 W",
+          "summary": "Default-on EasySkyMesh power saving with the supported 1 W RF front end.",
+          "transport": "USB CLI",
+          "features": ["ULP", "repeater", "1 W FEM", "EasySkyMesh", "solar/battery"],
+          "update": "NeonPocketMC-ULP-RAK3401-1W-v1.0.0-rc.1.uf2",
+          "onboarding": "ulp-repeater"
+        }
+      ]
+    },
+    {
+      "id": "xiao-esp32s3-ulp",
+      "product": "ulp-solar-repeaters",
+      "name": "Xiao ESP32-S3 ULP Solar Repeater",
+      "family": "ESP32-S3",
+      "display": "Headless",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-S3",
+      "profiles": [
+        {
+          "id": "ulp-solar-repeater",
+          "name": "ULP Solar Repeater",
+          "summary": "Default-on EasySkyMesh power saving for the supported Xiao SX1262 wiring.",
+          "transport": "USB CLI",
+          "features": ["headless", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
+          "update": "NeonPocketMC-ULP-Xiao-ESP32S3-v1.0.0-rc.1-app.bin",
+          "update_address": 65536,
+          "recovery": "NeonPocketMC-ULP-Xiao-ESP32S3-v1.0.0-rc.1-full-recovery.bin",
+          "recovery_address": 0,
+          "onboarding": "ulp-repeater"
+        }
+      ]
+    },
+    {
+      "id": "xiao-nrf52840-ulp",
+      "product": "ulp-solar-repeaters",
+      "name": "Xiao nRF52840 ULP Solar Repeater",
+      "family": "nRF52840",
+      "display": "Headless / null display",
+      "flash_method": "uf2",
+      "profiles": [
+        {
+          "id": "ulp-solar-repeater",
+          "name": "ULP Solar Repeater",
+          "summary": "Default-on EasySkyMesh power saving for the supported Xiao SX1262 wiring.",
+          "transport": "USB CLI",
+          "features": ["headless", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
+          "update": "NeonPocketMC-ULP-Xiao-nRF52840-v1.0.0-rc.1.uf2",
+          "onboarding": "ulp-repeater"
         }
       ]
     },
