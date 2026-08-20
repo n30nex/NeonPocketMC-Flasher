@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "suite_version": "1.6.0-rc.1",
+  "suite_version": "1.7.0-rc.1",
   "devices": [
     {
       "id": "heltec-v3",
@@ -264,6 +264,43 @@
             "local_url": "/firmware/56a1cc9498fdd816ec2284e0f5ce64eea99c42c642d956e5100a2a7e3900cf48/NeonPocketMC-RC52-1.1-RC4-USB.uf2"
           },
           "onboarding": "companion-usb"
+        }
+      ]
+    },
+    {
+      "id": "rc52-headless-companion",
+      "product": "rc52-headless-companion",
+      "name": "RadioCore RC52 Headless Companion",
+      "family": "nRF52840",
+      "display": "No TFT — screenless",
+      "flash_method": "uf2",
+      "usb_vid": 9114,
+      "usb_pid": 32881,
+      "repository": "https://github.com/n30nex/NeonPocketMC-RC52-Headless",
+      "release": "https://github.com/n30nex/NeonPocketMC-RC52-Headless/releases/tag/v1.0.0-rc.1",
+      "tag": "v1.0.0-rc.1",
+      "commit": "0ddb59190b880f2a5059f1d1e6a0cb2918fbe6a8",
+      "profiles": [
+        {
+          "id": "ble-companion-headless",
+          "name": "BLE Companion — Headless",
+          "summary": "Screenless phone companion with fixed pairing PIN 123456.",
+          "transport": "BLE",
+          "features": [
+            "headless",
+            "BLE",
+            "PIN 123456",
+            "low power"
+          ],
+          "update": {
+            "name": "NeonPocketMC-RC52-Headless-1.0-RC1-BLE.uf2",
+            "size": 693248,
+            "sha256": "6aaad62897e51c4ae07d6f3075c539b3ab3dbb3712d9f7f7a08dfd1a9d57b251",
+            "url": "https://github.com/n30nex/NeonPocketMC-RC52-Headless/releases/download/v1.0.0-rc.1/NeonPocketMC-RC52-Headless-1.0-RC1-BLE.uf2",
+            "md5": "b15b606e8cf7ccf917de0215c4e903cf",
+            "local_url": "/firmware/6aaad62897e51c4ae07d6f3075c539b3ab3dbb3712d9f7f7a08dfd1a9d57b251/NeonPocketMC-RC52-Headless-1.0-RC1-BLE.uf2"
+          },
+          "onboarding": "companion-headless"
         }
       ]
     },

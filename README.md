@@ -25,6 +25,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 
 - Heltec V3 / V4 BLE or native-USB companion with OLED
 - RC52 BLE or native-USB companion with NV3001B TFT
+- RC52 screenless BLE companion with fixed pairing PIN `123456`
 - RC52 headless repeater
 - RC52 Room Server, headless or TFT
 - RCC6 Ultimate BLE or native-USB companion with TFT
