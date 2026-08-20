@@ -166,6 +166,12 @@ function renderFlashSummary() {
     <div><small>Verification</small><b>SHA-256${state.device.flash_method === "esp32" ? " + flash MD5" : " + USB return"}</b></div>
     ${validation ? `<div class="validation-evidence"><small>Hardware evidence</small><a href="${escapeHtml(validation.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(validation.label)} ↗</a></div>` : ""}
   `;
+  const isHeltecV3 = state.device.id === "heltec-v3";
+  $("#usb-guidance").textContent = isHeltecV3
+    ? "Attach the LoRa antenna. On macOS use current desktop Chrome or Edge. If no port appears, install the CP210x driver, reconnect the V3, and close other serial apps."
+    : "Attach the LoRa antenna. Use a data-capable USB cable. Close serial monitors and companion apps.";
+  $("#v3-driver-link").classList.toggle("hidden", !isHeltecV3);
+  $("#flash-button").disabled = !navigator.serial;
 }
 
 async function sha256(bytes) {
@@ -393,6 +399,10 @@ async function flashUf2(artifact, bytes) {
 
 async function flashSelected() {
   const button = $("#flash-button");
+  if (!navigator.serial) {
+    resetLog($("#flash-log"), "ERROR: Web Serial is unavailable. Use current desktop Chrome or Edge; Safari and Firefox are not supported.");
+    return;
+  }
   button.disabled = true;
   resetLog($("#flash-log"), "Starting fail-closed flash workflow…");
   setProgress("Downloading exact release", 1);
@@ -408,7 +418,7 @@ async function flashSelected() {
     flashLog(`ERROR: ${error.message}`);
     setProgress("Stopped safely", 0);
   } finally {
-    button.disabled = false;
+    button.disabled = !navigator.serial;
   }
 }
 

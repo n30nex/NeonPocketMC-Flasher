@@ -44,6 +44,8 @@ The WDG Mesh Sidecar profile is deliberately live-only. It has no WiGLE import, 
 
 Use current desktop Chrome or Edge over HTTPS. Web Serial is not available in Firefox or iOS browsers. Keep a tuned LoRa antenna attached before transmitting.
 
+Heltec V3 connects through its Silicon Labs CP2102 USB-to-UART bridge. On macOS, if the V3 does not appear in the Chrome or Edge port chooser, install the current [CP210x VCP driver](https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers?tab=downloads), reconnect the board with a data-capable cable, and close any app already using the serial port.
+
 For RC52, double-press Reset when instructed and select the bootloader drive containing `INFO_UF2.TXT`. The site copies only the application UF2; it does not replace the SoftDevice or bootloader.
 
 For the D1L RP2040 bridge, hold BOOTSEL while reconnecting the RP2040 USB side, then select the drive containing `INFO_UF2.TXT`. Reconnect the ESP32 side and use **Verify bridge** afterward. For SD setup, select the root of an already-formatted FAT32 microSD card. Both workflows are additive and never format the card.

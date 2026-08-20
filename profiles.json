@@ -54,6 +54,8 @@
       "flash_method": "esp32",
       "expected_chip": "ESP32-S3",
       "ambiguous_with": "Heltec V4",
+      "usb_vid": 4292,
+      "usb_pid": 60000,
       "profiles": [
         {
           "id": "ble-companion-oled",
