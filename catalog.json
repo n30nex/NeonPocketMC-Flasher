@@ -11,6 +11,8 @@
       "flash_method": "esp32",
       "expected_chip": "ESP32-S3",
       "ambiguous_with": "Heltec V4",
+      "usb_vid": 4292,
+      "usb_pid": 60000,
       "repository": "https://github.com/n30nex/NeonPocketMC-Heltec-V3",
       "release": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/tag/v1.0.0-rc.3",
       "tag": "v1.0.0-rc.3",

@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/assets/neonpocketmc-mark.png">
   <link rel="stylesheet" href="/css/flasher.css?v=20260815scene1">
   <script src="/scene.js?v=20260815scene1" defer></script>
-  <script type="module" src="/flasher.js?v=20260820rcc6headless1"></script>
+  <script type="module" src="/flasher.js?v=20260820macv31"></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -92,7 +92,10 @@
         <p>Firmware is verified in this browser.</p>
       </div>
       <div id="flash-summary" class="summary-card"></div>
-      <div class="safety-strip"><b>Before flashing</b><span>Attach the LoRa antenna. Use a data-capable USB cable. Close serial monitors and companion apps.</span></div>
+      <div class="safety-strip">
+        <b>Before flashing</b>
+        <span><span id="usb-guidance">Attach the LoRa antenna. Use a data-capable USB cable. Close serial monitors and companion apps.</span> <a id="v3-driver-link" class="hidden" href="https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers?tab=downloads" target="_blank" rel="noopener noreferrer">Silicon Labs CP210x driver ↗</a></span>
+      </div>
       <div id="flash-progress" class="progress-wrap hidden">
         <div class="progress-label"><span id="progress-stage">Preparing…</span><b id="progress-number">0%</b></div>
         <progress id="progress-bar" max="100" value="0"></progress>

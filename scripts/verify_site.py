@@ -91,6 +91,11 @@ def main() -> int:
     require(len(artifacts) == 42, f"expected 42 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
+    heltec_v3 = next(device for device in catalog["devices"] if device["id"] == "heltec-v3")
+    heltec_v3_profile = next(device for device in profiles["devices"] if device["id"] == "heltec-v3")
+    require((heltec_v3["usb_vid"], heltec_v3["usb_pid"]) == (0x10C4, 0xEA60), "bad Heltec V3 CP2102 USB identity")
+    require((heltec_v3_profile["usb_vid"], heltec_v3_profile["usb_pid"]) == (0x10C4, 0xEA60), "bad Heltec V3 source USB identity")
+
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
     require(deskos["tag"] == "v1.7.9", "wrong DeskOS release")
@@ -113,6 +118,8 @@ def main() -> int:
         "Prepare SD card",
         "No existing file was replaced",
         "artifact.address",
+        "Silicon Labs CP210x driver",
+        "Safari and Firefox are not supported",
     ):
         require(contract in html + js, f"missing safety contract: {contract}")
     bridge = js.split("async function installDeskOsBridge", 1)[1].split(
@@ -157,7 +164,7 @@ def main() -> int:
     }, "wrong V4 evidence link")
     require(all(profile["tag"] == "v1.0.0-rc.1" for device, profile in wdg_profiles if device["id"] != "heltec-v4"), "V3/RCC6 must remain on RC1")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260820rcc6headless1" in html, "flasher JS cache bust is stale")
+    require("flasher.js?v=20260820macv31" in html, "flasher JS cache bust is stale")
     for scene_contract in (
         "scene-ticker",
         "scanline-drift",
