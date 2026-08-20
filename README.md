@@ -30,6 +30,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RC52 Room Server, headless or TFT
 - RCC6 Ultimate BLE or native-USB companion with TFT
 - RCC6 Ultimate Wi-Fi/Web companion with TFT
+- RCC6 screenless BLE, native-USB, or Wi-Fi Web/TCP companion
 - RCC6, Heltec V3, and Heltec V4 WDG Mesh Sidecar for Biscuit-compatible live MeshCore collection (V4 RC2 physically validated with public evidence)
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT

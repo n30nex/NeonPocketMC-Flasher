@@ -26,9 +26,9 @@ def main() -> int:
     css = (ROOT / "css" / "flasher.css").read_text(encoding="utf-8")
 
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
-    require(len(catalog["devices"]) == 8, "expected eight hardware selections")
+    require(len(catalog["devices"]) == 9, "expected nine hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 22, f"expected 22 profiles, found {profile_count}")
+    require(profile_count == 25, f"expected 25 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -88,7 +88,7 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 36, f"expected 36 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 42, f"expected 42 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
@@ -157,7 +157,7 @@ def main() -> int:
     }, "wrong V4 evidence link")
     require(all(profile["tag"] == "v1.0.0-rc.1" for device, profile in wdg_profiles if device["id"] != "heltec-v4"), "V3/RCC6 must remain on RC1")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260815v4evidence1" in html, "flasher JS cache bust is stale")
+    require("flasher.js?v=20260820rcc6headless1" in html, "flasher JS cache bust is stale")
     for scene_contract in (
         "scene-ticker",
         "scanline-drift",
@@ -170,7 +170,7 @@ def main() -> int:
     require("pointer-events: none" in css, "scene canvas must not intercept flashing input")
     require("pointermove" in scene_js and "pointerdown" in scene_js, "cursor trail or ripple missing")
     require("localStorage" not in js and "sessionStorage" not in js, "credentials/state must not be browser-persisted")
-    print(f"Verified flasher: 8 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
+    print(f"Verified flasher: 9 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
     return 0
 
 

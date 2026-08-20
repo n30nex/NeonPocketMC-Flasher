@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "suite_version": "1.7.0-rc.1",
+  "suite_version": "1.8.0-rc.1",
   "devices": [
     {
       "id": "heltec-v3",
@@ -511,6 +511,110 @@
           "release": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/tag/v1.0.0-rc.1",
           "tag": "v1.0.0-rc.1",
           "commit": "96f5e6a659cdff38ca36936979942f15f38ddfab"
+        }
+      ]
+    },
+    {
+      "id": "rcc6-headless-companion",
+      "product": "rcc6-headless-companion",
+      "name": "RadioCore RCC6 Headless Companion",
+      "family": "ESP32-C6",
+      "display": "No TFT — screenless",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-C6",
+      "usb_vid": 12346,
+      "usb_pid": 4097,
+      "repository": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless",
+      "release": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/tag/v1.0.0-rc.1",
+      "tag": "v1.0.0-rc.1",
+      "commit": "4c91a5e25f24f483fa206acc4125404dfef3b9f3",
+      "profiles": [
+        {
+          "id": "ble-companion-headless",
+          "name": "BLE Companion — Headless",
+          "summary": "Screenless phone companion with default pairing PIN 123456.",
+          "transport": "BLE",
+          "features": [
+            "headless",
+            "BLE",
+            "PIN 123456",
+            "low power"
+          ],
+          "update": {
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-BLE-app.bin",
+            "size": 1475632,
+            "sha256": "94891209e1b9636793d640803f7fdad342d34dcf0c7efe4a621095eddefb9c45",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.1/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-BLE-app.bin",
+            "md5": "3f2efff3fa594ea0b97c57123c8a1223",
+            "local_url": "/firmware/94891209e1b9636793d640803f7fdad342d34dcf0c7efe4a621095eddefb9c45/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-BLE-app.bin"
+          },
+          "recovery": {
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "size": 1541168,
+            "sha256": "e147ca0b4fe9e45cad904477ce1f86c527d732f7347334bb5aadddac20e0f8d5",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.1/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "md5": "903c37c4e8c54a35e82243d43a0443dc",
+            "local_url": "/firmware/e147ca0b4fe9e45cad904477ce1f86c527d732f7347334bb5aadddac20e0f8d5/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin"
+          },
+          "onboarding": "companion-headless"
+        },
+        {
+          "id": "usb-companion-headless",
+          "name": "USB Companion — Headless",
+          "summary": "Screenless wired desktop companion using the native USB protocol.",
+          "transport": "Native USB",
+          "features": [
+            "headless",
+            "USB companion",
+            "low power"
+          ],
+          "update": {
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-USB-app.bin",
+            "size": 562624,
+            "sha256": "69ab501a221f0765e5175d93eba2e3f9e938bf017ee618c4c3893225c19469ae",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.1/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-USB-app.bin",
+            "md5": "6ac3547ec2e3971db7463b66cbef1132",
+            "local_url": "/firmware/69ab501a221f0765e5175d93eba2e3f9e938bf017ee618c4c3893225c19469ae/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-USB-app.bin"
+          },
+          "recovery": {
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "size": 628160,
+            "sha256": "414dee406aed8e2cda881328145baa2da6d2e9b1f45b02b3928ca6cb72362396",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.1/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "md5": "e6923f209edc3e264dc2df03efc6c449",
+            "local_url": "/firmware/414dee406aed8e2cda881328145baa2da6d2e9b1f45b02b3928ca6cb72362396/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-USB-recovery-resets-nvs-preserves-meshcore-storage.bin"
+          },
+          "onboarding": "companion-usb"
+        },
+        {
+          "id": "web-ap-companion-headless",
+          "name": "Wi-Fi / Web Companion — Headless",
+          "summary": "Screenless AP onboarding, LAN WebUI and trusted-LAN TCP companion access.",
+          "transport": "Wi-Fi + WebUI",
+          "features": [
+            "headless",
+            "WebUI",
+            "AP onboarding",
+            "LAN TCP",
+            "USB setup log"
+          ],
+          "update": {
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-Web-app.bin",
+            "size": 1377568,
+            "sha256": "3cf0551afd948c310c79ba9b69b1e9e32eaf4a93ef4f296bf6252bc5ec811d58",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.1/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-Web-app.bin",
+            "md5": "85760bb99afb014d516cfc6582172a06",
+            "local_url": "/firmware/3cf0551afd948c310c79ba9b69b1e9e32eaf4a93ef4f296bf6252bc5ec811d58/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-Web-app.bin"
+          },
+          "recovery": {
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "size": 1443104,
+            "sha256": "4806348e6fe00d88af584bd820f54655afe0f7c0d4905aff42c802c435adea9b",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.1/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "md5": "3d0b6b31eaf8d3bebf2a7dbfe9124604",
+            "local_url": "/firmware/4806348e6fe00d88af584bd820f54655afe0f7c0d4905aff42c802c435adea9b/NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-Web-recovery-resets-nvs-preserves-meshcore-storage.bin"
+          },
+          "onboarding": "companion-web"
         }
       ]
     },

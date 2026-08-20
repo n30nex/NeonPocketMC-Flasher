@@ -280,6 +280,49 @@
       ]
     },
     {
+      "id": "rcc6-headless-companion",
+      "product": "rcc6-headless-companion",
+      "name": "RadioCore RCC6 Headless Companion",
+      "family": "ESP32-C6",
+      "display": "No TFT — screenless",
+      "flash_method": "esp32",
+      "expected_chip": "ESP32-C6",
+      "usb_vid": 12346,
+      "usb_pid": 4097,
+      "profiles": [
+        {
+          "id": "ble-companion-headless",
+          "name": "BLE Companion — Headless",
+          "summary": "Screenless phone companion with default pairing PIN 123456.",
+          "transport": "BLE",
+          "features": ["headless", "BLE", "PIN 123456", "low power"],
+          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-BLE-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
+          "onboarding": "companion-headless"
+        },
+        {
+          "id": "usb-companion-headless",
+          "name": "USB Companion — Headless",
+          "summary": "Screenless wired desktop companion using the native USB protocol.",
+          "transport": "Native USB",
+          "features": ["headless", "USB companion", "low power"],
+          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-USB-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
+          "onboarding": "companion-usb"
+        },
+        {
+          "id": "web-ap-companion-headless",
+          "name": "Wi-Fi / Web Companion — Headless",
+          "summary": "Screenless AP onboarding, LAN WebUI and trusted-LAN TCP companion access.",
+          "transport": "Wi-Fi + WebUI",
+          "features": ["headless", "WebUI", "AP onboarding", "LAN TCP", "USB setup log"],
+          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-Web-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.1-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
+          "onboarding": "companion-web"
+        }
+      ]
+    },
+    {
       "id": "rcc6-server",
       "product": "rcc6-server",
       "name": "RadioCore RCC6 Services",
