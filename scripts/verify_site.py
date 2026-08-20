@@ -190,6 +190,12 @@ def main() -> int:
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
     require("flasher.js?v=20260820ulp2" in html, "flasher JS cache bust is stale")
+    require("flasher.css?v=20260820aircraft1" in html, "flasher CSS cache bust is stale")
+    require(
+        "WDG-Aircraft-Sidecar-Windows-x64-v1.1.0.zip" in html
+        and "https://github.com/n30nex/WDG-Aircraft-Sidecar" in html,
+        "WDG Aircraft Sidecar release links are missing",
+    )
     for scene_contract in (
         "scene-ticker",
         "scanline-drift",
