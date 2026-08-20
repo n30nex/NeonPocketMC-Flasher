@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/assets/neonpocketmc-mark.png">
   <link rel="stylesheet" href="/css/flasher.css?v=20260815scene1">
   <script src="/scene.js?v=20260815scene1" defer></script>
-  <script type="module" src="/flasher.js?v=20260820macv31"></script>
+  <script type="module" src="/flasher.js?v=20260820ulp2"></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -216,6 +216,15 @@
             <label><span>Forward mesh traffic</span><select id="repeat-mode"><option value="on">On — repeater</option><option value="off">Off — observer/server only</option></select></label>
           </div>
           <p class="form-note">Advert/path hashes are always configured to the NeonPocket default: <b>3 bytes</b>.</p>
+          <div id="ulp-fields" class="field-grid hidden">
+            <label><span>Power profile</span><select id="ulp-profile">
+              <option value="on" selected>Balanced — recommended</option>
+              <option value="conservative">Conservative — listens more</option>
+              <option value="max">Maximum saving — may miss more traffic</option>
+              <option value="off">Off — continuous receive</option>
+            </select></label>
+          </div>
+          <p id="ulp-note" class="form-note hidden"><b>Solar safety:</b> use a protected battery and an external MPPT/charge controller matched to the panel and cell. Never connect an unregulated panel directly to VBAT or USB.</p>
         </div>
         <div id="network-fields" class="form-section hidden">
           <h3>2.4 GHz Wi-Fi and MQTT</h3>

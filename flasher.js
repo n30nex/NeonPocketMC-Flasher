@@ -526,6 +526,7 @@ function prepareOnboarding() {
   const deskos = type === "deskos";
   const wdgSidecar = type === "wdg-sidecar";
   const companion = type.startsWith("companion");
+  const ulp = type === "ulp-repeater";
   $("#companion-onboarding").classList.toggle("hidden", !companion);
   $("#deskos-onboarding").classList.toggle("hidden", !deskos);
   $("#wdg-onboarding").classList.toggle("hidden", !wdgSidecar);
@@ -568,12 +569,16 @@ function prepareOnboarding() {
   const room = type.startsWith("room");
   $("#network-fields").classList.toggle("hidden", !network);
   $("#guest-password-field").classList.toggle("hidden", !room);
+  $("#ulp-fields").classList.toggle("hidden", !ulp);
+  $("#ulp-note").classList.toggle("hidden", !ulp);
   $("#wifi-ssid").required = network;
   $("#mqtt-iata").required = network;
   $("#guest-password").required = room;
-  $("#onboarding-heading").textContent = network
-    ? "The USB wizard applies radio, Wi-Fi, MQTT and security settings, reboots, verifies saved values and reports the LAN IP."
-    : "The USB wizard applies and verifies the node, radio, forwarding and security settings before deployment.";
+  $("#onboarding-heading").textContent = ulp
+    ? "The USB wizard applies radio, security and default-on ULP power settings, then verifies them after reboot."
+    : network
+      ? "The USB wizard applies radio, Wi-Fi, MQTT and security settings, reboots, verifies saved values and reports the LAN IP."
+      : "The USB wizard applies and verifies the node, radio, forwarding and security settings before deployment.";
 }
 
 class CliSession {
@@ -673,6 +678,7 @@ function formConfig() {
   const preset = state.catalog.radio_presets[Number($("#radio-preset").value)];
   const network = state.profile.onboarding.includes("network");
   const room = state.profile.onboarding.startsWith("room");
+  const ulp = state.profile.onboarding === "ulp-repeater";
   const config = {
     name: $("#node-name").value.trim(),
     preset,
@@ -682,6 +688,8 @@ function formConfig() {
     guest: room ? $("#guest-password").value : "",
     network,
     room,
+    ulp,
+    ulpProfile: ulp ? $("#ulp-profile").value : "",
     ssid: network ? $("#wifi-ssid").value : "",
     wifiPassword: network ? $("#wifi-password").value : "",
     iata: network ? $("#mqtt-iata").value.trim().toUpperCase() : "",
@@ -705,6 +713,7 @@ function configurationCommands(config) {
     [`set repeat ${config.repeat}`],
     ["set path.hash.mode 2"],
   ];
+  if (config.ulp) commands.push([`ulp ${config.ulpProfile}`]);
   if (config.network) {
     commands.push(
       [`set mqtt.origin ${config.name}`],
@@ -744,6 +753,18 @@ async function verifyConfiguration(cli, config) {
     const actual = await cli.command(`get ${key}`);
     const normalized = (value) => value.toLowerCase().replace(/\s+/g, "");
     if (!normalized(actual).includes(normalized(wanted))) throw new Error(`Verification failed for ${key}: device replied '${actual}'.`);
+  }
+  if (config.ulp) {
+    const status = await cli.command("ulp");
+    const checks = {
+      on: /ULP on.*level=5.*preamble=16/i,
+      conservative: /ULP on/i,
+      max: /ULP on.*level=10.*preamble=32/i,
+      off: /ULP off/i,
+    };
+    if (!checks[config.ulpProfile].test(status)) {
+      throw new Error(`Verification failed for ULP profile: device replied '${status}'.`);
+    }
   }
 }
 
