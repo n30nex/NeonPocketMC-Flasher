@@ -7,7 +7,7 @@ Guided browser flashing and USB onboarding for the [NeonPocketMC firmware suite]
 ## What it does
 
 1. Selects the exact Heltec V3/V4, RAK4631, RAK3401 1 W, Xiao ESP32-S3/nRF52840, RadioCore RC52/RCC6, or SenseCAP Indicator D1L hardware.
-2. Selects a released companion, repeater, ULP Solar Repeater, observer, Room Server, or WDG Mesh Sidecar profile.
+2. Selects a released companion, repeater, ULP Solar Repeater, observer, Room Server, WDG Mesh Sidecar, or MeshGangs Territory Sidecar profile.
 3. Verifies the exact release file with SHA-256 before touching USB.
 4. Detects ESP32-C6 versus ESP32-S3 in ROM and blocks the wrong family.
 5. Writes each ESP image at its release-owned address: `0x10000` for NeonPocket and WDG Sidecar updates, `0x20000` for DeskOS updates, or `0x0` for an explicitly selected recovery/clean image.
@@ -32,6 +32,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RCC6 Ultimate Wi-Fi/Web companion with TFT
 - RCC6 screenless BLE, native-USB, or Wi-Fi Web/TCP companion
 - RCC6, Heltec V3, and Heltec V4 WDG Mesh Sidecar for Biscuit-compatible live MeshCore collection (V4 RC2 physically validated with public evidence)
+- Heltec V3 MeshGangs Territory Sidecar with privacy-safe durable retry and Android patrol pairing
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT
 - Experimental ULP Solar Repeater builds for V3, V4, RAK4631, RAK3401 1 W, Xiao ESP32-S3, Xiao nRF52840, and headless/TFT RCC6/RC52
@@ -40,6 +41,8 @@ No password is saved by the page, browser storage, repository, or server. Secret
 Normal updates preserve bootloader, partitions, identity, contacts, channels, and settings. Recovery images are an explicit expert path: they replace the boot/partition regions and may reset NVS/BLE bonds even when MeshCore storage is preserved. The D1L full 8 MB image is a destructive clean install and requires a separate confirmation because it replaces the existing DeskOS identity and history. A clean D1L install has three required stages: ESP32 firmware, RP2040 SD bridge, and a prepared FAT32 card. The web wizard remains incomplete until DeskOS verifies all three; flashing only the ESP32 cannot enable the SD slot.
 
 The WDG Mesh Sidecar profile is deliberately live-only. It has no WiGLE import, historical scan, stored upload backlog, catch-up, migration, or backfill path. After flashing, use the device's temporary setup Wi-Fi to store a 2.4 GHz hotspot and WDGWars API key directly on the device; the flasher does not receive or store either credential.
+
+The MeshGangs profile is a separate app-only Heltec V3 release. Its setup portal stores a 2.4 GHz hotspot and a key created at `mg.canadaverse.org`; the flasher never receives either credential. The firmware persists only bounded scoring metadata and canonical packet digests, never message text or raw packets.
 
 ## Browser requirements
 

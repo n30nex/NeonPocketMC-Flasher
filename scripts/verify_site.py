@@ -42,6 +42,7 @@ def main() -> int:
         "ulp-profile",
         "ulp-note",
         "wdg-onboarding",
+        "meshgangs-onboarding",
         "deskos-onboarding",
         "deskos-bridge-button",
         "deskos-bridge-verify",
@@ -78,7 +79,7 @@ def main() -> int:
     for device in catalog["devices"]:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
-            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar"), f"bad onboarding: {profile['id']}")
+            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar", "meshgangs-sidecar"), f"bad onboarding: {profile['id']}")
             for kind in ("update", "recovery", "bridge"):
                 if kind not in profile:
                     continue
