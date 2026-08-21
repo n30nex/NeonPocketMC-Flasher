@@ -153,19 +153,19 @@
             "MeshGangs territory"
           ],
           "update": {
-            "name": "meshgangs-heltec-v3-v0.1.0-beta.4.bin",
+            "name": "meshgangs-heltec-v3-v0.1.0-beta.5.bin",
             "size": 1329536,
-            "sha256": "5eac06afab510f94e157c45ba1ada5c6f31f0b3b12e6a01e470923cd77df3923",
-            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.4.bin",
+            "sha256": "f310278bed28632496e201b3a51b71c480cbe660666fa0382f9389d0b847cbfe",
+            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.5.bin",
             "address": 65536,
-            "md5": "ffc8e081b6105322c107d88993b77fa5",
-            "local_url": "/firmware/5eac06afab510f94e157c45ba1ada5c6f31f0b3b12e6a01e470923cd77df3923/meshgangs-heltec-v3-v0.1.0-beta.4.bin"
+            "md5": "2d511d6a7b2cea2d01efe829cd267570",
+            "local_url": "/firmware/f310278bed28632496e201b3a51b71c480cbe660666fa0382f9389d0b847cbfe/meshgangs-heltec-v3-v0.1.0-beta.5.bin"
           },
           "onboarding": "meshgangs-sidecar",
           "repository": "https://github.com/n30nex/MeshGangs",
           "release": "https://mg.canadaverse.org/downloads/",
-          "tag": "v0.1.0-beta.4",
-          "commit": "4c2ee7d92e709de265ea10fe9d7a74f157b48d43"
+          "tag": "v0.1.0-beta.5",
+          "commit": "8510c8c43f4a3b0bb9fcb65bf389de6b7dd8413c"
         }
       ]
     },
@@ -682,19 +682,19 @@
             "MeshGangs territory"
           ],
           "update": {
-            "name": "meshgangs-rcc6-v0.1.0-beta.4.bin",
+            "name": "meshgangs-rcc6-v0.1.0-beta.5.bin",
             "size": 1714304,
-            "sha256": "d7196bd4f4b0ceacec5e268784ab7ddf2671b2b1df4550fbc5bee02d71901145",
-            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-rcc6-v0.1.0-beta.4.bin",
+            "sha256": "7e749be240efd2cdece5cb2931a899dc1d98b44dcc410bcc84e3a01e4359dd45",
+            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-rcc6-v0.1.0-beta.5.bin",
             "address": 65536,
-            "md5": "af1bcc7cda077454ae824b7a81d6baa6",
-            "local_url": "/firmware/d7196bd4f4b0ceacec5e268784ab7ddf2671b2b1df4550fbc5bee02d71901145/meshgangs-rcc6-v0.1.0-beta.4.bin"
+            "md5": "5207b5fc5f4d819e37431ac61f0f4a92",
+            "local_url": "/firmware/7e749be240efd2cdece5cb2931a899dc1d98b44dcc410bcc84e3a01e4359dd45/meshgangs-rcc6-v0.1.0-beta.5.bin"
           },
           "onboarding": "meshgangs-sidecar",
           "repository": "https://github.com/n30nex/MeshGangs",
           "release": "https://mg.canadaverse.org/downloads/",
-          "tag": "v0.1.0-beta.4",
-          "commit": "4c2ee7d92e709de265ea10fe9d7a74f157b48d43"
+          "tag": "v0.1.0-beta.5",
+          "commit": "8510c8c43f4a3b0bb9fcb65bf389de6b7dd8413c"
         }
       ]
     },
