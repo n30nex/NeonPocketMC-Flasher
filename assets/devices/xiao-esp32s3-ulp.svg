@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="Seeed XIAO ESP32-S3 ULP repeater silhouette">
+  <defs><linearGradient id="pcb" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#164d45"/><stop offset="1" stop-color="#071a1c"/></linearGradient></defs>
+  <rect x="132" y="68" width="216" height="344" rx="32" fill="url(#pcb)" stroke="#65ddb6" stroke-width="5"/>
+  <g fill="#e9bd4c"><path d="M117 116h24v24h-24zM117 158h24v24h-24zM117 200h24v24h-24zM117 242h24v24h-24zM117 284h24v24h-24zM339 116h24v24h-24zM339 158h24v24h-24zM339 200h24v24h-24zM339 242h24v24h-24zM339 284h24v24h-24z"/></g>
+  <rect x="163" y="105" width="154" height="112" rx="12" fill="#c9d3d8" stroke="#f1f9fb" stroke-width="5"/><rect x="184" y="128" width="112" height="66" rx="6" fill="#2b3943"/><text x="240" y="171" text-anchor="middle" fill="#9cff38" font-family="system-ui,sans-serif" font-size="25" font-weight="850">S3</text>
+  <rect x="188" y="259" width="104" height="59" rx="10" fill="#111c27" stroke="#65d1ff" stroke-width="4"/><path d="M209 278h62M209 297h42" stroke="#9cff38" stroke-width="4"/>
+  <rect x="195" y="68" width="90" height="34" rx="13" fill="#17212b" stroke="#9baeb9" stroke-width="4"/>
+  <path d="M239 412v35" stroke="#d7edf6" stroke-width="8" stroke-linecap="round"/><circle cx="239" cy="457" r="13" fill="#e6b94b" stroke="#fff1aa" stroke-width="4"/>
+  <text x="240" y="362" text-anchor="middle" fill="#effaff" font-family="system-ui,sans-serif" font-size="24" font-weight="800">XIAO ESP32-S3</text>
+</svg>

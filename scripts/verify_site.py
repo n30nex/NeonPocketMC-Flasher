@@ -212,8 +212,14 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260820ulp2" in html, "flasher JS cache bust is stale")
-    require("flasher.css?v=20260820aircraft1" in html, "flasher CSS cache bust is stale")
+    require("flasher.js?v=20260822devices2" in html, "flasher JS cache bust is stale")
+    require("flasher.css?v=20260822devices2" in html, "flasher CSS cache bust is stale")
+    require("/assets/devices/${escapeHtml(device.id)}.svg" in js, "device cards must use hardware-specific SVGs")
+    for device in catalog["devices"]:
+        asset = ROOT / "assets" / "devices" / f"{device['id']}.svg"
+        require(asset.is_file(), f"missing device silhouette: {asset.name}")
+        svg = asset.read_text(encoding="utf-8")
+        require("<svg" in svg and "<script" not in svg, f"unsafe device silhouette: {asset.name}")
     require(
         "WDG-Aircraft-Sidecar-Windows-x64-v1.1.0.zip" in html
         and "https://github.com/n30nex/WDG-Aircraft-Sidecar" in html,

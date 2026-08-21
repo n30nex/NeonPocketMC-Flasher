@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="RAK4631 WisBlock ULP repeater silhouette">
+  <defs><linearGradient id="pcb" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#185147"/><stop offset="1" stop-color="#071b1b"/></linearGradient></defs>
+  <rect x="71" y="115" width="338" height="250" rx="26" fill="url(#pcb)" stroke="#65dfb7" stroke-width="5"/>
+  <g fill="#e9bd4d"><circle cx="96" cy="140" r="9"/><circle cx="384" cy="140" r="9"/><circle cx="96" cy="340" r="9"/><circle cx="384" cy="340" r="9"/></g>
+  <rect x="121" y="152" width="238" height="151" rx="12" fill="#101a25" stroke="#a8bfd0" stroke-width="5"/>
+  <rect x="143" y="174" width="104" height="87" rx="7" fill="#c7d1d7" stroke="#f2f8fb" stroke-width="4"/><path d="M159 192h72v51h-72Z" fill="#2d3b46"/>
+  <rect x="270" y="174" width="66" height="87" rx="7" fill="#09292d" stroke="#65d1ff" stroke-width="4"/><path d="M285 192h36M285 211h27M285 230h36" stroke="#9cff38" stroke-width="4"/>
+  <g fill="#e6bb4d"><path d="M107 178h15v18h-15zM107 211h15v18h-15zM107 244h15v18h-15zM358 178h15v18h-15zM358 211h15v18h-15zM358 244h15v18h-15z"/></g>
+  <path d="M328 115V77h42" fill="none" stroke="#d6edf5" stroke-width="8" stroke-linecap="round"/><circle cx="382" cy="77" r="13" fill="#e5b94b" stroke="#fff1a8" stroke-width="4"/>
+  <path d="M117 322h246" stroke="#18b7ff" stroke-width="5" stroke-dasharray="13 9"/>
+  <text x="240" y="408" text-anchor="middle" fill="#9cff38" font-family="system-ui,sans-serif" font-size="31" font-weight="850">RAK4631</text>
+</svg>

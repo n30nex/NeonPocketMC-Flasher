@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="RadioCore RC52 companion with TFT silhouette">
+  <defs><linearGradient id="case" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce6ed"/><stop offset="1" stop-color="#80919f"/></linearGradient><linearGradient id="ui" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b3261"/><stop offset="1" stop-color="#030913"/></linearGradient></defs>
+  <rect x="54" y="104" width="372" height="270" rx="44" fill="url(#case)" stroke="#eaf6ff" stroke-width="5"/>
+  <rect x="72" y="121" width="336" height="236" rx="27" fill="#111a27" stroke="#26394b" stroke-width="7"/>
+  <rect x="102" y="147" width="276" height="154" rx="10" fill="url(#ui)" stroke="#18b7ff" stroke-width="5"/>
+  <path d="M120 178h110M120 202h78M120 247h240M120 271h160" stroke="#65d1ff" stroke-width="5"/><path d="M260 176h95M260 202h66" stroke="#9cff38" stroke-width="5"/>
+  <circle cx="129" cy="330" r="18" fill="#d7e4ea" stroke="#627483" stroke-width="5"/><circle cx="190" cy="330" r="18" fill="#d7e4ea" stroke="#627483" stroke-width="5"/>
+  <g fill="#f1c150"><rect x="83" y="130" width="11" height="20" rx="3"/><rect x="386" y="130" width="11" height="20" rx="3"/></g>
+  <path d="M328 104V65h45" fill="none" stroke="#cfe6f5" stroke-width="8" stroke-linecap="round"/><circle cx="384" cy="65" r="14" fill="#e5b94b" stroke="#fff1a8" stroke-width="4"/>
+  <text x="240" y="405" text-anchor="middle" fill="#9cff38" font-family="system-ui,sans-serif" font-size="35" font-weight="850">RC52</text>
+</svg>
