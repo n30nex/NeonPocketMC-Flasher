@@ -32,7 +32,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RCC6 Ultimate Wi-Fi/Web companion with TFT
 - RCC6 screenless BLE, native-USB, or Wi-Fi Web/TCP companion
 - RCC6, Heltec V3, and Heltec V4 WDG Mesh Sidecar for Biscuit-compatible live MeshCore collection (V4 RC2 physically validated with public evidence)
-- Heltec V3 MeshGangs Territory Sidecar with privacy-safe durable retry and Android patrol pairing
+- Heltec V3 and physically qualified RCC6 MeshGangs Territory Sidecars with privacy-safe durable retry and Android patrol pairing
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT
 - Experimental ULP Solar Repeater builds for V3, V4, RAK4631, RAK3401 1 W, Xiao ESP32-S3, Xiao nRF52840, and headless/TFT RCC6/RC52
@@ -42,7 +42,7 @@ Normal updates preserve bootloader, partitions, identity, contacts, channels, an
 
 The WDG Mesh Sidecar profile is deliberately live-only. It has no WiGLE import, historical scan, stored upload backlog, catch-up, migration, or backfill path. After flashing, use the device's temporary setup Wi-Fi to store a 2.4 GHz hotspot and WDGWars API key directly on the device; the flasher does not receive or store either credential.
 
-The MeshGangs profile is a separate app-only Heltec V3 release. Its setup portal stores a 2.4 GHz hotspot and a key created at `mg.canadaverse.org`; the flasher never receives either credential. The firmware persists only bounded scoring metadata and canonical packet digests, never message text or raw packets.
+The MeshGangs profiles are separate app-only Heltec V3 and RCC6 releases. Their setup portal stores a 2.4 GHz hotspot and a key created at `mg.canadaverse.org`; the flasher never receives either credential. The firmware persists only bounded scoring metadata and canonical packet digests, never message text or raw packets.
 
 ## Browser requirements
 

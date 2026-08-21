@@ -153,19 +153,19 @@
             "MeshGangs territory"
           ],
           "update": {
-            "name": "meshgangs-heltec-v3-v0.1.0-beta.2.bin",
-            "size": 1329488,
-            "sha256": "17a151ed6809072c90f7ca6398aeb9a96edee27446feca1e56f379a4f963ad0b",
-            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.2.bin",
+            "name": "meshgangs-heltec-v3-v0.1.0-beta.3.bin",
+            "size": 1329536,
+            "sha256": "5dc96d13d4e4fddc0f93eb6e7d28767d3ec03bcf775ac5572770b6fcdd5761d9",
+            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.3.bin",
             "address": 65536,
-            "md5": "abfedf6b0df199197c54c5f810012008",
-            "local_url": "/firmware/17a151ed6809072c90f7ca6398aeb9a96edee27446feca1e56f379a4f963ad0b/meshgangs-heltec-v3-v0.1.0-beta.2.bin"
+            "md5": "134e7c116e40c1f30aad99060eae34e2",
+            "local_url": "/firmware/5dc96d13d4e4fddc0f93eb6e7d28767d3ec03bcf775ac5572770b6fcdd5761d9/meshgangs-heltec-v3-v0.1.0-beta.3.bin"
           },
           "onboarding": "meshgangs-sidecar",
           "repository": "https://github.com/n30nex/MeshGangs",
           "release": "https://mg.canadaverse.org/downloads/",
-          "tag": "v0.1.0-beta.2",
-          "commit": "cf8b5ee7fe7b8a58b383956ca8f1b957cb44f736"
+          "tag": "v0.1.0-beta.3",
+          "commit": "cf35e80d9de37eacf27359ef7ac3f888b9a23cba"
         }
       ]
     },
@@ -668,6 +668,33 @@
           "release": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/tag/v1.0.0-rc.1",
           "tag": "v1.0.0-rc.1",
           "commit": "96f5e6a659cdff38ca36936979942f15f38ddfab"
+        },
+        {
+          "id": "meshgangs-sidecar",
+          "product": "meshgangs-sidecar",
+          "name": "MeshGangs Territory Sidecar",
+          "summary": "Physically qualified invite-beta MeshCore territory collector with durable offline upload and secure device-key setup.",
+          "transport": "BLE + Wi-Fi",
+          "features": [
+            "TFT",
+            "BLE patrol pairing",
+            "durable queue",
+            "MeshGangs territory"
+          ],
+          "update": {
+            "name": "meshgangs-rcc6-v0.1.0-beta.3.bin",
+            "size": 1714304,
+            "sha256": "4423895b51db551496b90a66ea3fe7429830566a7d266de3a194efd256d8190d",
+            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-rcc6-v0.1.0-beta.3.bin",
+            "address": 65536,
+            "md5": "576af9e4469fa21366328fa904d6ba18",
+            "local_url": "/firmware/4423895b51db551496b90a66ea3fe7429830566a7d266de3a194efd256d8190d/meshgangs-rcc6-v0.1.0-beta.3.bin"
+          },
+          "onboarding": "meshgangs-sidecar",
+          "repository": "https://github.com/n30nex/MeshGangs",
+          "release": "https://mg.canadaverse.org/downloads/",
+          "tag": "v0.1.0-beta.3",
+          "commit": "cf35e80d9de37eacf27359ef7ac3f888b9a23cba"
         }
       ]
     },

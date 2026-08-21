@@ -534,7 +534,7 @@ function prepareOnboarding() {
   $("#meshgangs-onboarding").classList.toggle("hidden", !meshGangs);
   $("#server-onboarding").classList.toggle("hidden", companion || deskos || wdgSidecar || meshGangs);
   if (meshGangs) {
-    $("#onboarding-heading").textContent = "Firmware verified. Connect this V3 to your MeshGangs account.";
+    $("#onboarding-heading").textContent = `Firmware verified. Connect this ${state.device.name} to your MeshGangs account.`;
     return;
   }
   if (wdgSidecar) {
