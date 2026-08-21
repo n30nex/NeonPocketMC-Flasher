@@ -68,6 +68,7 @@ function escapeHtml(value) {
 function renderDevices() {
   $("#device-grid").innerHTML = state.catalog.devices.map((device) => `
     <button class="device-card" data-device="${escapeHtml(device.id)}">
+      <span class="device-art" aria-hidden="true"><img src="/assets/devices/${escapeHtml(device.id)}.svg" alt="" width="480" height="480" loading="lazy"></span>
       <span class="card-kicker">${escapeHtml(device.family)}</span>
       <h3>${escapeHtml(device.name)}</h3>
       <p>${escapeHtml(device.display)}</p>

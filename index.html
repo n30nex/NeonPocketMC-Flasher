@@ -8,9 +8,9 @@
   <title>NeonPocketMC Flasher</title>
   <link rel="icon" href="/assets/neonpocketmc-mark-64.png">
   <link rel="apple-touch-icon" href="/assets/neonpocketmc-mark.png">
-  <link rel="stylesheet" href="/css/flasher.css?v=20260820aircraft1">
+  <link rel="stylesheet" href="/css/flasher.css?v=20260821devices1">
   <script src="/scene.js?v=20260815scene1" defer></script>
-  <script type="module" src="/flasher.js?v=20260820ulp2"></script>
+  <script type="module" src="/flasher.js?v=20260821devices1"></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -35,27 +35,14 @@
       <div>
         <p class="eyebrow">FLASH · VERIFY · CONFIGURE</p>
         <h1>FLASH THE <span>MESH.</span></h1>
-        <p class="hero-copy">Choose a device and build. Flash, restart, configure.</p>
+        <p class="hero-copy">Device → build → flash → setup.</p>
       </div>
-      <div class="hero-orbit" aria-hidden="true">
-        <img src="/assets/neonpocketmc-mark.png" alt="">
-        <i></i><i></i><i></i>
+      <div class="hero-visual" aria-hidden="true">
+        <img src="/assets/visuals/flasher-hero.webp" alt="" width="640" height="640">
       </div>
     </section>
 
     <aside id="compatibility" class="notice hidden" role="alert"></aside>
-
-    <section class="sidecar-promo" aria-labelledby="aircraft-sidecar-title">
-      <div>
-        <p class="card-kicker">NEW · WINDOWS 10/11 X64</p>
-        <h2 id="aircraft-sidecar-title">Put an RTL-SDR to work for WDG.</h2>
-        <p>WDG Aircraft Sidecar is a portable ADS-B uploader with no Docker or separate Python install required.</p>
-      </div>
-      <div class="sidecar-actions">
-        <a class="sidecar-download" href="https://github.com/n30nex/WDG-Aircraft-Sidecar/releases/download/v1.1.0/WDG-Aircraft-Sidecar-Windows-x64-v1.1.0.zip">Download v1.1.0</a>
-        <a href="https://github.com/n30nex/WDG-Aircraft-Sidecar" target="_blank" rel="noopener noreferrer">Windows + Linux →</a>
-      </div>
-    </section>
 
     <nav class="stepper" aria-label="Setup progress">
       <button class="step active" data-go="1"><b>1</b><span>Device</span></button>
@@ -68,7 +55,7 @@
     <section class="panel active" data-panel="1">
       <div class="panel-heading">
         <div><p class="eyebrow">STEP 1</p><h2>Choose device</h2></div>
-        <p>USB hardware is checked before flashing.</p>
+        <p>Verified before write.</p>
       </div>
       <div id="device-grid" class="card-grid"></div>
     </section>
@@ -101,7 +88,7 @@
     <section class="panel" data-panel="3">
       <div class="panel-heading">
         <div><p class="eyebrow">STEP 3</p><h2>Flash</h2></div>
-        <p>Firmware is verified in this browser.</p>
+        <p>Verified in-browser.</p>
       </div>
       <div id="flash-summary" class="summary-card"></div>
       <div class="safety-strip">
@@ -270,6 +257,14 @@
       </details>
       <div id="completion" class="completion hidden"><b>Done.</b><span>You can disconnect USB.</span></div>
     </section>
+
+    <aside class="sidecar-strip" aria-labelledby="aircraft-sidecar-title">
+      <span class="card-kicker">ADS-B</span>
+      <strong id="aircraft-sidecar-title">WDG Aircraft Sidecar</strong>
+      <span>Windows + Linux</span>
+      <a href="https://github.com/n30nex/WDG-Aircraft-Sidecar/releases/download/v1.1.0/WDG-Aircraft-Sidecar-Windows-x64-v1.1.0.zip">Get v1.1.0</a>
+      <a href="https://github.com/n30nex/WDG-Aircraft-Sidecar" target="_blank" rel="noopener noreferrer">Source ↗</a>
+    </aside>
   </main>
 
   <footer>
