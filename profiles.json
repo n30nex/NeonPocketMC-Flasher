@@ -42,6 +42,21 @@
           "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/download/v1.0.0-rc.2/Canadaverse-WDG-Mesh-Heltec-V4-v1.0.0-rc.2-app.bin"
         }
       ]
+    },
+    {
+      "id": "meshgangs-sidecar",
+      "repository": "https://github.com/n30nex/MeshGangs",
+      "release": "https://mg.canadaverse.org/downloads/",
+      "tag": "v0.1.0-beta.2",
+      "commit": "cf8b5ee7fe7b8a58b383956ca8f1b957cb44f736",
+      "artifacts": [
+        {
+          "name": "meshgangs-heltec-v3-v0.1.0-beta.2.bin",
+          "size": 1329488,
+          "sha256": "17a151ed6809072c90f7ca6398aeb9a96edee27446feca1e56f379a4f963ad0b",
+          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.2.bin"
+        }
+      ]
     }
   ],
   "devices": [
@@ -100,6 +115,17 @@
           "update": "Canadaverse-WDG-Mesh-Heltec-V3-v1.0.0-rc.1-app.bin",
           "update_address": 65536,
           "onboarding": "wdg-sidecar"
+        },
+        {
+          "id": "meshgangs-sidecar",
+          "product": "meshgangs-sidecar",
+          "name": "MeshGangs Territory Sidecar",
+          "summary": "Invite-beta MeshCore territory collector with durable offline upload and secure device-key setup.",
+          "transport": "BLE + Wi-Fi",
+          "features": ["OLED", "BLE patrol pairing", "durable queue", "MeshGangs territory"],
+          "update": "meshgangs-heltec-v3-v0.1.0-beta.2.bin",
+          "update_address": 65536,
+          "onboarding": "meshgangs-sidecar"
         }
       ]
     },
