@@ -176,13 +176,13 @@ def main() -> int:
     require(len(meshgangs_profiles) == 2, "expected two launch-qualified MeshGangs profiles")
     require({device["id"] for device, profile in meshgangs_profiles} == {"heltec-v3", "rcc6-companion"}, "wrong MeshGangs hardware matrix")
     expected_meshgangs = {
-        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.3.bin", 1_329_536, "5dc96d13d4e4fddc0f93eb6e7d28767d3ec03bcf775ac5572770b6fcdd5761d9"),
-        "rcc6-companion": ("meshgangs-rcc6-v0.1.0-beta.3.bin", 1_714_304, "4423895b51db551496b90a66ea3fe7429830566a7d266de3a194efd256d8190d"),
+        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.4.bin", 1_329_536, "5eac06afab510f94e157c45ba1ada5c6f31f0b3b12e6a01e470923cd77df3923"),
+        "rcc6-companion": ("meshgangs-rcc6-v0.1.0-beta.4.bin", 1_714_304, "d7196bd4f4b0ceacec5e268784ab7ddf2671b2b1df4550fbc5bee02d71901145"),
     }
     for meshgangs_device, meshgangs in meshgangs_profiles:
         name, size, digest = expected_meshgangs[meshgangs_device["id"]]
-        require(meshgangs["tag"] == "v0.1.0-beta.3", "wrong MeshGangs release")
-        require(meshgangs["commit"] == "cf35e80d9de37eacf27359ef7ac3f888b9a23cba", "wrong MeshGangs source")
+        require(meshgangs["tag"] == "v0.1.0-beta.4", "wrong MeshGangs release")
+        require(meshgangs["commit"] == "4c2ee7d92e709de265ea10fe9d7a74f157b48d43", "wrong MeshGangs source")
         require(meshgangs["update"]["address"] == 0x10000, "MeshGangs update must preserve NVS")
         require("recovery" not in meshgangs, "MeshGangs beta must be app-only")
         require(meshgangs["update"]["name"] == name, "wrong MeshGangs artifact name")
