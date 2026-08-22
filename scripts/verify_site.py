@@ -203,8 +203,8 @@ def main() -> int:
         "rak3401-1w-ulp", "xiao-esp32s3-ulp", "xiao-nrf52840-ulp",
     }, "wrong ULP hardware matrix")
     for device, profile in ulp_profiles:
-        require(profile.get("tag", device["tag"]) == "v1.0.0-rc.1", f"wrong ULP release: {device['id']}")
-        require(profile.get("commit", device["commit"]) == "f05eff932e52236d35b68e0646850458e3785f97", f"wrong ULP source: {device['id']}")
+        require(profile.get("tag", device["tag"]) == "v1.0.0-rc.2", f"wrong ULP release: {device['id']}")
+        require(profile.get("commit", device["commit"]) == "f1ad326267618d03027a745258a2b5718d098d7d", f"wrong ULP source: {device['id']}")
         require("EasySkyMesh" in profile["features"], f"ULP attribution missing: {device['id']}")
         if device["flash_method"] == "esp32":
             require(profile["update"]["address"] == 0x10000, f"unsafe ULP update address: {device['id']}")
