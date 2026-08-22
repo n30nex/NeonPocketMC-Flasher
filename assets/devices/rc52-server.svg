@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="RadioCore RC52 server with optional TFT silhouette">
+  <defs><linearGradient id="pcb" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#18524a"/><stop offset="1" stop-color="#06191d"/></linearGradient><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d386c"/><stop offset="1" stop-color="#020814"/></linearGradient></defs>
+  <rect x="70" y="87" width="340" height="306" rx="35" fill="url(#pcb)" stroke="#6fe2c0" stroke-width="5"/>
+  <g fill="#e9bd4e"><path d="M58 122h20v23H58zM58 161h20v23H58zM58 200h20v23H58zM58 239h20v23H58zM402 122h20v23h-20zM402 161h20v23h-20zM402 200h20v23h-20zM402 239h20v23h-20z"/></g>
+  <rect x="106" y="123" width="268" height="151" rx="13" fill="url(#glass)" stroke="#18b7ff" stroke-width="5"/>
+  <path d="M128 153h104M128 177h77M128 227h224M128 249h151" stroke="#66d6ff" stroke-width="5"/><path d="M267 153h83M267 177h60" stroke="#9cff38" stroke-width="5"/>
+  <g fill="#9cff38"><circle cx="147" cy="320" r="11"/><circle cx="194" cy="320" r="11"/><circle cx="241" cy="320" r="11"/></g><path d="M252 320h86" stroke="#65d1ff" stroke-width="6" stroke-linecap="round"/>
+  <path d="M315 87V48h45" fill="none" stroke="#d8eef8" stroke-width="8" stroke-linecap="round"/><circle cx="372" cy="48" r="13" fill="#e7ba49" stroke="#fff1aa" stroke-width="4"/>
+  <text x="240" y="368" text-anchor="middle" fill="#eff9ff" font-family="system-ui,sans-serif" font-size="27" font-weight="850">RC52 SERVER</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="RadioCore RCC6 Ultimate Companion silhouette">
+  <defs><linearGradient id="case" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce5ea"/><stop offset="1" stop-color="#7d8d98"/></linearGradient><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#123e73"/><stop offset="1" stop-color="#020816"/></linearGradient></defs>
+  <rect x="78" y="77" width="324" height="337" rx="43" fill="url(#case)" stroke="#edf8ff" stroke-width="5"/>
+  <rect x="96" y="95" width="288" height="301" rx="27" fill="#111926" stroke="#273b4a" stroke-width="7"/>
+  <rect x="116" y="126" width="248" height="168" rx="10" fill="url(#glass)" stroke="#18b7ff" stroke-width="5"/>
+  <path d="M134 155h83M134 178h63M134 225h212M134 250h132" stroke="#65d1ff" stroke-width="5"/><path d="M252 153h92M252 178h68" stroke="#9cff38" stroke-width="5"/>
+  <circle cx="150" cy="338" r="22" fill="#dce7eb" stroke="#60727f" stroke-width="5"/><circle cx="330" cy="338" r="22" fill="#dce7eb" stroke="#60727f" stroke-width="5"/>
+  <path d="M305 77V38h44" fill="none" stroke="#d7ebf5" stroke-width="8" stroke-linecap="round"/><circle cx="361" cy="38" r="13" fill="#e8bb49" stroke="#fff1a8" stroke-width="4"/>
+  <text x="240" y="453" text-anchor="middle" fill="#9cff38" font-family="system-ui,sans-serif" font-size="32" font-weight="850">RCC6 ULTIMATE</text>
+</svg>

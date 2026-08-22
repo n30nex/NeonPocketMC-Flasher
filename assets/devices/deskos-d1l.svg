@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="SenseCAP Indicator D1L touchscreen silhouette">
+  <defs><linearGradient id="case" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d6dde1"/><stop offset="1" stop-color="#747f86"/></linearGradient><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#153e78"/><stop offset=".55" stop-color="#080d20"/><stop offset="1" stop-color="#142552"/></linearGradient></defs>
+  <rect x="55" y="56" width="370" height="368" rx="54" fill="url(#case)" stroke="#eef7fb" stroke-width="6"/>
+  <rect x="78" y="79" width="324" height="322" rx="37" fill="#111823" stroke="#2d3b49" stroke-width="8"/>
+  <rect x="103" y="104" width="274" height="272" rx="22" fill="url(#glass)" stroke="#18b7ff" stroke-width="5"/>
+  <path d="M127 141h135M127 171h92M127 224h226M127 254h172M127 304h90" stroke="#65d1ff" stroke-width="7"/><path d="M282 141h70M282 171h48M245 304h107" stroke="#9cff38" stroke-width="7"/>
+  <path d="M406 173h18v80h-18" fill="#65727a" stroke="#dfe9ed" stroke-width="4"/>
+  <circle cx="240" cy="390" r="7" fill="#9cff38"/>
+  <text x="240" y="457" text-anchor="middle" fill="#9cff38" font-family="system-ui,sans-serif" font-size="29" font-weight="850">DESKOS D1L</text>
+</svg>

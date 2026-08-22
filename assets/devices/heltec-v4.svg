@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="Heltec WiFi LoRa 32 V4 silhouette">
+  <defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1e4761"/><stop offset="1" stop-color="#071220"/></linearGradient><linearGradient id="n" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9cff38"/><stop offset="1" stop-color="#18b7ff"/></linearGradient></defs>
+  <path d="M66 111h348l20 20v218l-20 20H66l-20-20V131Z" fill="url(#b)" stroke="#7ee4ff" stroke-width="5"/>
+  <g fill="#d8ecff"><circle cx="76" cy="143" r="9"/><circle cx="404" cy="143" r="9"/><circle cx="76" cy="337" r="9"/><circle cx="404" cy="337" r="9"/></g>
+  <rect x="91" y="151" width="202" height="116" rx="13" fill="#020817" stroke="#68d6ff" stroke-width="5"/>
+  <path d="M110 177h150M110 199h106M110 221h132" stroke="url(#n)" stroke-width="6"/>
+  <rect x="319" y="153" width="77" height="67" rx="8" fill="#a7b4c5" stroke="#e7f1fa" stroke-width="4"/><path d="M333 168h49v37h-49Z" fill="#2b3646"/>
+  <rect x="319" y="239" width="77" height="70" rx="8" fill="#111c2d" stroke="#8195aa" stroke-width="4"/><path d="M334 255h47v9h-47M334 275h33v9h-33" stroke="#65d1ff" stroke-width="4"/>
+  <g fill="#f0bd48"><path d="M53 182h14v28H53zM53 227h14v28H53zM413 182h14v28h-14zM413 227h14v28h-14z"/></g>
+  <text x="91" y="322" fill="#9cff38" font-family="system-ui,sans-serif" font-size="29" font-weight="800">HELTEC V4.3</text>
+  <path d="M347 111V78h46" fill="none" stroke="#e5f5ff" stroke-width="7" stroke-linecap="round"/><circle cx="402" cy="78" r="13" fill="#e9bb48" stroke="#fff0aa" stroke-width="4"/>
+</svg>

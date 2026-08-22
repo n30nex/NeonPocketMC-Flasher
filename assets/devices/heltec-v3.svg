@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="Heltec WiFi LoRa 32 V3 silhouette">
+  <defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#173558"/><stop offset="1" stop-color="#071323"/></linearGradient><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#18b7ff"/><stop offset="1" stop-color="#9cff38"/></linearGradient></defs>
+  <path d="M72 118h336a24 24 0 0 1 24 24v196a24 24 0 0 1-24 24H72a24 24 0 0 1-24-24V142a24 24 0 0 1 24-24Z" fill="url(#b)" stroke="#65d1ff" stroke-width="5"/>
+  <g fill="#d8ecff"><circle cx="78" cy="148" r="9"/><circle cx="402" cy="148" r="9"/><circle cx="78" cy="332" r="9"/><circle cx="402" cy="332" r="9"/></g>
+  <rect x="108" y="158" width="185" height="104" rx="12" fill="#020817" stroke="#66d6ff" stroke-width="5"/>
+  <g stroke="url(#s)" stroke-width="5" opacity=".9"><path d="M127 184h118M127 204h92M127 224h132"/><path d="M317 166v90"/></g>
+  <rect x="318" y="176" width="72" height="54" rx="7" fill="#334257" stroke="#9cb0c3" stroke-width="4"/>
+  <path d="M334 240h40v66h-40Z" fill="#101c2f" stroke="#7b8fa6" stroke-width="3"/>
+  <g fill="#e7b849"><rect x="58" y="185" width="12" height="26" rx="3"/><rect x="58" y="225" width="12" height="26" rx="3"/><rect x="410" y="185" width="12" height="26" rx="3"/><rect x="410" y="225" width="12" height="26" rx="3"/></g>
+  <text x="108" y="311" fill="#9cff38" font-family="system-ui,sans-serif" font-size="30" font-weight="800">HELTEC V3</text>
+  <path d="M353 118v-32h45" fill="none" stroke="#d6eaff" stroke-width="7" stroke-linecap="round"/><circle cx="406" cy="86" r="13" fill="#e7b849" stroke="#fff0a8" stroke-width="4"/>
+</svg>
