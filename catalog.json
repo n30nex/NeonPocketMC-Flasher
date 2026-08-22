@@ -153,19 +153,19 @@
             "MeshGangs territory"
           ],
           "update": {
-            "name": "meshgangs-heltec-v3-v0.1.0-beta.7.bin",
-            "size": 1334128,
-            "sha256": "59fba77981f7ffa945650c8d32ea639e0ec26a05eac4009772955c63623c3e2f",
-            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.7.bin",
+            "name": "meshgangs-heltec-v3-v0.1.0-beta.9.bin",
+            "size": 1334256,
+            "sha256": "5bcce6a6693a2feecc7d848fbc833ba5d5192bd4191adc13870ed08686c00b6b",
+            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.9.bin",
             "address": 65536,
-            "md5": "a509dfc8b7993b01cb3e6ca132187b7b",
-            "local_url": "/firmware/59fba77981f7ffa945650c8d32ea639e0ec26a05eac4009772955c63623c3e2f/meshgangs-heltec-v3-v0.1.0-beta.7.bin"
+            "md5": "638aab1e5490f98e99867707a0c2cd8c",
+            "local_url": "/firmware/5bcce6a6693a2feecc7d848fbc833ba5d5192bd4191adc13870ed08686c00b6b/meshgangs-heltec-v3-v0.1.0-beta.9.bin"
           },
           "onboarding": "meshgangs-sidecar",
           "repository": "https://github.com/n30nex/MeshGangs",
           "release": "https://mg.canadaverse.org/downloads/",
-          "tag": "v0.1.0-beta.7",
-          "commit": "32e6fd04acc759ed5bb59bc07e832de2e556f596"
+          "tag": "v0.1.0-beta.9",
+          "commit": "dd10d43fea69631eb6e239b44f2cd4d087a217ec"
         }
       ]
     },
