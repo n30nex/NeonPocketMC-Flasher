@@ -47,20 +47,20 @@
       "id": "meshgangs-sidecar",
       "repository": "https://github.com/n30nex/MeshGangs",
       "release": "https://mg.canadaverse.org/downloads/",
-      "tag": "v0.1.0-beta.5",
-      "commit": "8510c8c43f4a3b0bb9fcb65bf389de6b7dd8413c",
+      "tag": "v0.1.0-beta.6",
+      "commit": "e49f0a55c78c9e3f692c141e5e57170df94d895a",
       "artifacts": [
         {
-          "name": "meshgangs-heltec-v3-v0.1.0-beta.5.bin",
-          "size": 1329536,
-          "sha256": "f310278bed28632496e201b3a51b71c480cbe660666fa0382f9389d0b847cbfe",
-          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.5.bin"
+          "name": "meshgangs-heltec-v3-v0.1.0-beta.6.bin",
+          "size": 1333264,
+          "sha256": "ec7ad9e92f6ee5cd86eeb704975d8bec972f92161d8b60661f219ebfc5e5aeb5",
+          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.6.bin"
         },
         {
-          "name": "meshgangs-rcc6-v0.1.0-beta.5.bin",
-          "size": 1714304,
-          "sha256": "7e749be240efd2cdece5cb2931a899dc1d98b44dcc410bcc84e3a01e4359dd45",
-          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-rcc6-v0.1.0-beta.5.bin"
+          "name": "meshgangs-rcc6-v0.1.0-beta.6.bin",
+          "size": 1715872,
+          "sha256": "0e181da9e4d0579e3c99da2aec60ed712d5c4b77786e1a7496a14681e937ee5e",
+          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-rcc6-v0.1.0-beta.6.bin"
         }
       ]
     }
@@ -129,7 +129,7 @@
           "summary": "Invite-beta MeshCore territory collector with durable offline upload and secure device-key setup.",
           "transport": "BLE + Wi-Fi",
           "features": ["OLED", "BLE patrol pairing", "durable queue", "MeshGangs territory"],
-          "update": "meshgangs-heltec-v3-v0.1.0-beta.5.bin",
+          "update": "meshgangs-heltec-v3-v0.1.0-beta.6.bin",
           "update_address": 65536,
           "onboarding": "meshgangs-sidecar"
         }
@@ -364,7 +364,7 @@
           "summary": "Physically qualified invite-beta MeshCore territory collector with durable offline upload and secure device-key setup.",
           "transport": "BLE + Wi-Fi",
           "features": ["TFT", "BLE patrol pairing", "durable queue", "MeshGangs territory"],
-          "update": "meshgangs-rcc6-v0.1.0-beta.5.bin",
+          "update": "meshgangs-rcc6-v0.1.0-beta.6.bin",
           "update_address": 65536,
           "onboarding": "meshgangs-sidecar"
         }
