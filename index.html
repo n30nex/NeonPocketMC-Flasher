@@ -8,9 +8,9 @@
   <title>NeonPocketMC Flasher</title>
   <link rel="icon" href="/assets/neonpocketmc-mark-64.png">
   <link rel="apple-touch-icon" href="/assets/neonpocketmc-mark.png">
-  <link rel="stylesheet" href="/css/flasher.css?v=20260822devices2">
+  <link rel="stylesheet" href="/css/flasher.css?v=20260822ulpfix">
   <script src="/scene.js?v=20260815scene1" defer></script>
-  <script type="module" src="/flasher.js?v=20260822devices2"></script>
+  <script type="module" src="/flasher.js?v=20260822ulpfix"></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -248,8 +248,14 @@
               <option value="max">Maximum saving — may miss more traffic</option>
               <option value="off">Off — continuous receive</option>
             </select></label>
+            <label><span>Advert map location</span><select id="ulp-location-share">
+              <option value="prefs" selected>Include saved location</option>
+              <option value="none">Do not include location</option>
+            </select></label>
+            <label><span>Latitude (optional)</span><input id="ulp-latitude" type="number" min="-90" max="90" step="0.000001" inputmode="decimal" placeholder="Keep saved value"></label>
+            <label><span>Longitude (optional)</span><input id="ulp-longitude" type="number" min="-180" max="180" step="0.000001" inputmode="decimal" placeholder="Keep saved value"></label>
           </div>
-          <p id="ulp-note" class="form-note hidden"><b>Solar safety:</b> use a protected battery and an external MPPT/charge controller matched to the panel and cell. Never connect an unregulated panel directly to VBAT or USB.</p>
+          <p id="ulp-note" class="form-note hidden"><b>USB setup only:</b> ULP repeaters do not create a Wi-Fi access point or WebUI. Keep USB connected until verification finishes. Use a protected battery and an external MPPT/charge controller matched to the panel and cell.</p>
         </div>
         <div id="network-fields" class="form-section hidden">
           <h3>2.4 GHz Wi-Fi and MQTT</h3>

@@ -54,6 +54,8 @@ For RC52, double-press Reset when instructed and select the bootloader drive con
 
 ULP Solar Repeater builds start new installs in the balanced EasySkyMesh power profile. The wizard can select balanced, conservative, maximum-saving, or continuous receive and verifies it after reboot. RX duty cycling can miss packets. Solar hardware still needs a protected battery and an external MPPT/charge controller matched to the panel and cell.
 
+ULP repeaters are configured over USB. They do not create a setup access point or WebUI. The wizard can keep or update the saved map coordinates and explicitly verifies whether that location is included in adverts.
+
 For the D1L RP2040 bridge, hold BOOTSEL while reconnecting the RP2040 USB side, then select the drive containing `INFO_UF2.TXT`. Reconnect the ESP32 side and use **Verify bridge** afterward. For SD setup, select the root of an already-formatted FAT32 microSD card. Both workflows are additive and never format the card.
 
 ## Development
