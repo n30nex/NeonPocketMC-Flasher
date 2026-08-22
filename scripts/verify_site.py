@@ -28,7 +28,7 @@ def main() -> int:
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
     require(len(catalog["devices"]) == 13, "expected thirteen hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 37, f"expected 37 profiles, found {profile_count}")
+    require(profile_count == 36, f"expected 36 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -92,7 +92,7 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 59, f"expected 59 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 58, f"expected 58 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     heltec_v3 = next(device for device in catalog["devices"] if device["id"] == "heltec-v3")
@@ -173,16 +173,15 @@ def main() -> int:
         for profile in device["profiles"]
         if profile["id"] == "meshgangs-sidecar"
     ]
-    require(len(meshgangs_profiles) == 2, "expected two launch-qualified MeshGangs profiles")
-    require({device["id"] for device, profile in meshgangs_profiles} == {"heltec-v3", "rcc6-companion"}, "wrong MeshGangs hardware matrix")
+    require(len(meshgangs_profiles) == 1, "expected one launch-qualified MeshGangs profile")
+    require({device["id"] for device, profile in meshgangs_profiles} == {"heltec-v3"}, "wrong MeshGangs hardware matrix")
     expected_meshgangs = {
-        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.6.bin", 1_333_264, "ec7ad9e92f6ee5cd86eeb704975d8bec972f92161d8b60661f219ebfc5e5aeb5"),
-        "rcc6-companion": ("meshgangs-rcc6-v0.1.0-beta.6.bin", 1_715_872, "0e181da9e4d0579e3c99da2aec60ed712d5c4b77786e1a7496a14681e937ee5e"),
+        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.9.bin", 1_334_256, "5bcce6a6693a2feecc7d848fbc833ba5d5192bd4191adc13870ed08686c00b6b"),
     }
     for meshgangs_device, meshgangs in meshgangs_profiles:
         name, size, digest = expected_meshgangs[meshgangs_device["id"]]
-        require(meshgangs["tag"] == "v0.1.0-beta.6", "wrong MeshGangs release")
-        require(meshgangs["commit"] == "e49f0a55c78c9e3f692c141e5e57170df94d895a", "wrong MeshGangs source")
+        require(meshgangs["tag"] == "v0.1.0-beta.9", "wrong MeshGangs release")
+        require(meshgangs["commit"] == "dd10d43fea69631eb6e239b44f2cd4d087a217ec", "wrong MeshGangs source")
         require(meshgangs["update"]["address"] == 0x10000, "MeshGangs update must preserve NVS")
         require("recovery" not in meshgangs, "MeshGangs beta must be app-only")
         require(meshgangs["update"]["name"] == name, "wrong MeshGangs artifact name")
