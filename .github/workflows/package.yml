@@ -29,12 +29,14 @@ jobs:
           cp css/flasher.css bundle/site/css/
           cp lib/esp32.js bundle/site/lib/
           cp assets/neonpocketmc-mark.png assets/neonpocketmc-mark-64.png bundle/site/assets/
+          cp -R assets/devices bundle/site/assets/
           cp -R assets/deskos-sd bundle/site/assets/
           cp deploy/Dockerfile deploy/server.py bundle/
       - name: Verify exact bundle
         run: |
           python scripts/verify_site.py
           python bundle/server.py --site bundle/site --self-test
+          for asset in assets/devices/*.svg; do test -f "bundle/site/$asset"; done
           node --check flasher.js
           node --check scene.js
           git diff --check
