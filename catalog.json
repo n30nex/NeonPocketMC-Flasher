@@ -154,12 +154,12 @@
           ],
           "update": {
             "name": "meshgangs-heltec-v3-v0.1.0-beta.7.bin",
-            "size": 1334304,
-            "sha256": "0d3aceb0c027298efff65fe6aa20c2a5e52241a8dc4e90e87d952e5c1d45e61a",
+            "size": 1334128,
+            "sha256": "59fba77981f7ffa945650c8d32ea639e0ec26a05eac4009772955c63623c3e2f",
             "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.7.bin",
             "address": 65536,
-            "md5": "6c51aa572763516f9e03d840dff6ff75",
-            "local_url": "/firmware/0d3aceb0c027298efff65fe6aa20c2a5e52241a8dc4e90e87d952e5c1d45e61a/meshgangs-heltec-v3-v0.1.0-beta.7.bin"
+            "md5": "a509dfc8b7993b01cb3e6ca132187b7b",
+            "local_url": "/firmware/59fba77981f7ffa945650c8d32ea639e0ec26a05eac4009772955c63623c3e2f/meshgangs-heltec-v3-v0.1.0-beta.7.bin"
           },
           "onboarding": "meshgangs-sidecar",
           "repository": "https://github.com/n30nex/MeshGangs",

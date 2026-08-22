@@ -176,7 +176,7 @@ def main() -> int:
     require(len(meshgangs_profiles) == 1, "expected one launch-qualified MeshGangs profile")
     require({device["id"] for device, profile in meshgangs_profiles} == {"heltec-v3"}, "wrong MeshGangs hardware matrix")
     expected_meshgangs = {
-        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.7.bin", 1_334_304, "0d3aceb0c027298efff65fe6aa20c2a5e52241a8dc4e90e87d952e5c1d45e61a"),
+        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.7.bin", 1_334_128, "59fba77981f7ffa945650c8d32ea639e0ec26a05eac4009772955c63623c3e2f"),
     }
     for meshgangs_device, meshgangs in meshgangs_profiles:
         name, size, digest = expected_meshgangs[meshgangs_device["id"]]
