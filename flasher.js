@@ -697,6 +697,9 @@ function formConfig() {
     room,
     ulp,
     ulpProfile: ulp ? $("#ulp-profile").value : "",
+    ulpLocationPolicy: ulp ? $("#ulp-location-share").value : "",
+    latitude: ulp ? $("#ulp-latitude").value.trim() : "",
+    longitude: ulp ? $("#ulp-longitude").value.trim() : "",
     ssid: network ? $("#wifi-ssid").value : "",
     wifiPassword: network ? $("#wifi-password").value : "",
     iata: network ? $("#mqtt-iata").value.trim().toUpperCase() : "",
@@ -707,6 +710,13 @@ function formConfig() {
   if (network && !config.ssid) throw new Error("Enter the 2.4 GHz Wi-Fi SSID.");
   if (network && !/^[A-Z0-9]{3}$/.test(config.iata)) throw new Error("IATA must be exactly three letters or digits.");
   if (network && config.mqtt1 === config.mqtt2 && config.mqtt1 !== "none") throw new Error("Choose two different MQTT servers, or disable one slot.");
+  if (ulp) {
+    const hasLatitude = config.latitude !== "";
+    const hasLongitude = config.longitude !== "";
+    if (hasLatitude !== hasLongitude) throw new Error("Enter both latitude and longitude, or leave both blank to keep the saved location.");
+    if (hasLatitude && (!Number.isFinite(Number(config.latitude)) || Number(config.latitude) < -90 || Number(config.latitude) > 90)) throw new Error("Latitude must be from -90 to 90.");
+    if (hasLongitude && (!Number.isFinite(Number(config.longitude)) || Number(config.longitude) < -180 || Number(config.longitude) > 180)) throw new Error("Longitude must be from -180 to 180.");
+  }
   return config;
 }
 
@@ -720,7 +730,14 @@ function configurationCommands(config) {
     [`set repeat ${config.repeat}`],
     ["set path.hash.mode 2"],
   ];
-  if (config.ulp) commands.push([`ulp ${config.ulpProfile}`]);
+  if (config.ulp) {
+    commands.push([`ulp ${config.ulpProfile}`]);
+    if (config.latitude !== "") {
+      commands.push([`set lat ${Number(config.latitude).toFixed(6)}`]);
+      commands.push([`set lon ${Number(config.longitude).toFixed(6)}`]);
+    }
+    commands.push([`gps advert ${config.ulpLocationPolicy}`]);
+  }
   if (config.network) {
     commands.push(
       [`set mqtt.origin ${config.name}`],
@@ -771,6 +788,16 @@ async function verifyConfiguration(cli, config) {
     };
     if (!checks[config.ulpProfile].test(status)) {
       throw new Error(`Verification failed for ULP profile: device replied '${status}'.`);
+    }
+    const locationPolicy = await cli.command("gps advert");
+    if (!locationPolicy.toLowerCase().includes(config.ulpLocationPolicy)) {
+      throw new Error(`Verification failed for advert location: device replied '${locationPolicy}'.`);
+    }
+    if (config.latitude !== "") {
+      const actualLatitude = Number.parseFloat(await cli.command("get lat"));
+      const actualLongitude = Number.parseFloat(await cli.command("get lon"));
+      if (!Number.isFinite(actualLatitude) || Math.abs(actualLatitude - Number(config.latitude)) > 0.000001) throw new Error("Saved latitude did not verify.");
+      if (!Number.isFinite(actualLongitude) || Math.abs(actualLongitude - Number(config.longitude)) > 0.000001) throw new Error("Saved longitude did not verify.");
     }
   }
 }

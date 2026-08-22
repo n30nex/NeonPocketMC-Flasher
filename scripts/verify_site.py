@@ -40,6 +40,9 @@ def main() -> int:
         "server-onboarding",
         "ulp-fields",
         "ulp-profile",
+        "ulp-location-share",
+        "ulp-latitude",
+        "ulp-longitude",
         "ulp-note",
         "wdg-onboarding",
         "meshgangs-onboarding",
@@ -208,11 +211,11 @@ def main() -> int:
             require(profile["recovery"]["address"] == 0, f"wrong ULP recovery address: {device['id']}")
         else:
             require(profile["update"]["name"].endswith(".uf2"), f"nRF ULP update must be UF2: {device['id']}")
-    for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "external MPPT/charge controller"):
+    for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260822devices2" in html, "flasher JS cache bust is stale")
-    require("flasher.css?v=20260822devices2" in html, "flasher CSS cache bust is stale")
+    require("flasher.js?v=20260822ulpfix" in html, "flasher JS cache bust is stale")
+    require("flasher.css?v=20260822ulpfix" in html, "flasher CSS cache bust is stale")
     require("/assets/devices/${escapeHtml(device.id)}.svg" in js, "device cards must use hardware-specific SVGs")
     for device in catalog["devices"]:
         asset = ROOT / "assets" / "devices" / f"{device['id']}.svg"
