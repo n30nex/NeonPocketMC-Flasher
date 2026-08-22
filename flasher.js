@@ -525,12 +525,18 @@ function prepareOnboarding() {
   const type = state.profile.onboarding;
   const deskos = type === "deskos";
   const wdgSidecar = type === "wdg-sidecar";
+  const meshGangs = type === "meshgangs-sidecar";
   const companion = type.startsWith("companion");
   const ulp = type === "ulp-repeater";
   $("#companion-onboarding").classList.toggle("hidden", !companion);
   $("#deskos-onboarding").classList.toggle("hidden", !deskos);
   $("#wdg-onboarding").classList.toggle("hidden", !wdgSidecar);
-  $("#server-onboarding").classList.toggle("hidden", companion || deskos || wdgSidecar);
+  $("#meshgangs-onboarding").classList.toggle("hidden", !meshGangs);
+  $("#server-onboarding").classList.toggle("hidden", companion || deskos || wdgSidecar || meshGangs);
+  if (meshGangs) {
+    $("#onboarding-heading").textContent = `Firmware verified. Connect this ${state.device.name} to your MeshGangs account.`;
+    return;
+  }
   if (wdgSidecar) {
     $("#onboarding-heading").textContent = "Firmware verified. Configure the live-only WDG Mesh Sidecar.";
     return;

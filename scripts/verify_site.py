@@ -28,7 +28,7 @@ def main() -> int:
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
     require(len(catalog["devices"]) == 13, "expected thirteen hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 35, f"expected 35 profiles, found {profile_count}")
+    require(profile_count == 37, f"expected 37 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -42,6 +42,7 @@ def main() -> int:
         "ulp-profile",
         "ulp-note",
         "wdg-onboarding",
+        "meshgangs-onboarding",
         "deskos-onboarding",
         "deskos-bridge-button",
         "deskos-bridge-verify",
@@ -78,7 +79,7 @@ def main() -> int:
     for device in catalog["devices"]:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
-            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar"), f"bad onboarding: {profile['id']}")
+            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar", "meshgangs-sidecar"), f"bad onboarding: {profile['id']}")
             for kind in ("update", "recovery", "bridge"):
                 if kind not in profile:
                     continue
@@ -91,7 +92,7 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 57, f"expected 57 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 59, f"expected 59 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     heltec_v3 = next(device for device in catalog["devices"] if device["id"] == "heltec-v3")
@@ -166,6 +167,28 @@ def main() -> int:
         "url": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/blob/main/evidence/V4_HARDWARE_VALIDATION.md",
     }, "wrong V4 evidence link")
     require(all(profile["tag"] == "v1.0.0-rc.1" for device, profile in wdg_profiles if device["id"] != "heltec-v4"), "V3/RCC6 must remain on RC1")
+    meshgangs_profiles = [
+        (device, profile)
+        for device in catalog["devices"]
+        for profile in device["profiles"]
+        if profile["id"] == "meshgangs-sidecar"
+    ]
+    require(len(meshgangs_profiles) == 2, "expected two launch-qualified MeshGangs profiles")
+    require({device["id"] for device, profile in meshgangs_profiles} == {"heltec-v3", "rcc6-companion"}, "wrong MeshGangs hardware matrix")
+    expected_meshgangs = {
+        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.6.bin", 1_333_264, "ec7ad9e92f6ee5cd86eeb704975d8bec972f92161d8b60661f219ebfc5e5aeb5"),
+        "rcc6-companion": ("meshgangs-rcc6-v0.1.0-beta.6.bin", 1_715_872, "0e181da9e4d0579e3c99da2aec60ed712d5c4b77786e1a7496a14681e937ee5e"),
+    }
+    for meshgangs_device, meshgangs in meshgangs_profiles:
+        name, size, digest = expected_meshgangs[meshgangs_device["id"]]
+        require(meshgangs["tag"] == "v0.1.0-beta.6", "wrong MeshGangs release")
+        require(meshgangs["commit"] == "e49f0a55c78c9e3f692c141e5e57170df94d895a", "wrong MeshGangs source")
+        require(meshgangs["update"]["address"] == 0x10000, "MeshGangs update must preserve NVS")
+        require("recovery" not in meshgangs, "MeshGangs beta must be app-only")
+        require(meshgangs["update"]["name"] == name, "wrong MeshGangs artifact name")
+        require(meshgangs["update"]["size"] == size, "wrong MeshGangs artifact size")
+        require(meshgangs["update"]["sha256"] == digest, "wrong MeshGangs artifact digest")
+        require(meshgangs["update"]["url"] == f"https://mg.canadaverse.org/downloads/files/{name}", "MeshGangs firmware must use its public download")
     ulp_profiles = [
         (device, profile)
         for device in catalog["devices"]
