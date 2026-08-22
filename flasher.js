@@ -17,12 +17,56 @@ const state = {
   deskosBridgeSent: false,
   deskosSdPrepared: false,
   stepperTop: null,
+  meshGangsToken: null,
+  meshGangsTokenError: false,
+  meshGangsRole: "mobile",
+  meshGangsEnrollment: null,
+  meshGangsProvisioned: false,
+  meshGangsUsbKey: null,
+  modemAudio: false,
 };
 
 const flashLog = (text) => appendLog($("#flash-log"), text);
 const bootLog = (text) => appendLog($("#boot-log"), text);
 const serialLog = (text) => appendLog($("#serial-log"), text);
 const deskosLog = (text) => appendLog($("#deskos-log"), text);
+
+function playModem(mode = "hop") {
+  if (!state.modemAudio) return;
+  const Audio = window.AudioContext || window.webkitAudioContext;
+  if (!Audio) return;
+  const audio = new Audio();
+  const master = audio.createGain();
+  master.gain.setValueAtTime(mode === "dial" ? .032 : .022, audio.currentTime);
+  master.connect(audio.destination);
+  const tones = mode === "dial"
+    ? [[620, 980, .14], [1180, 1180, .08], [760, 1920, .16], [2200, 1050, .14], [980, 2380, .15], [1880, 720, .16], [1300, 2200, .14]]
+    : [[780, 1180, .045], [1450, 920, .045]];
+  let cursor = audio.currentTime;
+  tones.forEach(([start, end, duration], index) => {
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    oscillator.type = index % 3 === 0 ? "square" : "sine";
+    oscillator.frequency.setValueAtTime(start, cursor);
+    oscillator.frequency.exponentialRampToValueAtTime(end, cursor + duration);
+    gain.gain.setValueAtTime(0, cursor);
+    gain.gain.linearRampToValueAtTime(1, cursor + .01);
+    gain.gain.linearRampToValueAtTime(0, cursor + duration);
+    oscillator.connect(gain).connect(master);
+    oscillator.start(cursor);
+    oscillator.stop(cursor + duration);
+    cursor += duration + .02;
+  });
+  setTimeout(() => audio.close(), mode === "dial" ? 1700 : 300);
+}
+
+function toggleModemAudio() {
+  state.modemAudio = !state.modemAudio;
+  const toggle = $("#modem-audio-toggle");
+  toggle.setAttribute("aria-pressed", String(state.modemAudio));
+  toggle.textContent = `56K AUDIO: ${state.modemAudio ? "ON" : "OFF"}`;
+  if (state.modemAudio) playModem("dial");
+}
 
 function appendLog(element, text) {
   const line = String(text ?? "").replace(/\r/g, "");
@@ -53,6 +97,7 @@ function enableThrough(step) {
 
 function goToStep(step) {
   if (step > state.maxStep) return;
+  playModem("hop");
   $$(".panel").forEach((panel) => panel.classList.toggle("active", Number(panel.dataset.panel) === step));
   $$(".step").forEach((button) => button.classList.toggle("active", Number(button.dataset.go) === step));
   const top = state.stepperTop ?? $(".stepper").offsetTop;
@@ -63,6 +108,63 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>'"]/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
   })[character]);
+}
+
+function captureMeshGangsEnrollment() {
+  if (!location.hash.startsWith("#meshgangs-enroll=")) return;
+  const match = location.hash.match(/^#meshgangs-enroll=([A-Za-z0-9_-]{40,64})$/);
+  state.meshGangsToken = match?.[1] || null;
+  state.meshGangsTokenError = !match;
+  history.replaceState(null, "", `${location.pathname}${location.search}`);
+}
+
+function isMeshGangsSidecar() {
+  return state.profile?.onboarding === "meshgangs-sidecar";
+}
+
+function meshGangsInputsValid() {
+  const label = $("#meshgangs-label").value.trim();
+  if (!label || label.length > 60 || /[\x00-\x1f\x7f]/.test(label)) return false;
+  if (state.meshGangsRole !== "wifi") return true;
+  const ssid = $("#meshgangs-wifi-ssid").value;
+  const password = $("#meshgangs-wifi-password").value;
+  const ssidBytes = new TextEncoder().encode(ssid).length;
+  const passwordBytes = new TextEncoder().encode(password).length;
+  return ssidBytes >= 1 && ssidBytes <= 32
+    && passwordBytes <= 63
+    && (passwordBytes === 0 || passwordBytes >= 8);
+}
+
+function updateMeshGangsSetup() {
+  const selected = isMeshGangsSidecar();
+  $("#meshgangs-setup").classList.toggle("hidden", !selected);
+  if (!selected) return;
+  const hasEnrollment = Boolean(state.meshGangsToken || state.meshGangsEnrollment);
+  const status = $("#meshgangs-account-state");
+  status.classList.remove("ready", "error", "working", "pending");
+  if (state.meshGangsTokenError) {
+    status.textContent = "Account link invalid";
+    status.classList.add("error");
+  } else if (state.meshGangsEnrollment) {
+    status.textContent = "Key created";
+    status.classList.add("ready");
+  } else if (state.meshGangsToken) {
+    status.textContent = "Account linked";
+    status.classList.add("ready");
+  } else {
+    status.textContent = "Account link required";
+    status.classList.add("pending");
+  }
+  $("#meshgangs-enroll-link").classList.toggle("hidden", hasEnrollment);
+  $("#meshgangs-wifi-fields").classList.toggle("hidden", state.meshGangsRole !== "wifi");
+  $$('input[name="meshgangs-role"]').forEach((radio) => {
+    radio.checked = radio.value === state.meshGangsRole;
+    radio.disabled = Boolean(state.meshGangsEnrollment);
+    radio.closest(".choice")?.classList.toggle("selected", radio.checked);
+  });
+  ["#meshgangs-label", "#meshgangs-wifi-ssid", "#meshgangs-wifi-password"].forEach((selector) => {
+    $(selector).disabled = Boolean(state.meshGangsEnrollment);
+  });
 }
 
 function renderDevices() {
@@ -106,6 +208,7 @@ function renderProfiles() {
   $("#install-mode").classList.add("hidden");
   $("#deskos-clean-confirm").classList.add("hidden");
   $("#ambiguous-confirm").classList.add("hidden");
+  $("#meshgangs-setup").classList.add("hidden");
   $("#to-flash").disabled = true;
 }
 
@@ -125,6 +228,7 @@ function selectProfile(id) {
   state.install = "update";
   const updateRadio = $('input[name="install"][value="update"]');
   if (updateRadio) updateRadio.checked = true;
+  updateMeshGangsSetup();
   updateContinueState();
 }
 
@@ -133,7 +237,9 @@ function updateContinueState() {
   $("#deskos-clean-confirm").classList.toggle("hidden", !deskosClean);
   $("#to-flash").disabled = !state.profile
     || (Boolean(state.device?.ambiguous_with) && !$("#model-confirm").checked)
-    || (deskosClean && !$("#deskos-clean-checkbox").checked);
+    || (deskosClean && !$("#deskos-clean-checkbox").checked)
+    || (isMeshGangsSidecar() && !(state.meshGangsToken || state.meshGangsEnrollment))
+    || (isMeshGangsSidecar() && !meshGangsInputsValid());
 }
 
 function selectInstallMode(value) {
@@ -338,6 +444,10 @@ async function flashEsp32(artifact, bytes) {
     if (!chip.toUpperCase().includes(state.device.expected_chip.toUpperCase())) {
       throw new Error(`Wrong chip. Selected ${state.device.expected_chip}, detected ${chip}.`);
     }
+    if (isMeshGangsSidecar()) {
+      flashLog("Exact V3 confirmed. Creating its one-time MeshGangs credential; secret values stay hidden…");
+      await enrollMeshGangsDevice();
+    }
     const address = artifact.address ?? (state.install === "recovery" ? 0 : 0x10000);
     setProgress("Writing verified firmware", 8);
     await loader.writeFlash({
@@ -404,8 +514,9 @@ async function flashSelected() {
     resetLog($("#flash-log"), "ERROR: Web Serial is unavailable. Use current desktop Chrome or Edge; Safari and Firefox are not supported.");
     return;
   }
+  playModem("dial");
   button.disabled = true;
-  resetLog($("#flash-log"), "Starting fail-closed flash workflow…");
+  resetLog($("#flash-log"), "ATZ\nATDT USB://NEONPOCKET\nNEGOTIATING FAIL-CLOSED FLASH LINE…");
   setProgress("Downloading exact release", 1);
   try {
     const artifact = currentArtifact();
@@ -429,16 +540,18 @@ async function readBootSample(port, durationMs = 6000) {
   const reader = port.readable.getReader();
   let output = "";
   const deadline = Date.now() + durationMs;
+  let pendingRead = reader.read();
   try {
     while (Date.now() < deadline) {
       const result = await Promise.race([
-        reader.read(),
+        pendingRead,
         sleep(350).then(() => ({ timeout: true })),
       ]);
       if (result.timeout) continue;
       if (result.done) break;
       output += decoder.decode(result.value, { stream: true });
       if (output.length > 24000) output = output.slice(-24000);
+      pendingRead = reader.read();
     }
   } finally {
     try { await reader.cancel(); } catch (_error) {}
@@ -446,6 +559,163 @@ async function readBootSample(port, durationMs = 6000) {
     await port.close();
   }
   return output;
+}
+
+function base64Utf8(value) {
+  return btoa(String.fromCharCode(...new TextEncoder().encode(value)));
+}
+
+async function enrollMeshGangsDevice() {
+  if (state.meshGangsEnrollment) return;
+  if (!state.meshGangsToken || !meshGangsInputsValid()) {
+    throw new Error("Link your MeshGangs account and complete the selected role before flashing.");
+  }
+  const status = $("#meshgangs-account-state");
+  status.textContent = "AUTH challenge";
+  status.classList.remove("ready", "error", "pending");
+  status.classList.add("working");
+  let payload;
+  try {
+    const response = await fetch("https://mg.canadaverse.org/api/v1/flasher/enroll", {
+      method: "POST",
+      mode: "cors",
+      cache: "no-store",
+      credentials: "omit",
+      referrerPolicy: "no-referrer",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token: state.meshGangsToken,
+        label: $("#meshgangs-label").value.trim(),
+        role: state.meshGangsRole,
+      }),
+    });
+    payload = await response.json().catch(() => null);
+    if (!response.ok) {
+      const code = payload?.code || `HTTP_${response.status}`;
+      throw new Error(`MeshGangs account link was not accepted (${code}). Start a new flasher link from your profile.`);
+    }
+    const hex64 = /^[0-9a-f]{64}$/i;
+    const expectedCredential = payload?.role === "mobile" ? "relay_key" : "device_key";
+    if (payload?.schema !== "meshgangs.flasher-enrollment.v1"
+      || payload.role !== state.meshGangsRole
+      || !Number.isInteger(payload.device?.id)
+      || typeof payload.device?.label !== "string"
+      || payload.credential_kind !== expectedCredential
+      || !hex64.test(payload.credential || "")) {
+      throw new Error("MeshGangs returned an invalid enrollment response; setup stopped safely.");
+    }
+    state.meshGangsEnrollment = {
+      role: payload.role,
+      device: payload.device,
+      secret: payload.credential,
+    };
+    state.meshGangsToken = null;
+    state.meshGangsTokenError = false;
+    payload.credential = "";
+    updateMeshGangsSetup();
+    updateContinueState();
+    flashLog("AUTH OK: scoped MeshGangs credential is held only in this tab until USB setup completes.");
+  } catch (error) {
+    status.textContent = "Account link failed";
+    status.classList.remove("ready", "working", "pending");
+    status.classList.add("error");
+    throw error;
+  } finally {
+    payload = null;
+  }
+}
+
+async function exchangeMeshGangsSerial(port, command, pattern, timeout = 12000) {
+  let reader;
+  let writer;
+  let output = "";
+  try {
+    await port.open({ baudRate: 115200 });
+    writer = port.writable.getWriter();
+    reader = port.readable.getReader();
+    await writer.write(new TextEncoder().encode(`${command}\r\n`));
+    const decoder = new TextDecoder();
+    const deadline = Date.now() + timeout;
+    let pendingRead = reader.read();
+    while (Date.now() < deadline) {
+      const result = await Promise.race([
+        pendingRead,
+        sleep(300).then(() => ({ timeout: true })),
+      ]);
+      if (result.timeout) continue;
+      if (result.done) break;
+      output += decoder.decode(result.value, { stream: true });
+      if (output.length > 24000) output = output.slice(-24000);
+      if (pattern.test(output)) return output;
+      pendingRead = reader.read();
+    }
+  } finally {
+    try { await reader?.cancel(); } catch (_error) {}
+    try { reader?.releaseLock(); } catch (_error) {}
+    try { writer?.releaseLock(); } catch (_error) {}
+    try { await port.close(); } catch (_error) {}
+  }
+  throw new Error("The MeshGangs V3 did not return the expected USB response.");
+}
+
+async function provisionMeshGangs(port) {
+  const enrollment = state.meshGangsEnrollment;
+  if (!enrollment?.secret) throw new Error("The one-time MeshGangs credential is no longer available in this tab.");
+  let command = "";
+  const expected = enrollment.role === "usb" ? "USB" : enrollment.role === "wifi" ? "WIFI" : "MOBILE";
+  if (enrollment.role === "usb") {
+    command = "CFG:MG1:USB";
+  } else if (enrollment.role === "wifi") {
+    command = `CFG:MG1:WIFI:${base64Utf8($("#meshgangs-wifi-ssid").value)}:${base64Utf8($("#meshgangs-wifi-password").value)}:${enrollment.secret}`;
+  } else {
+    command = `CFG:MG1:MOBILE:${enrollment.secret}`;
+  }
+  try {
+    const reply = await exchangeMeshGangsSerial(
+      port,
+      command,
+      /RSP:mgprovision:(?:OK:(?:USB|WIFI|MOBILE)|ERROR)/,
+      15000,
+    );
+    if (/RSP:mgprovision:ERROR/.test(reply)) throw new Error("The V3 rejected the selected MeshGangs role or credential.");
+    if (!reply.includes(`RSP:mgprovision:OK:${expected}`)) throw new Error("The V3 confirmed a different role than the one selected.");
+  } finally {
+    command = "";
+  }
+}
+
+async function waitForMeshGangsReady(port) {
+  const role = state.meshGangsEnrollment.role;
+  const expected = role === "usb" ? "USB_READY" : role === "wifi" ? "READY" : "MOBILE_READY";
+  const deadline = Date.now() + (role === "wifi" ? 120000 : 30000);
+  let lastStatus = "";
+  await sleep(3000);
+  while (Date.now() < deadline) {
+    try {
+      const reply = await exchangeMeshGangsSerial(
+        port,
+        "CMD:mgstatus:",
+        /MeshGangs status: [A-Z_]+/,
+        6000,
+      );
+      if (/storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 init failed|display failed to start|guru meditation|panic|assert failed/i.test(reply)) {
+        throw new Error("The MeshGangs V3 reported a hardware or storage failure after setup.");
+      }
+      const status = reply.match(/MeshGangs status: ([A-Z_]+)/)?.[1] || "UNKNOWN";
+      if (status !== lastStatus) {
+        bootLog(`MeshGangs status: ${status}`);
+        lastStatus = status;
+      }
+      if (status === expected) return;
+      if (status === "AUTH_ERROR") throw new Error("MeshGangs rejected the new device key.");
+    } catch (error) {
+      if (/reported a hardware|rejected the new device key/.test(error.message)) throw error;
+    }
+    await sleep(1500);
+  }
+  throw new Error(role === "wifi"
+    ? "The V3 saved Home Wi-Fi setup but did not authenticate within two minutes. Check the 2.4 GHz network details."
+    : `The V3 saved setup but did not reach ${expected}.`);
 }
 
 function parseCliJson(reply, command) {
@@ -503,8 +773,24 @@ async function verifyBoot() {
     const sample = await readBootSample(port);
     if (sample.trim()) bootLog(sample.trim());
     else bootLog("No text startup log was emitted; USB enumeration succeeded.");
-    if (/storage error|radio init failed|guru meditation|panic|assert failed/i.test(sample)) {
+    if (/storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 init failed|display failed to start|guru meditation|panic|assert failed/i.test(sample)) {
       throw new Error("Startup output contains a fatal error. Do not disconnect USB.");
+    }
+    if (isMeshGangsSidecar() && !state.meshGangsProvisioned) {
+      if (!state.meshGangsEnrollment) throw new Error("The MeshGangs account enrollment is missing; return to the build step and link the account again.");
+      bootLog(`Applying the exclusive ${state.meshGangsEnrollment.role} role over USB; secret values are hidden…`);
+      await provisionMeshGangs(port);
+      bootLog("PASS: the V3 confirmed that its role was saved; verifying the restarted collector…");
+      await waitForMeshGangsReady(port);
+      if (state.meshGangsEnrollment.role === "usb") {
+        state.meshGangsUsbKey = state.meshGangsEnrollment.secret;
+      } else if (state.meshGangsEnrollment.role === "wifi") {
+        $("#meshgangs-wifi-ssid").value = "";
+        $("#meshgangs-wifi-password").value = "";
+      }
+      state.meshGangsEnrollment.secret = null;
+      state.meshGangsProvisioned = true;
+      bootLog("PASS: MeshGangs role and startup state verified over USB.");
     }
     if (state.device.id === "deskos-d1l") {
       bootLog("Verifying the exact DeskOS release and health…");
@@ -535,7 +821,7 @@ function prepareOnboarding() {
   $("#meshgangs-onboarding").classList.toggle("hidden", !meshGangs);
   $("#server-onboarding").classList.toggle("hidden", companion || deskos || wdgSidecar || meshGangs);
   if (meshGangs) {
-    $("#onboarding-heading").textContent = `Firmware verified. Connect this ${state.device.name} to your MeshGangs account.`;
+    renderMeshGangsOnboarding();
     return;
   }
   if (wdgSidecar) {
@@ -586,6 +872,51 @@ function prepareOnboarding() {
     : network
       ? "The USB wizard applies radio, Wi-Fi, MQTT and security settings, reboots, verifies saved values and reports the LAN IP."
       : "The USB wizard applies and verifies the node, radio, forwarding and security settings before deployment.";
+}
+
+function renderMeshGangsOnboarding() {
+  const role = state.meshGangsEnrollment?.role || state.meshGangsRole;
+  const checks = $("#meshgangs-ready-checks");
+  $("#meshgangs-usb-key").classList.toggle("hidden", role !== "usb" || !state.meshGangsUsbKey);
+  $("#meshgangs-usb-key-value").textContent = state.meshGangsUsbKey || "";
+  if (role === "usb") {
+    $("#onboarding-heading").textContent = "Home USB collector configured.";
+    $("#meshgangs-ready-title").textContent = "Home USB V3 is ready";
+    $("#meshgangs-ready-copy").textContent = "The radio has no Wi-Fi or game key. Keep this one-time key for the Windows/Linux uploader, which will own uploads.";
+    checks.innerHTML = "<label>✓ Radio role verified as <strong>USB_READY</strong>.</label><label>✓ Radio Wi-Fi and relay credentials were cleared.</label><label>Next: download the setup file, install the desktop uploader, and select this V3.</label>";
+  } else if (role === "wifi") {
+    $("#onboarding-heading").textContent = "Home Wi-Fi collector configured.";
+    $("#meshgangs-ready-title").textContent = "Home Wi-Fi V3 is online";
+    $("#meshgangs-ready-copy").textContent = "The V3 joined the selected 2.4 GHz network and authenticated directly with MeshGangs. USB is no longer required.";
+    checks.innerHTML = "<label>✓ Radio role verified as <strong>READY</strong>.</label><label>✓ BLE patrol relay is disabled in this role.</label><label>Place the powered V3 at home with its LoRa antenna attached.</label>";
+  } else {
+    $("#onboarding-heading").textContent = "Mobile BLE companion configured.";
+    $("#meshgangs-ready-title").textContent = "Mobile V3 is ready to pair";
+    $("#meshgangs-ready-copy").textContent = "The V3 has only its scoped phone-relay credential. Android supplies GPS and internet; the radio does not join Wi-Fi.";
+    checks.innerHTML = "<label>✓ Radio role verified as <strong>MOBILE_READY</strong>.</label><label>✓ Radio Wi-Fi and direct-upload key were cleared.</label><label>Next: unplug USB, open MeshGangs on Android, select this V3, and start a patrol.</label>";
+  }
+}
+
+async function copyMeshGangsUsbKey() {
+  if (!state.meshGangsUsbKey) return;
+  await navigator.clipboard.writeText(state.meshGangsUsbKey);
+  $("#meshgangs-copy-key").textContent = "Copied";
+}
+
+function downloadMeshGangsUsbKey() {
+  if (!state.meshGangsUsbKey) return;
+  const setup = {
+    schema: "meshgangs.desktop-enrollment.v1",
+    server: "https://mg.canadaverse.org",
+    label: state.meshGangsEnrollment?.device?.label || $("#meshgangs-label").value.trim(),
+    device_key: state.meshGangsUsbKey,
+  };
+  const blob = new Blob([`${JSON.stringify(setup, null, 2)}\n`], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "meshgangs-home-usb-setup.json";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 
 class CliSession {
@@ -1146,10 +1477,19 @@ function populateOptions() {
 }
 
 function bindEvents() {
+  $("#modem-audio-toggle").addEventListener("click", toggleModemAudio);
   $$('[data-go]').forEach((button) => button.addEventListener("click", () => goToStep(Number(button.dataset.go))));
   $$('input[name="install"]').forEach((radio) => radio.addEventListener("change", () => selectInstallMode(radio.value)));
   $("#model-confirm").addEventListener("change", updateContinueState);
   $("#deskos-clean-checkbox").addEventListener("change", updateContinueState);
+  $$('input[name="meshgangs-role"]').forEach((radio) => radio.addEventListener("change", () => {
+    state.meshGangsRole = radio.value;
+    updateMeshGangsSetup();
+    updateContinueState();
+  }));
+  ["#meshgangs-label", "#meshgangs-wifi-ssid", "#meshgangs-wifi-password"].forEach((selector) => {
+    $(selector).addEventListener("input", updateContinueState);
+  });
   $("#to-flash").addEventListener("click", () => {
     state.install = $('input[name="install"]:checked')?.value || "update";
     renderFlashSummary();
@@ -1168,11 +1508,16 @@ function bindEvents() {
   $("#deskos-sd-button").addEventListener("click", prepareDeskOsSdCard);
   $("#deskos-sd-verify").addEventListener("click", () => verifyDeskOsStorage("sd"));
   $("#deskos-required-action").addEventListener("click", runRequiredDeskOsAction);
+  $("#meshgangs-copy-key").addEventListener("click", async () => {
+    try { await copyMeshGangsUsbKey(); } catch (_error) { $("#meshgangs-copy-key").textContent = "Copy failed"; }
+  });
+  $("#meshgangs-download-key").addEventListener("click", downloadMeshGangsUsbKey);
   $("#serial-command").addEventListener("keydown", (event) => { if (event.key === "Enter") sendManualCommand(); });
 }
 
 async function init() {
   state.stepperTop = $(".stepper").offsetTop;
+  captureMeshGangsEnrollment();
   bindEvents();
   const issues = [];
   if (!window.isSecureContext && location.hostname !== "localhost") issues.push("Web Serial requires HTTPS.");
@@ -1189,6 +1534,15 @@ async function init() {
     $("#suite-version").textContent = `Suite ${state.catalog.suite_version}`;
     renderDevices();
     populateOptions();
+    const params = new URLSearchParams(location.search);
+    const deviceId = params.get("device");
+    const profileId = params.get("profile");
+    const device = state.catalog.devices.find((candidate) => candidate.id === deviceId);
+    const profile = device?.profiles.find((candidate) => candidate.id === profileId);
+    if (device && profile) {
+      selectDevice(device.id);
+      selectProfile(profile.id);
+    }
   } catch (error) {
     $("#compatibility").textContent = `Firmware catalog failed to load: ${error.message}`;
     $("#compatibility").classList.remove("hidden");

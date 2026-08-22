@@ -46,6 +46,18 @@ def main() -> int:
         "ulp-note",
         "wdg-onboarding",
         "meshgangs-onboarding",
+        "meshgangs-setup",
+        "meshgangs-account-state",
+        "meshgangs-enroll-link",
+        "meshgangs-label",
+        "meshgangs-wifi-fields",
+        "meshgangs-wifi-ssid",
+        "meshgangs-wifi-password",
+        "meshgangs-ready-checks",
+        "meshgangs-usb-key",
+        "meshgangs-usb-key-value",
+        "meshgangs-copy-key",
+        "meshgangs-download-key",
         "deskos-onboarding",
         "deskos-bridge-button",
         "deskos-bridge-verify",
@@ -191,6 +203,57 @@ def main() -> int:
         require(meshgangs["update"]["size"] == size, "wrong MeshGangs artifact size")
         require(meshgangs["update"]["sha256"] == digest, "wrong MeshGangs artifact digest")
         require(meshgangs["update"]["url"] == f"https://mg.canadaverse.org/downloads/files/{name}", "MeshGangs firmware must use its public download")
+    for contract in (
+        '#meshgangs-enroll=',
+        'history.replaceState(null, "", `${location.pathname}${location.search}`)',
+        'https://mg.canadaverse.org/api/v1/flasher/enroll',
+        'credentials: "omit"',
+        'referrerPolicy: "no-referrer"',
+        'meshgangs.flasher-enrollment.v1',
+        'payload.credential_kind !== expectedCredential',
+        'secret: payload.credential',
+        'CFG:MG1:USB',
+        'CFG:MG1:WIFI:',
+        'CFG:MG1:MOBILE:',
+        'RSP:mgprovision:',
+        'USB_READY',
+        'MOBILE_READY',
+        'meshgangs.desktop-enrollment.v1',
+        'The radio never broadcasts a setup network or captive portal.',
+    ):
+        require(contract in html + js, f"missing MeshGangs USB setup contract: {contract}")
+    require("payload.device_key" not in js, "flasher must receive only the role-scoped credential")
+    require("payload.relay_key" not in js, "flasher must receive only the role-scoped credential")
+    esp32_flow = js.split("async function flashEsp32", 1)[1].split(
+        "async function flashUf2", 1
+    )[0]
+    require(
+        esp32_flow.index("Wrong chip") < esp32_flow.index("enrollMeshGangsDevice")
+        < esp32_flow.index("loader.writeFlash"),
+        "MeshGangs enrollment must follow exact-chip verification and precede device writing",
+    )
+    boot_flow = js.split("async function verifyBoot", 1)[1].split(
+        "function prepareOnboarding", 1
+    )[0]
+    require(
+        boot_flow.index("provisionMeshGangs") < boot_flow.index("prepareOnboarding"),
+        "MeshGangs USB role verification must precede onboarding",
+    )
+    meshgangs_html = html.split('id="meshgangs-setup"', 1)[1].split(
+        'id="to-flash"', 1
+    )[0] + html.split('id="meshgangs-onboarding"', 1)[1].split(
+        'id="deskos-onboarding"', 1
+    )[0]
+    require("192.168.4.1" not in meshgangs_html, "MeshGangs setup must not mention a captive portal address")
+    server = (ROOT / "deploy" / "server.py").read_text(encoding="utf-8")
+    for header_contract in (
+        '"Content-Security-Policy"',
+        '"https://mg.canadaverse.org; frame-ancestors \'none\'',
+        '"Cross-Origin-Opener-Policy", "same-origin"',
+        '"Cross-Origin-Resource-Policy", "same-site"',
+        "usb=(self), serial=(self)",
+    ):
+        require(header_contract in server, f"missing flasher security header: {header_contract}")
     ulp_profiles = [
         (device, profile)
         for device in catalog["devices"]
@@ -214,8 +277,8 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260822ulpfix" in html, "flasher JS cache bust is stale")
-    require("flasher.css?v=20260822ulpfix" in html, "flasher CSS cache bust is stale")
+    require("flasher.js?v=20260822mgbbs2" in html, "flasher JS cache bust is stale")
+    require("flasher.css?v=20260822mgbbs2" in html, "flasher CSS cache bust is stale")
     require("/assets/devices/${escapeHtml(device.id)}.svg" in js, "device cards must use hardware-specific SVGs")
     for device in catalog["devices"]:
         asset = ROOT / "assets" / "devices" / f"{device['id']}.svg"

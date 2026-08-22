@@ -41,6 +41,19 @@ class FlasherHandler(SimpleHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
         self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        self.send_header("Cross-Origin-Resource-Policy", "same-site")
+        self.send_header(
+            "Permissions-Policy",
+            "camera=(), microphone=(), geolocation=(), payment=(), usb=(self), serial=(self)",
+        )
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self'; base-uri 'self'; connect-src 'self' "
+            "https://mg.canadaverse.org; frame-ancestors 'none'; img-src 'self' data:; "
+            "object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+            "worker-src 'self'",
+        )
         if self.path == "/catalog.json" or self.path.startswith("/assets/deskos-sd/"):
             self.send_header("Cache-Control", "no-store")
         super().end_headers()
