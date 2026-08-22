@@ -181,7 +181,7 @@ def main() -> int:
     for meshgangs_device, meshgangs in meshgangs_profiles:
         name, size, digest = expected_meshgangs[meshgangs_device["id"]]
         require(meshgangs["tag"] == "v0.1.0-beta.7", "wrong MeshGangs release")
-        require(meshgangs["commit"] == "dead4be5e83b47be3613b67af22b71e4ca38df11", "wrong MeshGangs source")
+        require(meshgangs["commit"] == "32e6fd04acc759ed5bb59bc07e832de2e556f596", "wrong MeshGangs source")
         require(meshgangs["update"]["address"] == 0x10000, "MeshGangs update must preserve NVS")
         require("recovery" not in meshgangs, "MeshGangs beta must be app-only")
         require(meshgangs["update"]["name"] == name, "wrong MeshGangs artifact name")
