@@ -316,8 +316,8 @@
           "summary": "The full standalone NeonPocket experience for standard companion apps.",
           "transport": "BLE",
           "features": ["TFT", "BLE", "history", "composer", "network explorer"],
-          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.4-BLE-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.4-BLE-recovery-preserves-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-BLE-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-BLE-recovery-preserves-settings.bin",
           "onboarding": "companion"
         },
         {
@@ -326,8 +326,8 @@
           "summary": "The full standalone NeonPocket experience over native USB serial.",
           "transport": "Native USB",
           "features": ["TFT", "USB companion", "history", "composer", "network explorer"],
-          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.4-USB-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.4-USB-recovery-preserves-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-USB-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-USB-recovery-preserves-settings.bin",
           "onboarding": "companion-usb"
         },
         {
@@ -336,8 +336,8 @@
           "summary": "AP onboarding, LAN WebUI and trusted-LAN TCP companion access.",
           "transport": "Wi-Fi + WebUI",
           "features": ["TFT", "WebUI", "AP onboarding", "LAN TCP", "signed OTA"],
-          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.4-Web-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.4-Web-recovery-preserves-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-Web-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-Web-recovery-preserves-settings.bin",
           "onboarding": "companion-web"
         },
         {
@@ -370,8 +370,8 @@
           "summary": "Screenless phone companion with default pairing PIN 123456.",
           "transport": "BLE",
           "features": ["headless", "BLE", "PIN 123456", "low power"],
-          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.2-BLE-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.2-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
+          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-BLE-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
           "onboarding": "companion-headless"
         },
         {
@@ -380,8 +380,8 @@
           "summary": "Screenless wired desktop companion using the native USB protocol.",
           "transport": "Native USB",
           "features": ["headless", "USB companion", "low power"],
-          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.2-USB-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.2-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
+          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-USB-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
           "onboarding": "companion-usb"
         },
         {
@@ -390,8 +390,8 @@
           "summary": "Screenless AP onboarding, LAN WebUI and trusted-LAN TCP companion access.",
           "transport": "Wi-Fi + WebUI",
           "features": ["headless", "WebUI", "AP onboarding", "LAN TCP", "USB setup log"],
-          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.2-Web-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.2-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
+          "update": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-Web-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
           "onboarding": "companion-web"
         }
       ]
@@ -439,8 +439,8 @@
           "summary": "Wi-Fi observer dashboard with MQTT ingestion and optional repeating.",
           "transport": "Wi-Fi + WebUI + USB CLI",
           "features": ["WebUI", "MQTT", "observer", "optional repeat", "headless"],
-          "update": "NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.2-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.2-full-recovery-preserves-meshcore-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.3-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Observer-v1.3.0-rc.3-full-recovery-preserves-meshcore-settings.bin",
           "onboarding": "server-network"
         },
         {
@@ -449,8 +449,8 @@
           "summary": "Smallest Room Server build; no screen, Wi-Fi, WebUI or MQTT.",
           "transport": "USB CLI",
           "features": ["headless", "room server", "minimal"],
-          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.2-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.2-full-recovery-preserves-meshcore-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.3-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-headless-v1.3.0-rc.3-full-recovery-preserves-meshcore-settings.bin",
           "onboarding": "room-core"
         },
         {
@@ -459,8 +459,8 @@
           "summary": "Room Server core plus the NeonPocket TFT; no Wi-Fi or MQTT.",
           "transport": "USB CLI",
           "features": ["TFT", "room server", "minimal"],
-          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.2-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.2-full-recovery-preserves-meshcore-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.3-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-minimal-tft-v1.3.0-rc.3-full-recovery-preserves-meshcore-settings.bin",
           "onboarding": "room-core"
         },
         {
@@ -469,8 +469,8 @@
           "summary": "Room Server with authenticated WebUI, Wi-Fi and MQTT.",
           "transport": "Wi-Fi + WebUI + USB CLI",
           "features": ["headless", "room server", "WebUI", "MQTT"],
-          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.2-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.2-full-recovery-preserves-meshcore-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.3-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-headless-v1.3.0-rc.3-full-recovery-preserves-meshcore-settings.bin",
           "onboarding": "room-network"
         },
         {
@@ -479,8 +479,8 @@
           "summary": "Every RCC6 Room Server service plus the NeonPocket TFT and memory gate.",
           "transport": "Wi-Fi + WebUI + USB CLI",
           "features": ["TFT", "room server", "WebUI", "MQTT", "experimental"],
-          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.2-app.bin",
-          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.2-full-recovery-preserves-meshcore-settings.bin",
+          "update": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.3-app.bin",
+          "recovery": "NeonPocketMC-RCC6-Ultimate-Room-Server-full-tft-v1.3.0-rc.3-full-recovery-preserves-meshcore-settings.bin",
           "onboarding": "room-network"
         }
       ]
