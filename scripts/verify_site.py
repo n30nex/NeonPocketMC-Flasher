@@ -28,7 +28,7 @@ def main() -> int:
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
     require(len(catalog["devices"]) == 13, "expected thirteen hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 36, f"expected 36 profiles, found {profile_count}")
+    require(profile_count == 42, f"expected 42 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -94,7 +94,7 @@ def main() -> int:
     for device in catalog["devices"]:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
-            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar", "meshgangs-sidecar"), f"bad onboarding: {profile['id']}")
+            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "repeater-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar", "meshgangs-sidecar"), f"bad onboarding: {profile['id']}")
             for kind in ("update", "recovery", "bridge"):
                 if kind not in profile:
                     continue
@@ -107,13 +107,18 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 58, f"expected 58 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 70, f"expected 70 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     heltec_v3 = next(device for device in catalog["devices"] if device["id"] == "heltec-v3")
     heltec_v3_profile = next(device for device in profiles["devices"] if device["id"] == "heltec-v3")
     require((heltec_v3["usb_vid"], heltec_v3["usb_pid"]) == (0x10C4, 0xEA60), "bad Heltec V3 CP2102 USB identity")
     require((heltec_v3_profile["usb_vid"], heltec_v3_profile["usb_pid"]) == (0x10C4, 0xEA60), "bad Heltec V3 source USB identity")
+    for device_id in ("heltec-v3", "heltec-v4"):
+        device = next(item for item in catalog["devices"] if item["id"] == device_id)
+        ultimate = {profile["id"]: profile for profile in device["profiles"] if profile["id"].startswith("ultimate-")}
+        require(set(ultimate) == {"ultimate-ble-companion-oled", "ultimate-web-companion-oled", "ultimate-repeater-web-oled"}, f"bad Ultimate profile set: {device_id}")
+        require(ultimate["ultimate-repeater-web-oled"]["onboarding"] == "repeater-web", f"bad repeater onboarding: {device_id}")
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")

@@ -93,6 +93,36 @@
           "onboarding": "companion-usb"
         },
         {
+          "id": "ultimate-ble-companion-oled",
+          "name": "Ultimate BLE Companion",
+          "summary": "Standard MeshCore BLE plus persistent history, metrics and Network Explorer.",
+          "transport": "BLE",
+          "features": ["OLED", "BLE", "history", "metrics", "network explorer"],
+          "update": "NeonPocketMC-Heltec-V3-Ultimate-BLE-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V3-Ultimate-BLE-recovery-preserves-settings.bin",
+          "onboarding": "companion"
+        },
+        {
+          "id": "ultimate-web-companion-oled",
+          "name": "Ultimate Wi-Fi / Web Companion",
+          "summary": "Private setup AP, LAN WebUI and trusted-LAN TCP companion access.",
+          "transport": "Wi-Fi + WebUI",
+          "features": ["OLED", "WebUI", "AP onboarding", "LAN TCP", "signed OTA"],
+          "update": "NeonPocketMC-Heltec-V3-Ultimate-Web-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V3-Ultimate-Web-recovery-preserves-settings.bin",
+          "onboarding": "companion-web"
+        },
+        {
+          "id": "ultimate-repeater-web-oled",
+          "name": "Ultimate Repeater WebUI",
+          "summary": "Wi-Fi-awake MeshCore repeater with a protected live radio dashboard.",
+          "transport": "Wi-Fi + WebUI",
+          "features": ["OLED", "WebUI", "repeater", "neighbors", "radio graphs"],
+          "update": "NeonPocketMC-Heltec-V3-Ultimate-Repeater-Web-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V3-Ultimate-Repeater-Web-recovery-preserves-settings.bin",
+          "onboarding": "repeater-web"
+        },
+        {
           "id": "ulp-solar-repeater-oled",
           "product": "ulp-solar-repeaters",
           "name": "ULP Solar Repeater + OLED",
@@ -158,6 +188,36 @@
           "update": "NeonPocketMC-Heltec-V4-USB-app.bin",
           "recovery": "NeonPocketMC-Heltec-V4-USB-recovery-preserves-settings.bin",
           "onboarding": "companion-usb"
+        },
+        {
+          "id": "ultimate-ble-companion-oled",
+          "name": "Ultimate BLE Companion",
+          "summary": "Standard MeshCore BLE plus persistent history, metrics and Network Explorer.",
+          "transport": "BLE",
+          "features": ["OLED", "BLE", "history", "metrics", "network explorer"],
+          "update": "NeonPocketMC-Heltec-V4-Ultimate-BLE-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V4-Ultimate-BLE-recovery-preserves-settings.bin",
+          "onboarding": "companion"
+        },
+        {
+          "id": "ultimate-web-companion-oled",
+          "name": "Ultimate Wi-Fi / Web Companion",
+          "summary": "Private setup AP, LAN WebUI and trusted-LAN TCP companion access.",
+          "transport": "Wi-Fi + WebUI",
+          "features": ["OLED", "WebUI", "AP onboarding", "LAN TCP", "signed OTA"],
+          "update": "NeonPocketMC-Heltec-V4-Ultimate-Web-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V4-Ultimate-Web-recovery-preserves-settings.bin",
+          "onboarding": "companion-web"
+        },
+        {
+          "id": "ultimate-repeater-web-oled",
+          "name": "Ultimate Repeater WebUI",
+          "summary": "Wi-Fi-awake MeshCore repeater with a protected live radio dashboard.",
+          "transport": "Wi-Fi + WebUI",
+          "features": ["OLED", "WebUI", "repeater", "neighbors", "radio graphs"],
+          "update": "NeonPocketMC-Heltec-V4-Ultimate-Repeater-Web-app.bin",
+          "recovery": "NeonPocketMC-Heltec-V4-Ultimate-Repeater-Web-recovery-preserves-settings.bin",
+          "onboarding": "repeater-web"
         },
         {
           "id": "ulp-solar-repeater-oled",

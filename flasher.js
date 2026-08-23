@@ -862,12 +862,13 @@ function prepareOnboarding() {
   const wdgSidecar = type === "wdg-sidecar";
   const meshGangs = type === "meshgangs-sidecar";
   const companion = type.startsWith("companion");
+  const repeaterWeb = type === "repeater-web";
   const ulp = type === "ulp-repeater";
-  $("#companion-onboarding").classList.toggle("hidden", !companion);
+  $("#companion-onboarding").classList.toggle("hidden", !(companion || repeaterWeb));
   $("#deskos-onboarding").classList.toggle("hidden", !deskos);
   $("#wdg-onboarding").classList.toggle("hidden", !wdgSidecar);
   $("#meshgangs-onboarding").classList.toggle("hidden", !meshGangs);
-  $("#server-onboarding").classList.toggle("hidden", companion || deskos || wdgSidecar || meshGangs);
+  $("#server-onboarding").classList.toggle("hidden", companion || repeaterWeb || deskos || wdgSidecar || meshGangs);
   if (meshGangs) {
     renderMeshGangsOnboarding();
     return;
@@ -882,12 +883,14 @@ function prepareOnboarding() {
     requestAnimationFrame(() => $("#deskos-required-action").focus({ preventScroll: true }));
     return;
   }
-  if (companion) {
+  if (companion || repeaterWeb) {
     const usb = type === "companion-usb";
     const web = type === "companion-web";
     const headless = type === "companion-headless";
     const headlessWeb = web && state.device.id === "rcc6-headless-companion";
-    $("#companion-instructions").textContent = headlessWeb
+    $("#companion-instructions").textContent = repeaterWeb
+      ? "Read the setup AP, key and address from the OLED. Join it, open 192.168.4.1, then configure local Wi-Fi and the repeater. The OLED shows the LAN IP after joining. This role has no BLE, companion TCP or MQTT."
+      : headlessWeb
       ? "Keep USB connected after restart and open the 115200-baud serial console below. It prints the setup AP name, password and address. Complete Local Wi-Fi Setup in the WebUI; after the device joins your LAN, the console prints its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
       : web
         ? "Read the AP name, password and address from the TFT, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the TFT shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
@@ -896,14 +899,18 @@ function prepareOnboarding() {
         : headless
           ? "Open a standard MeshCore companion app, select the advertised NeonPocket device, and pair with PIN 123456. This build has no display; radio preset, name and channels are managed through the companion app."
           : "Open a standard MeshCore companion app, select the advertised NeonPocket device, and use the PIN shown on its screen. Radio preset, name and channels are managed through the companion app.";
-    $("#companion-check-connect").textContent = usb
+    $("#companion-check-connect").textContent = repeaterWeb
+      ? " I opened the protected repeater dashboard using the OLED setup key."
+      : usb
       ? " My desktop companion connected to the NeonPocket serial device."
       : web
         ? " I connected to the setup AP or the displayed local-network address."
         : headless
           ? " I paired or connected using PIN 123456."
           : " I paired or connected using the PIN shown by the device.";
-    $("#companion-check-sync").textContent = " My identity, contacts and channels loaded correctly.";
+    $("#companion-check-sync").textContent = repeaterWeb
+      ? " The node name, legal radio preset, forwarding and LAN address are correct."
+      : " My identity, contacts and channels loaded correctly.";
     return;
   }
   const network = type.includes("network");
