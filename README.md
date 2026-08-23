@@ -23,7 +23,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 
 ## Supported released profiles
 
-- Heltec V3 / V4 BLE or native-USB companion with OLED
+- Heltec V3 / V4 BLE and native-USB companions, Ultimate BLE/Web companions, and Ultimate WebUI repeaters with OLED
 - RC52 BLE or native-USB companion with NV3001B TFT
 - RC52 screenless BLE companion with fixed pairing PIN `123456`
 - RC52 headless repeater

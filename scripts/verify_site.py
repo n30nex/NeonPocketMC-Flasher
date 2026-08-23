@@ -127,6 +127,8 @@ def main() -> int:
         require(f'id: "{family_id}"' in js, f"missing hardware family: {family_id}")
     require("data-device-family=" in js, "hardware family selection is missing")
     require("state.deviceFamily = deviceFamilies.find" in js, "deep links must restore their hardware family")
+    require('const screenLabel = /oled/i.test(state.device.display) ? "OLED" : "TFT"' in js, "screen onboarding must match OLED versus TFT hardware")
+    require("Ultimate BLE/Web companions" in (ROOT / "README.md").read_text(encoding="utf-8"), "Ultimate Heltec roles are missing from README")
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")

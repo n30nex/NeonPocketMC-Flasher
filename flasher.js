@@ -959,12 +959,13 @@ function prepareOnboarding() {
     const web = type === "companion-web";
     const headless = type === "companion-headless";
     const headlessWeb = web && state.device.id === "rcc6-headless-companion";
+    const screenLabel = /oled/i.test(state.device.display) ? "OLED" : "TFT";
     $("#companion-instructions").textContent = repeaterWeb
       ? "Read the setup AP, key and address from the OLED. Join it, open 192.168.4.1, then configure local Wi-Fi and the repeater. The OLED shows the LAN IP after joining. This role has no BLE, companion TCP or MQTT."
       : headlessWeb
       ? "Keep USB connected after restart and open the 115200-baud serial console below. It prints the setup AP name, password and address. Complete Local Wi-Fi Setup in the WebUI; after the device joins your LAN, the console prints its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
       : web
-        ? "Read the AP name, password and address from the TFT, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the TFT shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
+        ? `Read the AP name, password and address from the ${screenLabel}, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the ${screenLabel} shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only.`
       : usb
         ? "Keep USB connected and open a desktop MeshCore companion that supports the standard serial transport. Select the NeonPocket serial device; this is the binary companion protocol, not the text CLI."
         : headless
