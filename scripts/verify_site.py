@@ -46,6 +46,18 @@ def main() -> int:
         "ulp-note",
         "wdg-onboarding",
         "meshgangs-onboarding",
+        "meshgangs-setup",
+        "meshgangs-account-state",
+        "meshgangs-enroll-link",
+        "meshgangs-label",
+        "meshgangs-wifi-fields",
+        "meshgangs-wifi-ssid",
+        "meshgangs-wifi-password",
+        "meshgangs-ready-checks",
+        "meshgangs-usb-key",
+        "meshgangs-usb-key-value",
+        "meshgangs-copy-key",
+        "meshgangs-download-key",
         "deskos-onboarding",
         "deskos-bridge-button",
         "deskos-bridge-verify",
@@ -179,18 +191,99 @@ def main() -> int:
     require(len(meshgangs_profiles) == 1, "expected one launch-qualified MeshGangs profile")
     require({device["id"] for device, profile in meshgangs_profiles} == {"heltec-v3"}, "wrong MeshGangs hardware matrix")
     expected_meshgangs = {
-        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.13.bin", 1_338_896, "9db6e269e7578871ac0baa89e7ac6b1503a4740c196818cd16a1000d3c600f74"),
+        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.15.bin", 1_303_152, "73429d1a98978803d25be72c7c03396bfd47e66712446307f7efa2755db083d9"),
     }
     for meshgangs_device, meshgangs in meshgangs_profiles:
         name, size, digest = expected_meshgangs[meshgangs_device["id"]]
-        require(meshgangs["tag"] == "v0.1.0-beta.13", "wrong MeshGangs release")
-        require(meshgangs["commit"] == "2ff8c52d849c88d371674d9302d91eb0a94ef7e5", "wrong MeshGangs source")
+        require(meshgangs["tag"] == "v0.1.0-beta.15", "wrong MeshGangs release")
+        require(meshgangs["commit"] == "7714b599466b7cb73604695d2404222785451913", "wrong MeshGangs source")
         require(meshgangs["update"]["address"] == 0x10000, "MeshGangs update must preserve NVS")
         require("recovery" not in meshgangs, "MeshGangs beta must be app-only")
         require(meshgangs["update"]["name"] == name, "wrong MeshGangs artifact name")
         require(meshgangs["update"]["size"] == size, "wrong MeshGangs artifact size")
         require(meshgangs["update"]["sha256"] == digest, "wrong MeshGangs artifact digest")
         require(meshgangs["update"]["url"] == f"https://mg.canadaverse.org/downloads/files/{name}", "MeshGangs firmware must use its public download")
+    for contract in (
+        '#meshgangs-enroll=',
+        'history.replaceState(null, "", `${location.pathname}${location.search}`)',
+        'https://mg.canadaverse.org/api/v1/flasher/enroll',
+        'credentials: "omit"',
+        'referrerPolicy: "no-referrer"',
+        'meshgangs.flasher-enrollment.v1',
+        'payload.credential_kind !== expectedCredential',
+        'secret: payload.credential',
+        'CFG:MG1:USB',
+        'CFG:MG1:WIFI:',
+        'CFG:MG1:MOBILE:',
+        'RSP:mgprovision:',
+        'USB_READY',
+        'MOBILE_READY',
+        'meshgangs.desktop-enrollment.v1',
+        'The radio never broadcasts a setup network or captive portal.',
+    ):
+        require(contract in html + js, f"missing MeshGangs USB setup contract: {contract}")
+    require("payload.device_key" not in js, "flasher must receive only the role-scoped credential")
+    require("payload.relay_key" not in js, "flasher must receive only the role-scoped credential")
+    esp32_flow = js.split("async function flashEsp32", 1)[1].split(
+        "async function flashUf2", 1
+    )[0]
+    require(
+        esp32_flow.index("Wrong chip") < esp32_flow.index("enrollMeshGangsDevice")
+        < esp32_flow.index("loader.writeFlash"),
+        "MeshGangs enrollment must follow exact-chip verification and precede device writing",
+    )
+    boot_flow = js.split("async function verifyBoot", 1)[1].split(
+        "function prepareOnboarding", 1
+    )[0]
+    require(
+        boot_flow.index("provisionMeshGangs") < boot_flow.index("prepareOnboarding"),
+        "MeshGangs USB role verification must precede onboarding",
+    )
+    select_device_flow = js.split("function selectDevice", 1)[1].split(
+        "function renderProfiles", 1
+    )[0]
+    select_profile_flow = js.split("function selectProfile", 1)[1].split(
+        "function updateContinueState", 1
+    )[0]
+    flash_selected_flow = js.split("async function flashSelected", 1)[1].split(
+        "function downloadBytes", 1
+    )[0]
+    require(
+        "resetMeshGangsDeviceWorkflow();" in select_device_flow
+        and "resetMeshGangsDeviceWorkflow();" in select_profile_flow
+        and "state.meshGangsProvisioned" in flash_selected_flow
+        and "resetMeshGangsDeviceWorkflow();" in flash_selected_flow,
+        "each new device workflow must clear prior MeshGangs provisioning state",
+    )
+    capture_handoff_flow = js.split("function captureMeshGangsEnrollment", 1)[1].split(
+        "function saveMeshGangsHandoff", 1
+    )[0]
+    save_handoff_flow = js.split("function saveMeshGangsHandoff", 1)[1].split(
+        "function isMeshGangsSidecar", 1
+    )[0]
+    require(
+        "sessionStorage.removeItem(meshGangsHandoffKey)" in capture_handoff_flow
+        and "state.meshGangsRole = match &&" in capture_handoff_flow
+        and "sessionStorage.setItem(meshGangsHandoffKey" in save_handoff_flow
+        and "meshgangs-wifi-password" not in save_handoff_flow,
+        "account handoff must preserve the chosen role without storing the Wi-Fi password",
+    )
+    meshgangs_html = html.split('id="meshgangs-setup"', 1)[1].split(
+        'id="to-flash"', 1
+    )[0] + html.split('id="meshgangs-onboarding"', 1)[1].split(
+        'id="deskos-onboarding"', 1
+    )[0]
+    require("192.168.4.1" not in meshgangs_html, "MeshGangs setup must not mention a captive portal address")
+    server = (ROOT / "deploy" / "server.py").read_text(encoding="utf-8")
+    for header_contract in (
+        '"Content-Security-Policy"',
+        '"https://mg.canadaverse.org https://github.com "',
+        '"https://release-assets.githubusercontent.com; frame-ancestors \'none\'; "',
+        '"Cross-Origin-Opener-Policy", "same-origin"',
+        '"Cross-Origin-Resource-Policy", "same-site"',
+        "usb=(self), serial=(self)",
+    ):
+        require(header_contract in server, f"missing flasher security header: {header_contract}")
     ulp_profiles = [
         (device, profile)
         for device in catalog["devices"]
@@ -214,8 +307,9 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260822ulpfix" in html, "flasher JS cache bust is stale")
-    require("flasher.css?v=20260822ulpfix" in html, "flasher CSS cache bust is stale")
+    require("flasher.js?v=20260822mgbbs3" in html, "flasher JS cache bust is stale")
+    require("flasher.css?v=20260822mgbbs3" in html, "flasher CSS cache bust is stale")
+    require(".hero-orbit, .sidecar-promo" not in css, "Aircraft Sidecar download must remain visible")
     require("/assets/devices/${escapeHtml(device.id)}.svg" in js, "device cards must use hardware-specific SVGs")
     for device in catalog["devices"]:
         asset = ROOT / "assets" / "devices" / f"{device['id']}.svg"
@@ -238,7 +332,12 @@ def main() -> int:
         require(scene_contract in html + css + scene_js, f"missing scene effect: {scene_contract}")
     require("pointer-events: none" in css, "scene canvas must not intercept flashing input")
     require("pointermove" in scene_js and "pointerdown" in scene_js, "cursor trail or ripple missing")
-    require("localStorage" not in js and "sessionStorage" not in js, "credentials/state must not be browser-persisted")
+    require("localStorage" not in js, "credentials/state must not be persistently stored")
+    require(
+        js.count("sessionStorage")
+        == (capture_handoff_flow + save_handoff_flow).count("sessionStorage"),
+        "session storage is limited to the non-secret account handoff",
+    )
     print(f"Verified flasher: 13 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
     return 0
 

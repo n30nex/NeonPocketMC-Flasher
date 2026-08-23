@@ -42,7 +42,7 @@ Normal updates preserve bootloader, partitions, identity, contacts, channels, an
 
 The WDG Mesh Sidecar profile is deliberately live-only. It has no WiGLE import, historical scan, stored upload backlog, catch-up, migration, or backfill path. After flashing, use the device's temporary setup Wi-Fi to store a 2.4 GHz hotspot and WDGWars API key directly on the device; the flasher does not receive or store either credential.
 
-The MeshGangs profile is a separate app-only Heltec V3 release. Its setup portal stores a 2.4 GHz hotspot and a key created at `mg.canadaverse.org`; the flasher never receives either credential. The firmware persists only bounded scoring metadata and canonical packet digests, never message text or raw packets. Android patrol pairing requires the random six-digit code shown on the V3.
+The MeshGangs profile is a separate app-only Heltec V3 release with no captive portal or setup access point. An authenticated, ten-minute handoff from `mg.canadaverse.org` lets the flasher create one key and configure exactly one role over USB: Home USB (the desktop uploader owns the device key), Home Wi-Fi (the radio owns the device key and 2.4 GHz network details), or Mobile BLE (the radio receives only a scoped relay key while Android supplies GPS and internet). Enrollment secrets remain in the tab only until USB verification finishes; Home USB can export its one-time desktop setup file. The firmware persists only bounded scoring metadata and canonical packet digests, never message text or raw packets. Android patrol pairing requires the random six-digit code shown on the V3.
 
 ## Browser requirements
 

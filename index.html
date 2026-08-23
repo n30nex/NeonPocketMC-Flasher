@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#050817">
+  <meta name="theme-color" content="#000806">
   <meta name="description" content="Guided browser flasher and onboarding for the NeonPocketMC MeshCore firmware suite.">
   <title>NeonPocketMC Flasher</title>
   <link rel="icon" href="/assets/neonpocketmc-mark-64.png">
   <link rel="apple-touch-icon" href="/assets/neonpocketmc-mark.png">
-  <link rel="stylesheet" href="/css/flasher.css?v=20260822ulpfix">
+  <link rel="stylesheet" href="/css/flasher.css?v=20260822mgbbs3">
   <script src="/scene.js?v=20260815scene1" defer></script>
-  <script type="module" src="/flasher.js?v=20260822ulpfix"></script>
+  <script type="module" src="/flasher.js?v=20260822mgbbs3"></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -18,24 +18,24 @@
   <header class="site-header">
     <a class="brand" href="/" aria-label="NeonPocketMC Flasher home">
       <img src="/assets/neonpocketmc-mark.png" alt="">
-      <span><b>NEONPOCKET</b><small>FLASHER</small></span>
+      <span><b>NEONPOCKET</b><small>BETA 1.0 // USB BBS</small></span>
     </a>
-    <div class="header-status"><span class="status-dot"></span><span id="suite-version">Loading catalog…</span></div>
+    <div class="header-status"><span class="status-dot"></span><span id="suite-version">DIALING CATALOG…</span><button id="modem-audio-toggle" class="modem-toggle" type="button" aria-pressed="false">56K AUDIO: OFF</button></div>
   </header>
 
   <div class="scene-ticker" aria-label="Canadaverse mesh scene status">
     <div class="scene-ticker-track">
-      <span>CANADAVERSE // ACCESS GRANTED // MESHCORE ONLINE // VERIFY BEFORE FLASH // PACKETS NEVER SLEEP //</span>
-      <span aria-hidden="true">CANADAVERSE // ACCESS GRANTED // MESHCORE ONLINE // VERIFY BEFORE FLASH // PACKETS NEVER SLEEP //</span>
+      <span>ATDT MG-8093 // CARRIER 56000 // USB NODE NEGOTIATION // SHA-256 VERIFY // CONFIGURE // TEST // DISCONNECT //</span>
+      <span aria-hidden="true">ATDT MG-8093 // CARRIER 56000 // USB NODE NEGOTIATION // SHA-256 VERIFY // CONFIGURE // TEST // DISCONNECT //</span>
     </div>
   </div>
 
   <main>
     <section class="hero">
       <div>
-        <p class="eyebrow">FLASH · VERIFY · CONFIGURE</p>
-        <h1>FLASH THE <span>MESH.</span></h1>
-        <p class="hero-copy">Choose a device and build. Flash, restart, configure.</p>
+        <p class="eyebrow">CANADAVERSE DEVICE BBS // SECURE WEB SERIAL</p>
+        <h1>DIAL. FLASH. <span>VERIFY.</span></h1>
+        <p class="hero-copy">One guided line: choose hardware, choose its job, connect USB, then follow each verified prompt.</p>
       </div>
       <div class="hero-orbit" aria-hidden="true">
         <img src="/assets/neonpocketmc-mark.png" alt="">
@@ -94,6 +94,23 @@
       </div>
       <div id="ambiguous-confirm" class="confirm-box hidden">
         <label><input id="model-confirm" type="checkbox"> I physically checked the board label and selected the correct model. ESP32-S3 alone cannot distinguish V3 from V4.</label>
+      </div>
+      <div id="meshgangs-setup" class="preflash-config hidden">
+        <div class="compact-heading"><h3>Choose one MeshGangs role</h3><span id="meshgangs-account-state" class="setup-state pending">Account link required</span></div>
+        <div class="role-grid" role="radiogroup" aria-label="MeshGangs collector role">
+          <label class="choice"><input type="radio" name="meshgangs-role" value="usb"><span><b>Home USB</b><small>Windows/Linux uploader owns the key. No radio Wi-Fi.</small></span></label>
+          <label class="choice"><input type="radio" name="meshgangs-role" value="wifi"><span><b>Home Wi-Fi</b><small>Standalone 2.4 GHz collector.</small></span></label>
+          <label class="choice selected"><input type="radio" name="meshgangs-role" value="mobile" checked><span><b>Mobile BLE</b><small>Android owns internet and GPS. No radio Wi-Fi.</small></span></label>
+        </div>
+        <div class="field-grid compact-fields">
+          <label><span>Radio label</span><input id="meshgangs-label" maxlength="60" value="MeshGangs V3" autocomplete="off"></label>
+        </div>
+        <div id="meshgangs-wifi-fields" class="field-grid compact-fields hidden">
+          <label><span>2.4 GHz Wi-Fi name</span><input id="meshgangs-wifi-ssid" maxlength="32" autocomplete="off" spellcheck="false"></label>
+          <label><span>Wi-Fi password</span><input id="meshgangs-wifi-password" type="password" maxlength="63" autocomplete="new-password"></label>
+        </div>
+        <div class="account-handoff"><span>The flasher creates and configures the right key during this verified USB workflow.</span><a id="meshgangs-enroll-link" href="https://mg.canadaverse.org/devices/flasher/">Link MeshGangs account</a></div>
+        <p class="form-note">Setup stays on this HTTPS page and the USB cable. The radio never broadcasts a setup network or captive portal.</p>
       </div>
       <div class="actions"><button id="to-flash" class="primary" disabled>Review and flash <span>→</span></button></div>
     </section>
@@ -165,15 +182,14 @@
 
       <div id="meshgangs-onboarding" class="onboarding hidden">
         <div class="success-mark">✓</div>
-        <h3>MeshGangs Territory Sidecar is ready</h3>
-        <p>This qualified Heltec V3 listens passively for Canada-preset MeshCore traffic, keeps a privacy-safe offline queue, and uploads only packet digests and scoring metadata to your MeshGangs account.</p>
-        <div class="checklist">
-          <label><input type="checkbox"> The <strong>MESHGANGS</strong> status screen is visible.</label>
-          <label><input type="checkbox"> I joined the temporary <strong>MG-V3</strong> setup Wi-Fi using the 8-digit PIN on the device and opened <strong>192.168.4.1</strong>.</label>
-          <label><input type="checkbox"> I entered a 2.4 GHz hotspot and a MeshGangs device key from <strong>mg.canadaverse.org</strong>.</label>
-          <label><input type="checkbox"> I installed the signed Android APK, entered the random 6-digit Bluetooth code shown on this V3, and the device reports <strong>MG READY</strong>.</label>
+        <h3 id="meshgangs-ready-title">MeshGangs V3 is ready</h3>
+        <p id="meshgangs-ready-copy"></p>
+        <div id="meshgangs-ready-checks" class="checklist"></div>
+        <div id="meshgangs-usb-key" class="secret-result hidden">
+          <small>Desktop uploader key · shown once</small><code id="meshgangs-usb-key-value"></code>
+          <div class="actions split"><button id="meshgangs-copy-key" class="secondary" type="button">Copy key</button><button id="meshgangs-download-key" class="secondary" type="button">Download setup file</button></div>
         </div>
-        <p><strong>Privacy:</strong> the firmware rejects message text and raw packet bytes. GPS stays in the Android patrol channel and is never sent over LoRa.</p>
+        <p><strong>Privacy:</strong> message text and raw packets are rejected. Mobile GPS stays between Android and MeshGangs; it is never sent over LoRa.</p>
       </div>
 
       <div id="deskos-onboarding" class="onboarding hidden">
