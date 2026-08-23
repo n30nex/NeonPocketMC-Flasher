@@ -28,12 +28,15 @@ def main() -> int:
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
     require(len(catalog["devices"]) == 13, "expected thirteen hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 36, f"expected 36 profiles, found {profile_count}")
+    require(profile_count == 42, f"expected 42 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
     for required_id in (
         "device-grid",
+        "device-family-bar",
+        "device-family-name",
+        "change-device-family",
         "profile-grid",
         "flash-button",
         "verify-boot",
@@ -94,7 +97,7 @@ def main() -> int:
     for device in catalog["devices"]:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
-            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar", "meshgangs-sidecar"), f"bad onboarding: {profile['id']}")
+            require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "repeater-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar", "meshgangs-sidecar"), f"bad onboarding: {profile['id']}")
             for kind in ("update", "recovery", "bridge"):
                 if kind not in profile:
                     continue
@@ -107,13 +110,25 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 58, f"expected 58 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 70, f"expected 70 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     heltec_v3 = next(device for device in catalog["devices"] if device["id"] == "heltec-v3")
     heltec_v3_profile = next(device for device in profiles["devices"] if device["id"] == "heltec-v3")
     require((heltec_v3["usb_vid"], heltec_v3["usb_pid"]) == (0x10C4, 0xEA60), "bad Heltec V3 CP2102 USB identity")
     require((heltec_v3_profile["usb_vid"], heltec_v3_profile["usb_pid"]) == (0x10C4, 0xEA60), "bad Heltec V3 source USB identity")
+    for device_id in ("heltec-v3", "heltec-v4"):
+        device = next(item for item in catalog["devices"] if item["id"] == device_id)
+        ultimate = {profile["id"]: profile for profile in device["profiles"] if profile["id"].startswith("ultimate-")}
+        require(set(ultimate) == {"ultimate-ble-companion-oled", "ultimate-web-companion-oled", "ultimate-repeater-web-oled"}, f"bad Ultimate profile set: {device_id}")
+        require(ultimate["ultimate-repeater-web-oled"]["onboarding"] == "repeater-web", f"bad repeater onboarding: {device_id}")
+
+    for family_id in ("radiocore", "heltec-oled", "solar-maker", "deskos"):
+        require(f'id: "{family_id}"' in js, f"missing hardware family: {family_id}")
+    require("data-device-family=" in js, "hardware family selection is missing")
+    require("state.deviceFamily = deviceFamilies.find" in js, "deep links must restore their hardware family")
+    require('const screenLabel = /oled/i.test(state.device.display) ? "OLED" : "TFT"' in js, "screen onboarding must match OLED versus TFT hardware")
+    require("Ultimate BLE/Web companions" in (ROOT / "README.md").read_text(encoding="utf-8"), "Ultimate Heltec roles are missing from README")
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
@@ -313,8 +328,8 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260822mgbbs3" in html, "flasher JS cache bust is stale")
-    require("flasher.css?v=20260822mgbbs3" in html, "flasher CSS cache bust is stale")
+    require("flasher.js?v=20260823families1" in html, "flasher JS cache bust is stale")
+    require("flasher.css?v=20260823families1" in html, "flasher CSS cache bust is stale")
     require(".hero-orbit, .sidecar-promo" not in css, "Aircraft Sidecar download must remain visible")
     require("/assets/devices/${escapeHtml(device.id)}.svg" in js, "device cards must use hardware-specific SVGs")
     for device in catalog["devices"]:

@@ -6,6 +6,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const state = {
   catalog: null,
+  deviceFamily: null,
   device: null,
   profile: null,
   install: "update",
@@ -25,6 +26,33 @@ const state = {
   meshGangsUsbKey: null,
   modemAudio: false,
 };
+
+const deviceFamilies = [
+  {
+    id: "radiocore",
+    name: "RadioCore",
+    summary: "RCC6 and RC52 companions, services and repeaters.",
+    deviceIds: ["rc52-companion", "rc52-headless-companion", "rc52-server", "rcc6-companion", "rcc6-headless-companion", "rcc6-server"],
+  },
+  {
+    id: "heltec-oled",
+    name: "Heltec OLED",
+    summary: "WiFi LoRa 32 V3 and V4 / V4.3 builds.",
+    deviceIds: ["heltec-v3", "heltec-v4"],
+  },
+  {
+    id: "solar-maker",
+    name: "Solar + Maker",
+    summary: "RAK and XIAO ultra-low-power solar repeaters.",
+    deviceIds: ["rak4631-ulp", "rak3401-1w-ulp", "xiao-esp32s3-ulp", "xiao-nrf52840-ulp"],
+  },
+  {
+    id: "deskos",
+    name: "DeskOS",
+    summary: "SenseCAP Indicator D1L desktop console.",
+    deviceIds: ["deskos-d1l"],
+  },
+];
 
 const meshGangsRoles = new Set(["usb", "wifi", "mobile"]);
 const meshGangsHandoffKey = "neonpocket.meshgangs.handoff.v1";
@@ -211,7 +239,34 @@ function resetMeshGangsDeviceWorkflow() {
 }
 
 function renderDevices() {
-  $("#device-grid").innerHTML = state.catalog.devices.map((device) => `
+  const grid = $("#device-grid");
+  const family = deviceFamilies.find((candidate) => candidate.id === state.deviceFamily);
+  $("#device-family-bar").classList.toggle("hidden", !family);
+  grid.classList.toggle("family-grid", !family);
+
+  if (!family) {
+    grid.innerHTML = deviceFamilies.map((candidate) => {
+      const devices = state.catalog.devices.filter((device) => candidate.deviceIds.includes(device.id));
+      const builds = devices.reduce((total, device) => total + device.profiles.length, 0);
+      return `
+        <button class="device-card family-card" data-device-family="${escapeHtml(candidate.id)}">
+          <span class="card-kicker">HARDWARE FAMILY</span>
+          <h3>${escapeHtml(candidate.name)}</h3>
+          <p>${escapeHtml(candidate.summary)}</p>
+          <div class="tags"><span class="tag">${devices.length} device${devices.length === 1 ? "" : "s"}</span><span class="tag">${builds} build${builds === 1 ? "" : "s"}</span></div>
+        </button>
+      `;
+    }).join("");
+    $$("[data-device-family]").forEach((card) => card.addEventListener("click", () => {
+      state.deviceFamily = card.dataset.deviceFamily;
+      renderDevices();
+    }));
+    return;
+  }
+
+  $("#device-family-name").textContent = family.name;
+  const devices = state.catalog.devices.filter((device) => family.deviceIds.includes(device.id));
+  grid.innerHTML = devices.map((device) => `
     <button class="device-card" data-device="${escapeHtml(device.id)}">
       <span class="device-art" aria-hidden="true"><img src="/assets/devices/${escapeHtml(device.id)}.svg" alt="" width="480" height="480" loading="lazy"></span>
       <span class="card-kicker">${escapeHtml(device.family)}</span>
@@ -221,6 +276,22 @@ function renderDevices() {
     </button>
   `).join("");
   $$("[data-device]").forEach((card) => card.addEventListener("click", () => selectDevice(card.dataset.device)));
+}
+
+function showDeviceFamilies() {
+  resetMeshGangsDeviceWorkflow();
+  state.deviceFamily = null;
+  state.device = null;
+  state.profile = null;
+  state.install = "update";
+  state.maxStep = 1;
+  $$(".step").forEach((button, index) => {
+    button.disabled = index > 0;
+    button.classList.remove("done");
+  });
+  $("#selected-device-copy").textContent = "";
+  renderDevices();
+  goToStep(1);
 }
 
 function selectDevice(id) {
@@ -862,12 +933,13 @@ function prepareOnboarding() {
   const wdgSidecar = type === "wdg-sidecar";
   const meshGangs = type === "meshgangs-sidecar";
   const companion = type.startsWith("companion");
+  const repeaterWeb = type === "repeater-web";
   const ulp = type === "ulp-repeater";
-  $("#companion-onboarding").classList.toggle("hidden", !companion);
+  $("#companion-onboarding").classList.toggle("hidden", !(companion || repeaterWeb));
   $("#deskos-onboarding").classList.toggle("hidden", !deskos);
   $("#wdg-onboarding").classList.toggle("hidden", !wdgSidecar);
   $("#meshgangs-onboarding").classList.toggle("hidden", !meshGangs);
-  $("#server-onboarding").classList.toggle("hidden", companion || deskos || wdgSidecar || meshGangs);
+  $("#server-onboarding").classList.toggle("hidden", companion || repeaterWeb || deskos || wdgSidecar || meshGangs);
   if (meshGangs) {
     renderMeshGangsOnboarding();
     return;
@@ -882,28 +954,35 @@ function prepareOnboarding() {
     requestAnimationFrame(() => $("#deskos-required-action").focus({ preventScroll: true }));
     return;
   }
-  if (companion) {
+  if (companion || repeaterWeb) {
     const usb = type === "companion-usb";
     const web = type === "companion-web";
     const headless = type === "companion-headless";
     const headlessWeb = web && state.device.id === "rcc6-headless-companion";
-    $("#companion-instructions").textContent = headlessWeb
+    const screenLabel = /oled/i.test(state.device.display) ? "OLED" : "TFT";
+    $("#companion-instructions").textContent = repeaterWeb
+      ? "Read the setup AP, key and address from the OLED. Join it, open 192.168.4.1, then configure local Wi-Fi and the repeater. The OLED shows the LAN IP after joining. This role has no BLE, companion TCP or MQTT."
+      : headlessWeb
       ? "Keep USB connected after restart and open the 115200-baud serial console below. It prints the setup AP name, password and address. Complete Local Wi-Fi Setup in the WebUI; after the device joins your LAN, the console prints its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
       : web
-        ? "Read the AP name, password and address from the TFT, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the TFT shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only."
+        ? `Read the AP name, password and address from the ${screenLabel}, connect to it, and complete Local Wi-Fi Setup in the WebUI. After it joins your LAN, the ${screenLabel} shows its new IP. TCP/5000 is a full companion/admin interface for trusted LANs only.`
       : usb
         ? "Keep USB connected and open a desktop MeshCore companion that supports the standard serial transport. Select the NeonPocket serial device; this is the binary companion protocol, not the text CLI."
         : headless
           ? "Open a standard MeshCore companion app, select the advertised NeonPocket device, and pair with PIN 123456. This build has no display; radio preset, name and channels are managed through the companion app."
           : "Open a standard MeshCore companion app, select the advertised NeonPocket device, and use the PIN shown on its screen. Radio preset, name and channels are managed through the companion app.";
-    $("#companion-check-connect").textContent = usb
+    $("#companion-check-connect").textContent = repeaterWeb
+      ? " I opened the protected repeater dashboard using the OLED setup key."
+      : usb
       ? " My desktop companion connected to the NeonPocket serial device."
       : web
         ? " I connected to the setup AP or the displayed local-network address."
         : headless
           ? " I paired or connected using PIN 123456."
           : " I paired or connected using the PIN shown by the device.";
-    $("#companion-check-sync").textContent = " My identity, contacts and channels loaded correctly.";
+    $("#companion-check-sync").textContent = repeaterWeb
+      ? " The node name, legal radio preset, forwarding and LAN address are correct."
+      : " My identity, contacts and channels loaded correctly.";
     return;
   }
   const network = type.includes("network");
@@ -1526,6 +1605,7 @@ function populateOptions() {
 
 function bindEvents() {
   $("#modem-audio-toggle").addEventListener("click", toggleModemAudio);
+  $("#change-device-family").addEventListener("click", showDeviceFamilies);
   $$('[data-go]').forEach((button) => button.addEventListener("click", () => goToStep(Number(button.dataset.go))));
   $$('input[name="install"]').forEach((radio) => radio.addEventListener("change", () => selectInstallMode(radio.value)));
   $("#model-confirm").addEventListener("change", updateContinueState);
@@ -1581,7 +1661,6 @@ async function init() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     state.catalog = await response.json();
     $("#suite-version").textContent = `Suite ${state.catalog.suite_version}`;
-    renderDevices();
     populateOptions();
     const params = new URLSearchParams(location.search);
     const deviceId = params.get("device");
@@ -1589,8 +1668,12 @@ async function init() {
     const device = state.catalog.devices.find((candidate) => candidate.id === deviceId);
     const profile = device?.profiles.find((candidate) => candidate.id === profileId);
     if (device && profile) {
+      state.deviceFamily = deviceFamilies.find((family) => family.deviceIds.includes(device.id))?.id || null;
+      renderDevices();
       selectDevice(device.id);
       selectProfile(profile.id);
+    } else {
+      renderDevices();
     }
   } catch (error) {
     $("#compatibility").textContent = `Firmware catalog failed to load: ${error.message}`;
