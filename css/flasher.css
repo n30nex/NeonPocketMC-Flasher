@@ -268,6 +268,8 @@ h1 span { color: var(--lime); background: none; filter: none; }
 .panel-heading h2 { font-size: clamp(17px, 2.5vw, 22px); letter-spacing: .02em; text-transform: uppercase; }
 .panel-heading > p { font-size: 11px; line-height: 1.4; }
 .card-grid { gap: 7px; }
+.family-grid { grid-template-columns: repeat(2, 1fr); }
+.family-card { min-height: 108px; }
 .device-card, .profile-card { min-height: 132px; padding: 11px; border-radius: 0; background: #020b09; transition: none; }
 .device-card:hover, .profile-card:hover { transform: translate(1px, 1px); }
 .device-card.selected, .profile-card.selected { box-shadow: inset 3px 0 0 var(--lime); }
@@ -332,7 +334,7 @@ footer { min-height: 54px; font-size: 9px; }
   .hero-copy { font-size: 10px; }
   .sidecar-promo { grid-template-columns: 1fr; }
   .panel { padding: 10px; border-radius: 0; }
-  .card-grid, .install-mode, .field-grid, .summary-card { grid-template-columns: 1fr; }
+  .card-grid, .family-grid, .install-mode, .field-grid, .summary-card { grid-template-columns: 1fr; }
   .device-card, .profile-card { min-height: 0; }
   .step { min-height: 34px; }
 }

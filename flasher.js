@@ -6,6 +6,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const state = {
   catalog: null,
+  deviceFamily: null,
   device: null,
   profile: null,
   install: "update",
@@ -25,6 +26,33 @@ const state = {
   meshGangsUsbKey: null,
   modemAudio: false,
 };
+
+const deviceFamilies = [
+  {
+    id: "radiocore",
+    name: "RadioCore",
+    summary: "RCC6 and RC52 companions, services and repeaters.",
+    deviceIds: ["rc52-companion", "rc52-headless-companion", "rc52-server", "rcc6-companion", "rcc6-headless-companion", "rcc6-server"],
+  },
+  {
+    id: "heltec-oled",
+    name: "Heltec OLED",
+    summary: "WiFi LoRa 32 V3 and V4 / V4.3 builds.",
+    deviceIds: ["heltec-v3", "heltec-v4"],
+  },
+  {
+    id: "solar-maker",
+    name: "Solar + Maker",
+    summary: "RAK and XIAO ultra-low-power solar repeaters.",
+    deviceIds: ["rak4631-ulp", "rak3401-1w-ulp", "xiao-esp32s3-ulp", "xiao-nrf52840-ulp"],
+  },
+  {
+    id: "deskos",
+    name: "DeskOS",
+    summary: "SenseCAP Indicator D1L desktop console.",
+    deviceIds: ["deskos-d1l"],
+  },
+];
 
 const meshGangsRoles = new Set(["usb", "wifi", "mobile"]);
 const meshGangsHandoffKey = "neonpocket.meshgangs.handoff.v1";
@@ -211,7 +239,34 @@ function resetMeshGangsDeviceWorkflow() {
 }
 
 function renderDevices() {
-  $("#device-grid").innerHTML = state.catalog.devices.map((device) => `
+  const grid = $("#device-grid");
+  const family = deviceFamilies.find((candidate) => candidate.id === state.deviceFamily);
+  $("#device-family-bar").classList.toggle("hidden", !family);
+  grid.classList.toggle("family-grid", !family);
+
+  if (!family) {
+    grid.innerHTML = deviceFamilies.map((candidate) => {
+      const devices = state.catalog.devices.filter((device) => candidate.deviceIds.includes(device.id));
+      const builds = devices.reduce((total, device) => total + device.profiles.length, 0);
+      return `
+        <button class="device-card family-card" data-device-family="${escapeHtml(candidate.id)}">
+          <span class="card-kicker">HARDWARE FAMILY</span>
+          <h3>${escapeHtml(candidate.name)}</h3>
+          <p>${escapeHtml(candidate.summary)}</p>
+          <div class="tags"><span class="tag">${devices.length} device${devices.length === 1 ? "" : "s"}</span><span class="tag">${builds} build${builds === 1 ? "" : "s"}</span></div>
+        </button>
+      `;
+    }).join("");
+    $$("[data-device-family]").forEach((card) => card.addEventListener("click", () => {
+      state.deviceFamily = card.dataset.deviceFamily;
+      renderDevices();
+    }));
+    return;
+  }
+
+  $("#device-family-name").textContent = family.name;
+  const devices = state.catalog.devices.filter((device) => family.deviceIds.includes(device.id));
+  grid.innerHTML = devices.map((device) => `
     <button class="device-card" data-device="${escapeHtml(device.id)}">
       <span class="device-art" aria-hidden="true"><img src="/assets/devices/${escapeHtml(device.id)}.svg" alt="" width="480" height="480" loading="lazy"></span>
       <span class="card-kicker">${escapeHtml(device.family)}</span>
@@ -221,6 +276,22 @@ function renderDevices() {
     </button>
   `).join("");
   $$("[data-device]").forEach((card) => card.addEventListener("click", () => selectDevice(card.dataset.device)));
+}
+
+function showDeviceFamilies() {
+  resetMeshGangsDeviceWorkflow();
+  state.deviceFamily = null;
+  state.device = null;
+  state.profile = null;
+  state.install = "update";
+  state.maxStep = 1;
+  $$(".step").forEach((button, index) => {
+    button.disabled = index > 0;
+    button.classList.remove("done");
+  });
+  $("#selected-device-copy").textContent = "";
+  renderDevices();
+  goToStep(1);
 }
 
 function selectDevice(id) {
@@ -1533,6 +1604,7 @@ function populateOptions() {
 
 function bindEvents() {
   $("#modem-audio-toggle").addEventListener("click", toggleModemAudio);
+  $("#change-device-family").addEventListener("click", showDeviceFamilies);
   $$('[data-go]').forEach((button) => button.addEventListener("click", () => goToStep(Number(button.dataset.go))));
   $$('input[name="install"]').forEach((radio) => radio.addEventListener("change", () => selectInstallMode(radio.value)));
   $("#model-confirm").addEventListener("change", updateContinueState);
@@ -1588,7 +1660,6 @@ async function init() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     state.catalog = await response.json();
     $("#suite-version").textContent = `Suite ${state.catalog.suite_version}`;
-    renderDevices();
     populateOptions();
     const params = new URLSearchParams(location.search);
     const deviceId = params.get("device");
@@ -1596,8 +1667,12 @@ async function init() {
     const device = state.catalog.devices.find((candidate) => candidate.id === deviceId);
     const profile = device?.profiles.find((candidate) => candidate.id === profileId);
     if (device && profile) {
+      state.deviceFamily = deviceFamilies.find((family) => family.deviceIds.includes(device.id))?.id || null;
+      renderDevices();
       selectDevice(device.id);
       selectProfile(profile.id);
+    } else {
+      renderDevices();
     }
   } catch (error) {
     $("#compatibility").textContent = `Firmware catalog failed to load: ${error.message}`;

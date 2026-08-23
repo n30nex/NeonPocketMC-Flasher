@@ -34,6 +34,9 @@ def main() -> int:
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
     for required_id in (
         "device-grid",
+        "device-family-bar",
+        "device-family-name",
+        "change-device-family",
         "profile-grid",
         "flash-button",
         "verify-boot",
@@ -119,6 +122,11 @@ def main() -> int:
         ultimate = {profile["id"]: profile for profile in device["profiles"] if profile["id"].startswith("ultimate-")}
         require(set(ultimate) == {"ultimate-ble-companion-oled", "ultimate-web-companion-oled", "ultimate-repeater-web-oled"}, f"bad Ultimate profile set: {device_id}")
         require(ultimate["ultimate-repeater-web-oled"]["onboarding"] == "repeater-web", f"bad repeater onboarding: {device_id}")
+
+    for family_id in ("radiocore", "heltec-oled", "solar-maker", "deskos"):
+        require(f'id: "{family_id}"' in js, f"missing hardware family: {family_id}")
+    require("data-device-family=" in js, "hardware family selection is missing")
+    require("state.deviceFamily = deviceFamilies.find" in js, "deep links must restore their hardware family")
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
@@ -318,8 +326,8 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260822mgbbs3" in html, "flasher JS cache bust is stale")
-    require("flasher.css?v=20260822mgbbs3" in html, "flasher CSS cache bust is stale")
+    require("flasher.js?v=20260823families1" in html, "flasher JS cache bust is stale")
+    require("flasher.css?v=20260823families1" in html, "flasher CSS cache bust is stale")
     require(".hero-orbit, .sidecar-promo" not in css, "Aircraft Sidecar download must remain visible")
     require("/assets/devices/${escapeHtml(device.id)}.svg" in js, "device cards must use hardware-specific SVGs")
     for device in catalog["devices"]:

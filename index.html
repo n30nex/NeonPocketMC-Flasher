@@ -8,9 +8,9 @@
   <title>NeonPocketMC Flasher</title>
   <link rel="icon" href="/assets/neonpocketmc-mark-64.png">
   <link rel="apple-touch-icon" href="/assets/neonpocketmc-mark.png">
-  <link rel="stylesheet" href="/css/flasher.css?v=20260822mgbbs3">
+  <link rel="stylesheet" href="/css/flasher.css?v=20260823families1">
   <script src="/scene.js?v=20260815scene1" defer></script>
-  <script type="module" src="/flasher.js?v=20260822mgbbs3"></script>
+  <script type="module" src="/flasher.js?v=20260823families1"></script>
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -45,18 +45,6 @@
 
     <aside id="compatibility" class="notice hidden" role="alert"></aside>
 
-    <section class="sidecar-promo" aria-labelledby="aircraft-sidecar-title">
-      <div>
-        <p class="card-kicker">NEW · WINDOWS 10/11 X64</p>
-        <h2 id="aircraft-sidecar-title">Put an RTL-SDR to work for WDG.</h2>
-        <p>WDG Aircraft Sidecar is a portable ADS-B uploader with no Docker or separate Python install required.</p>
-      </div>
-      <div class="sidecar-actions">
-        <a class="sidecar-download" href="https://github.com/n30nex/WDG-Aircraft-Sidecar/releases/download/v1.1.0/WDG-Aircraft-Sidecar-Windows-x64-v1.1.0.zip">Download v1.1.0</a>
-        <a href="https://github.com/n30nex/WDG-Aircraft-Sidecar" target="_blank" rel="noopener noreferrer">Windows + Linux →</a>
-      </div>
-    </section>
-
     <nav class="stepper" aria-label="Setup progress">
       <button class="step active" data-go="1"><b>1</b><span>Device</span></button>
       <button class="step" data-go="2" disabled><b>2</b><span>Build</span></button>
@@ -68,7 +56,11 @@
     <section class="panel active" data-panel="1">
       <div class="panel-heading">
         <div><p class="eyebrow">STEP 1</p><h2>Choose device</h2></div>
-        <p>USB hardware is checked before flashing.</p>
+        <p>Choose a hardware family first. USB hardware is checked before flashing.</p>
+      </div>
+      <div id="device-family-bar" class="compact-heading hidden">
+        <div><p class="eyebrow">HARDWARE FAMILY</p><h3 id="device-family-name"></h3></div>
+        <button id="change-device-family" class="secondary" type="button">All hardware families</button>
       </div>
       <div id="device-grid" class="card-grid"></div>
     </section>
@@ -304,6 +296,18 @@
         <div class="console-input"><input id="serial-command" placeholder="Enter a MeshCore CLI command"><button id="send-command" class="secondary" type="button" disabled>Send</button></div>
       </details>
       <div id="completion" class="completion hidden"><b>Done.</b><span>You can disconnect USB.</span></div>
+    </section>
+
+    <section class="sidecar-promo" aria-labelledby="aircraft-sidecar-title">
+      <div>
+        <p class="card-kicker">ALSO FROM CANADAVERSE · WINDOWS 10/11 X64</p>
+        <h2 id="aircraft-sidecar-title">Put an RTL-SDR to work for WDG.</h2>
+        <p>WDG Aircraft Sidecar is a portable ADS-B uploader with no Docker or separate Python install required.</p>
+      </div>
+      <div class="sidecar-actions">
+        <a class="sidecar-download" href="https://github.com/n30nex/WDG-Aircraft-Sidecar/releases/download/v1.1.0/WDG-Aircraft-Sidecar-Windows-x64-v1.1.0.zip">Download v1.1.0</a>
+        <a href="https://github.com/n30nex/WDG-Aircraft-Sidecar" target="_blank" rel="noopener noreferrer">Windows + Linux →</a>
+      </div>
     </section>
   </main>
 
