@@ -10,9 +10,9 @@ permissions:
 
 jobs:
   verify:
-    # A JSON repository variable can temporarily select a restricted self-hosted
-    # runner when hosted minutes are unavailable. Unset keeps the normal runner.
-    runs-on: ${{ fromJSON(vars.NEONPOCKET_RUNS_ON || '"ubuntu-24.04"') }}
+    # Pull-request code always runs on an isolated GitHub-hosted runner. The
+    # temporary repository override is available only to trusted main pushes.
+    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && '["ubuntu-24.04"]' || vars.NEONPOCKET_RUNS_ON || '["ubuntu-24.04"]') }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
