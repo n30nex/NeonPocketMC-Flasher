@@ -234,7 +234,7 @@
           "id": "meshgangs-sidecar",
           "product": "meshgangs-sidecar",
           "name": "MeshGangs Radio Scout",
-          "summary": "Beta 1.0 MeshCore territory scout with verified USB setup and durable offline collection.",
+          "summary": "Beta 1.0 MeshCore territory scout with verified USB setup and live-only collection.",
           "transport": "BLE + Wi-Fi",
           "features": [
             "OLED",
