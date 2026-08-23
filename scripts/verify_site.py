@@ -191,17 +191,23 @@ def main() -> int:
     require(len(meshgangs_profiles) == 1, "expected one launch-qualified MeshGangs profile")
     require({device["id"] for device, profile in meshgangs_profiles} == {"heltec-v3"}, "wrong MeshGangs hardware matrix")
     expected_meshgangs = {
-        "heltec-v3": ("meshgangs-heltec-v3-v0.1.0-beta.15.bin", 1_303_152, "73429d1a98978803d25be72c7c03396bfd47e66712446307f7efa2755db083d9"),
+        "heltec-v3": (
+            "meshgangs-heltec-v3-v0.1.0-beta.16.bin",
+            1_303_152,
+            "5cc3e1937a30d1175587e4877f80d9780d1fa74e8bb1879e18de475b092fdaf4",
+            "21ad9880e84fba802003c815833ca4b5",
+        ),
     }
     for meshgangs_device, meshgangs in meshgangs_profiles:
-        name, size, digest = expected_meshgangs[meshgangs_device["id"]]
-        require(meshgangs["tag"] == "v0.1.0-beta.15", "wrong MeshGangs release")
-        require(meshgangs["commit"] == "7714b599466b7cb73604695d2404222785451913", "wrong MeshGangs source")
+        name, size, digest, md5 = expected_meshgangs[meshgangs_device["id"]]
+        require(meshgangs["tag"] == "v0.1.0-beta.16", "wrong MeshGangs release")
+        require(meshgangs["commit"] == "59bf4f3126d21522d9f90702eddab4541115dc43", "wrong MeshGangs source")
         require(meshgangs["update"]["address"] == 0x10000, "MeshGangs update must preserve NVS")
         require("recovery" not in meshgangs, "MeshGangs beta must be app-only")
         require(meshgangs["update"]["name"] == name, "wrong MeshGangs artifact name")
         require(meshgangs["update"]["size"] == size, "wrong MeshGangs artifact size")
         require(meshgangs["update"]["sha256"] == digest, "wrong MeshGangs artifact digest")
+        require(meshgangs["update"]["md5"] == md5, "wrong MeshGangs write-verification digest")
         require(meshgangs["update"]["url"] == f"https://mg.canadaverse.org/downloads/files/{name}", "MeshGangs firmware must use its public download")
     for contract in (
         '#meshgangs-enroll=',

@@ -47,14 +47,14 @@
       "id": "meshgangs-sidecar",
       "repository": "https://github.com/n30nex/MeshGangs",
       "release": "https://mg.canadaverse.org/downloads/",
-      "tag": "v0.1.0-beta.15",
-      "commit": "7714b599466b7cb73604695d2404222785451913",
+      "tag": "v0.1.0-beta.16",
+      "commit": "59bf4f3126d21522d9f90702eddab4541115dc43",
       "artifacts": [
         {
-          "name": "meshgangs-heltec-v3-v0.1.0-beta.15.bin",
+          "name": "meshgangs-heltec-v3-v0.1.0-beta.16.bin",
           "size": 1303152,
-          "sha256": "73429d1a98978803d25be72c7c03396bfd47e66712446307f7efa2755db083d9",
-          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.15.bin"
+          "sha256": "5cc3e1937a30d1175587e4877f80d9780d1fa74e8bb1879e18de475b092fdaf4",
+          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.16.bin"
         }
       ]
     }
@@ -123,7 +123,7 @@
           "summary": "Beta 1.0 MeshCore territory scout with verified USB setup and durable offline collection.",
           "transport": "BLE + Wi-Fi",
           "features": ["OLED", "BLE patrol pairing", "durable queue", "MeshGangs territory"],
-          "update": "meshgangs-heltec-v3-v0.1.0-beta.15.bin",
+          "update": "meshgangs-heltec-v3-v0.1.0-beta.16.bin",
           "update_address": 65536,
           "onboarding": "meshgangs-sidecar"
         }
