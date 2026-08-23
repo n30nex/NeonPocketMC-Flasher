@@ -47,14 +47,14 @@
       "id": "meshgangs-sidecar",
       "repository": "https://github.com/n30nex/MeshGangs",
       "release": "https://mg.canadaverse.org/downloads/",
-      "tag": "v0.1.0-beta.16",
-      "commit": "59bf4f3126d21522d9f90702eddab4541115dc43",
+      "tag": "v0.1.0-beta.19",
+      "commit": "cdcb9837495775998d3fc3e7acc8e434760fd903",
       "artifacts": [
         {
-          "name": "meshgangs-heltec-v3-v0.1.0-beta.16.bin",
-          "size": 1303152,
-          "sha256": "5cc3e1937a30d1175587e4877f80d9780d1fa74e8bb1879e18de475b092fdaf4",
-          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.16.bin"
+          "name": "meshgangs-heltec-v3-v0.1.0-beta.19.bin",
+          "size": 1259344,
+          "sha256": "b67e586104c3f67fca1b8b8d6da61987dd3fbee9fe18c88bcef341c040780751",
+          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.19.bin"
         }
       ]
     }
@@ -150,10 +150,10 @@
           "id": "meshgangs-sidecar",
           "product": "meshgangs-sidecar",
           "name": "MeshGangs Radio Scout",
-          "summary": "Beta 1.0 MeshCore territory scout with verified USB setup and durable offline collection.",
+          "summary": "Beta 1.0 MeshCore territory scout with verified USB setup and live-only collection.",
           "transport": "BLE + Wi-Fi",
-          "features": ["OLED", "BLE patrol pairing", "durable queue", "MeshGangs territory"],
-          "update": "meshgangs-heltec-v3-v0.1.0-beta.16.bin",
+          "features": ["OLED", "BLE patrol pairing", "live-only collection", "MeshGangs territory"],
+          "update": "meshgangs-heltec-v3-v0.1.0-beta.19.bin",
           "update_address": 65536,
           "onboarding": "meshgangs-sidecar"
         }

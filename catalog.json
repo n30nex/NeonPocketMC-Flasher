@@ -239,23 +239,23 @@
           "features": [
             "OLED",
             "BLE patrol pairing",
-            "durable queue",
+            "live-only collection",
             "MeshGangs territory"
           ],
           "update": {
-            "name": "meshgangs-heltec-v3-v0.1.0-beta.16.bin",
-            "size": 1303152,
-            "sha256": "5cc3e1937a30d1175587e4877f80d9780d1fa74e8bb1879e18de475b092fdaf4",
-            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.16.bin",
+            "name": "meshgangs-heltec-v3-v0.1.0-beta.19.bin",
+            "size": 1259344,
+            "sha256": "b67e586104c3f67fca1b8b8d6da61987dd3fbee9fe18c88bcef341c040780751",
+            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.19.bin",
             "address": 65536,
-            "md5": "21ad9880e84fba802003c815833ca4b5",
-            "local_url": "/firmware/5cc3e1937a30d1175587e4877f80d9780d1fa74e8bb1879e18de475b092fdaf4/meshgangs-heltec-v3-v0.1.0-beta.16.bin"
+            "md5": "07759e5037852219c00ef6e2d3eae6e3",
+            "local_url": "/firmware/b67e586104c3f67fca1b8b8d6da61987dd3fbee9fe18c88bcef341c040780751/meshgangs-heltec-v3-v0.1.0-beta.19.bin"
           },
           "onboarding": "meshgangs-sidecar",
           "repository": "https://github.com/n30nex/MeshGangs",
           "release": "https://mg.canadaverse.org/downloads/",
-          "tag": "v0.1.0-beta.16",
-          "commit": "59bf4f3126d21522d9f90702eddab4541115dc43"
+          "tag": "v0.1.0-beta.19",
+          "commit": "cdcb9837495775998d3fc3e7acc8e434760fd903"
         }
       ]
     },
