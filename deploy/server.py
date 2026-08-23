@@ -50,7 +50,9 @@ class FlasherHandler(SimpleHTTPRequestHandler):
         self.send_header(
             "Content-Security-Policy",
             "default-src 'self'; base-uri 'self'; connect-src 'self' "
-            "https://mg.canadaverse.org; frame-ancestors 'none'; img-src 'self' data:; "
+            "https://mg.canadaverse.org https://github.com "
+            "https://release-assets.githubusercontent.com; frame-ancestors 'none'; "
+            "img-src 'self' data:; "
             "object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
             "worker-src 'self'",
         )

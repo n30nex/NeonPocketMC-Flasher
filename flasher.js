@@ -167,6 +167,21 @@ function updateMeshGangsSetup() {
   });
 }
 
+function resetMeshGangsDeviceWorkflow() {
+  const heldDeviceState = Boolean(
+    state.meshGangsEnrollment
+    || state.meshGangsProvisioned
+    || state.meshGangsUsbKey,
+  );
+  state.meshGangsEnrollment = null;
+  state.meshGangsProvisioned = false;
+  state.meshGangsUsbKey = null;
+  if (heldDeviceState) {
+    $("#meshgangs-wifi-ssid").value = "";
+    $("#meshgangs-wifi-password").value = "";
+  }
+}
+
 function renderDevices() {
   $("#device-grid").innerHTML = state.catalog.devices.map((device) => `
     <button class="device-card" data-device="${escapeHtml(device.id)}">
@@ -181,6 +196,7 @@ function renderDevices() {
 }
 
 function selectDevice(id) {
+  resetMeshGangsDeviceWorkflow();
   state.device = state.catalog.devices.find((device) => device.id === id);
   state.profile = null;
   state.install = "update";
@@ -213,6 +229,7 @@ function renderProfiles() {
 }
 
 function selectProfile(id) {
+  resetMeshGangsDeviceWorkflow();
   state.profile = state.device.profiles.find((profile) => profile.id === id);
   $$("[data-profile]").forEach((card) => card.classList.toggle("selected", card.dataset.profile === id));
   const hasRecovery = Boolean(state.profile.recovery);
@@ -513,6 +530,9 @@ async function flashSelected() {
   if (!navigator.serial) {
     resetLog($("#flash-log"), "ERROR: Web Serial is unavailable. Use current desktop Chrome or Edge; Safari and Firefox are not supported.");
     return;
+  }
+  if (isMeshGangsSidecar() && state.meshGangsProvisioned) {
+    resetMeshGangsDeviceWorkflow();
   }
   playModem("dial");
   button.disabled = true;

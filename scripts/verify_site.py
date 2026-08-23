@@ -239,6 +239,22 @@ def main() -> int:
         boot_flow.index("provisionMeshGangs") < boot_flow.index("prepareOnboarding"),
         "MeshGangs USB role verification must precede onboarding",
     )
+    select_device_flow = js.split("function selectDevice", 1)[1].split(
+        "function renderProfiles", 1
+    )[0]
+    select_profile_flow = js.split("function selectProfile", 1)[1].split(
+        "function updateContinueState", 1
+    )[0]
+    flash_selected_flow = js.split("async function flashSelected", 1)[1].split(
+        "function downloadBytes", 1
+    )[0]
+    require(
+        "resetMeshGangsDeviceWorkflow();" in select_device_flow
+        and "resetMeshGangsDeviceWorkflow();" in select_profile_flow
+        and "state.meshGangsProvisioned" in flash_selected_flow
+        and "resetMeshGangsDeviceWorkflow();" in flash_selected_flow,
+        "each new device workflow must clear prior MeshGangs provisioning state",
+    )
     meshgangs_html = html.split('id="meshgangs-setup"', 1)[1].split(
         'id="to-flash"', 1
     )[0] + html.split('id="meshgangs-onboarding"', 1)[1].split(
@@ -248,7 +264,8 @@ def main() -> int:
     server = (ROOT / "deploy" / "server.py").read_text(encoding="utf-8")
     for header_contract in (
         '"Content-Security-Policy"',
-        '"https://mg.canadaverse.org; frame-ancestors \'none\'',
+        '"https://mg.canadaverse.org https://github.com "',
+        '"https://release-assets.githubusercontent.com; frame-ancestors \'none\'; "',
         '"Cross-Origin-Opener-Policy", "same-origin"',
         '"Cross-Origin-Resource-Policy", "same-site"',
         "usb=(self), serial=(self)",
