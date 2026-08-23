@@ -144,6 +144,7 @@ function escapeHtml(value) {
 function captureMeshGangsEnrollment() {
   if (!location.hash.startsWith("#meshgangs-enroll=")) return;
   const match = location.hash.match(/^#meshgangs-enroll=([A-Za-z0-9_-]{40,64})$/);
+  const requestedRole = new URLSearchParams(location.search).get("role");
   let handoff = null;
   try {
     handoff = JSON.parse(sessionStorage.getItem(meshGangsHandoffKey) || "null");
@@ -153,7 +154,9 @@ function captureMeshGangsEnrollment() {
   try { sessionStorage.removeItem(meshGangsHandoffKey); } catch (_error) {}
   state.meshGangsToken = match?.[1] || null;
   state.meshGangsTokenError = !match;
-  state.meshGangsRole = match && meshGangsRoles.has(handoff?.role) ? handoff.role : null;
+  state.meshGangsRole = match && meshGangsRoles.has(handoff?.role)
+    ? handoff.role
+    : (match && meshGangsRoles.has(requestedRole) ? requestedRole : null);
   if (match && typeof handoff?.label === "string"
       && handoff.label.length >= 1 && handoff.label.length <= 60
       && !/[\x00-\x1f\x7f]/.test(handoff.label)) {
