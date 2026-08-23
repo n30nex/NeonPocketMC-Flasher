@@ -32,7 +32,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RCC6 Ultimate Wi-Fi/Web companion with TFT
 - RCC6 screenless BLE, native-USB, or Wi-Fi Web/TCP companion
 - RCC6, Heltec V3, and Heltec V4 WDG Mesh Sidecar for Biscuit-compatible live MeshCore collection (V4 RC2 physically validated with public evidence)
-- Heltec V3 MeshGangs Territory Sidecar with privacy-safe durable retry and authenticated Android patrol pairing
+- Heltec V3 MeshGangs Territory Sidecar with privacy-safe live-only relay and authenticated Android patrol pairing
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT
 - Experimental ULP Solar Repeater builds for V3, V4, RAK4631, RAK3401 1 W, Xiao ESP32-S3, Xiao nRF52840, and headless/TFT RCC6/RC52
@@ -42,7 +42,7 @@ Normal updates preserve bootloader, partitions, identity, contacts, channels, an
 
 The WDG Mesh Sidecar profile is deliberately live-only. It has no WiGLE import, historical scan, stored upload backlog, catch-up, migration, or backfill path. After flashing, use the device's temporary setup Wi-Fi to store a 2.4 GHz hotspot and WDGWars API key directly on the device; the flasher does not receive or store either credential.
 
-The MeshGangs profile is a separate app-only Heltec V3 release with no captive portal or setup access point. An authenticated, ten-minute handoff from `mg.canadaverse.org` lets the flasher create one key and configure exactly one role over USB: Home USB (the desktop uploader owns the device key), Home Wi-Fi (the radio owns the device key and 2.4 GHz network details), or Mobile BLE (the radio receives only a scoped relay key while Android supplies GPS and internet). Enrollment secrets remain in the tab only until USB verification finishes; Home USB can export its one-time desktop setup file. The firmware persists only bounded scoring metadata and canonical packet digests, never message text or raw packets. Android patrol pairing requires the random six-digit code shown on the V3.
+The MeshGangs profile is a separate app-only Heltec V3 release with no captive portal or setup access point. An authenticated, ten-minute handoff from `mg.canadaverse.org` lets the flasher create one key and configure exactly one role over USB: Home USB (the desktop uploader owns the device key), Home Wi-Fi (the radio owns the device key and 2.4 GHz network details), or Mobile BLE (the radio receives only a scoped relay key while Android supplies GPS and internet). Enrollment secrets remain in the tab only until USB verification finishes; Home USB can export its one-time desktop setup file. Collection is live-only: a small volatile in-flight buffer exists only while the configured uplink is active and is discarded on disconnect or restart. No message text or raw packets are accepted. Android patrol pairing requires the random six-digit code shown on the V3.
 
 ## Browser requirements
 
