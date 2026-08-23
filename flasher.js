@@ -26,6 +26,9 @@ const state = {
   modemAudio: false,
 };
 
+const meshGangsRoles = new Set(["usb", "wifi", "mobile"]);
+const meshGangsHandoffKey = "neonpocket.meshgangs.handoff.v1";
+
 const flashLog = (text) => appendLog($("#flash-log"), text);
 const bootLog = (text) => appendLog($("#boot-log"), text);
 const serialLog = (text) => appendLog($("#serial-log"), text);
@@ -113,9 +116,33 @@ function escapeHtml(value) {
 function captureMeshGangsEnrollment() {
   if (!location.hash.startsWith("#meshgangs-enroll=")) return;
   const match = location.hash.match(/^#meshgangs-enroll=([A-Za-z0-9_-]{40,64})$/);
+  let handoff = null;
+  try {
+    handoff = JSON.parse(sessionStorage.getItem(meshGangsHandoffKey) || "null");
+  } catch (_error) {
+    handoff = null;
+  }
+  try { sessionStorage.removeItem(meshGangsHandoffKey); } catch (_error) {}
   state.meshGangsToken = match?.[1] || null;
   state.meshGangsTokenError = !match;
+  state.meshGangsRole = match && meshGangsRoles.has(handoff?.role) ? handoff.role : null;
+  if (match && typeof handoff?.label === "string"
+      && handoff.label.length >= 1 && handoff.label.length <= 60
+      && !/[\x00-\x1f\x7f]/.test(handoff.label)) {
+    $("#meshgangs-label").value = handoff.label;
+  }
   history.replaceState(null, "", `${location.pathname}${location.search}`);
+}
+
+function saveMeshGangsHandoff() {
+  const label = $("#meshgangs-label").value.trim();
+  const handoff = {
+    role: meshGangsRoles.has(state.meshGangsRole) ? state.meshGangsRole : null,
+    label: label.length >= 1 && label.length <= 60 && !/[\x00-\x1f\x7f]/.test(label)
+      ? label
+      : "MeshGangs V3",
+  };
+  try { sessionStorage.setItem(meshGangsHandoffKey, JSON.stringify(handoff)); } catch (_error) {}
 }
 
 function isMeshGangsSidecar() {
@@ -123,6 +150,7 @@ function isMeshGangsSidecar() {
 }
 
 function meshGangsInputsValid() {
+  if (!meshGangsRoles.has(state.meshGangsRole)) return false;
   const label = $("#meshgangs-label").value.trim();
   if (!label || label.length > 60 || /[\x00-\x1f\x7f]/.test(label)) return false;
   if (state.meshGangsRole !== "wifi") return true;
@@ -149,7 +177,7 @@ function updateMeshGangsSetup() {
     status.textContent = "Key created";
     status.classList.add("ready");
   } else if (state.meshGangsToken) {
-    status.textContent = "Account linked";
+    status.textContent = state.meshGangsRole ? "Account linked" : "Account linked · choose role";
     status.classList.add("ready");
   } else {
     status.textContent = "Account link required";
@@ -1502,6 +1530,7 @@ function bindEvents() {
   $$('input[name="install"]').forEach((radio) => radio.addEventListener("change", () => selectInstallMode(radio.value)));
   $("#model-confirm").addEventListener("change", updateContinueState);
   $("#deskos-clean-checkbox").addEventListener("change", updateContinueState);
+  $("#meshgangs-enroll-link").addEventListener("click", saveMeshGangsHandoff);
   $$('input[name="meshgangs-role"]').forEach((radio) => radio.addEventListener("change", () => {
     state.meshGangsRole = radio.value;
     updateMeshGangsSetup();

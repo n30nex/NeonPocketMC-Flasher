@@ -255,6 +255,19 @@ def main() -> int:
         and "resetMeshGangsDeviceWorkflow();" in flash_selected_flow,
         "each new device workflow must clear prior MeshGangs provisioning state",
     )
+    capture_handoff_flow = js.split("function captureMeshGangsEnrollment", 1)[1].split(
+        "function saveMeshGangsHandoff", 1
+    )[0]
+    save_handoff_flow = js.split("function saveMeshGangsHandoff", 1)[1].split(
+        "function isMeshGangsSidecar", 1
+    )[0]
+    require(
+        "sessionStorage.removeItem(meshGangsHandoffKey)" in capture_handoff_flow
+        and "state.meshGangsRole = match &&" in capture_handoff_flow
+        and "sessionStorage.setItem(meshGangsHandoffKey" in save_handoff_flow
+        and "meshgangs-wifi-password" not in save_handoff_flow,
+        "account handoff must preserve the chosen role without storing the Wi-Fi password",
+    )
     meshgangs_html = html.split('id="meshgangs-setup"', 1)[1].split(
         'id="to-flash"', 1
     )[0] + html.split('id="meshgangs-onboarding"', 1)[1].split(
@@ -294,8 +307,9 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260822mgbbs2" in html, "flasher JS cache bust is stale")
-    require("flasher.css?v=20260822mgbbs2" in html, "flasher CSS cache bust is stale")
+    require("flasher.js?v=20260822mgbbs3" in html, "flasher JS cache bust is stale")
+    require("flasher.css?v=20260822mgbbs3" in html, "flasher CSS cache bust is stale")
+    require(".hero-orbit, .sidecar-promo" not in css, "Aircraft Sidecar download must remain visible")
     require("/assets/devices/${escapeHtml(device.id)}.svg" in js, "device cards must use hardware-specific SVGs")
     for device in catalog["devices"]:
         asset = ROOT / "assets" / "devices" / f"{device['id']}.svg"
@@ -318,7 +332,12 @@ def main() -> int:
         require(scene_contract in html + css + scene_js, f"missing scene effect: {scene_contract}")
     require("pointer-events: none" in css, "scene canvas must not intercept flashing input")
     require("pointermove" in scene_js and "pointerdown" in scene_js, "cursor trail or ripple missing")
-    require("localStorage" not in js and "sessionStorage" not in js, "credentials/state must not be browser-persisted")
+    require("localStorage" not in js, "credentials/state must not be persistently stored")
+    require(
+        js.count("sessionStorage")
+        == (capture_handoff_flow + save_handoff_flow).count("sessionStorage"),
+        "session storage is limited to the non-secret account handoff",
+    )
     print(f"Verified flasher: 13 devices, {profile_count} profiles, {len(artifacts)} exact artifacts")
     return 0
 

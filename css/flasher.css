@@ -245,7 +245,13 @@ body::after { opacity: .15; }
 .scene-ticker { font-size: 9px; line-height: 24px; background: #000806; }
 main { padding-bottom: 34px; }
 .hero { min-height: 132px; display: block; padding: 24px 0 16px; border-bottom: 1px dashed var(--line); }
-.hero-orbit, .sidecar-promo { display: none; }
+.hero-orbit { display: none; }
+.sidecar-promo { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin: 8px 0 10px; padding: 8px 10px; border-radius: 0; }
+.sidecar-promo h2 { margin: 2px 0; font-size: 12px; }
+.sidecar-promo p:last-child { font-size: 9px; line-height: 1.35; }
+.sidecar-actions { gap: 7px; }
+.sidecar-actions a { font-size: 9px; }
+.sidecar-actions .sidecar-download { min-height: 28px; padding: 0 8px; border-radius: 0; }
 .eyebrow { margin-bottom: 7px; color: var(--blue); font-size: 9px; letter-spacing: .12em; }
 h1 { font-size: clamp(24px, 4vw, 38px); line-height: 1; letter-spacing: .01em; }
 h1 span { color: var(--lime); background: none; filter: none; }
@@ -324,6 +330,7 @@ footer { min-height: 54px; font-size: 9px; }
   #suite-version, .status-dot { display: none; }
   .hero { min-height: 112px; padding-top: 18px; }
   .hero-copy { font-size: 10px; }
+  .sidecar-promo { grid-template-columns: 1fr; }
   .panel { padding: 10px; border-radius: 0; }
   .card-grid, .install-mode, .field-grid, .summary-card { grid-template-columns: 1fr; }
   .device-card, .profile-card { min-height: 0; }
