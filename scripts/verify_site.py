@@ -330,7 +330,8 @@ def main() -> int:
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
     require("flasher.js?v=20260823families1" in html, "flasher JS cache bust is stale")
-    require("flasher.css?v=20260823families1" in html, "flasher CSS cache bust is stale")
+    require("flasher.css?v=20260824boot1" in html, "flasher CSS cache bust is stale")
+    require("scene.js?v=20260824boot1" in html, "scene JS cache bust is stale")
     require(".hero-orbit, .sidecar-promo" not in css, "Aircraft Sidecar download must remain visible")
     require("/assets/devices/${escapeHtml(device.id)}.svg" in js, "device cards must use hardware-specific SVGs")
     for device in catalog["devices"]:
@@ -344,6 +345,8 @@ def main() -> int:
         "WDG Aircraft Sidecar release links are missing",
     )
     for scene_contract in (
+        "boot-sequence",
+        "boot-meter",
         "scene-ticker",
         "scanline-drift",
         "ticker-scroll",
@@ -353,6 +356,8 @@ def main() -> int:
     ):
         require(scene_contract in html + css + scene_js, f"missing scene effect: {scene_contract}")
     require("pointer-events: none" in css, "scene canvas must not intercept flashing input")
+    require("window.setTimeout(finishBoot, 820)" in scene_js, "quick boot timeout missing")
+    require('addEventListener("pointerdown", finishBoot' in scene_js and 'addEventListener("keydown", finishBoot' in scene_js, "boot sequence must be skippable")
     require("pointermove" in scene_js and "pointerdown" in scene_js, "cursor trail or ripple missing")
     require("localStorage" not in js, "credentials/state must not be persistently stored")
     require(
