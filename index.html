@@ -8,11 +8,20 @@
   <title>NeonPocketMC Flasher</title>
   <link rel="icon" href="/assets/neonpocketmc-mark-64.png">
   <link rel="apple-touch-icon" href="/assets/neonpocketmc-mark.png">
-  <link rel="stylesheet" href="/css/flasher.css?v=20260823families1">
-  <script src="/scene.js?v=20260815scene1" defer></script>
+  <link rel="stylesheet" href="/css/flasher.css?v=20260824boot1">
+  <script src="/scene.js?v=20260824boot1" defer></script>
   <script type="module" src="/flasher.js?v=20260823families1"></script>
 </head>
 <body>
+  <div id="boot-sequence" class="boot-sequence" aria-hidden="true">
+    <div class="boot-sequence-core">
+      <img src="/assets/neonpocketmc-mark.png" alt="" width="96" height="96">
+      <p>CANADAVERSE // USB BBS</p>
+      <strong>NEONPOCKET</strong>
+      <span>LINK READY</span>
+      <i></i>
+    </div>
+  </div>
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
   <header class="site-header">
@@ -35,7 +44,7 @@
       <div>
         <p class="eyebrow">CANADAVERSE DEVICE BBS // SECURE WEB SERIAL</p>
         <h1>DIAL. FLASH. <span>VERIFY.</span></h1>
-        <p class="hero-copy">One guided line: choose hardware, choose its job, connect USB, then follow each verified prompt.</p>
+        <p class="hero-copy">Choose hardware. Pick a job. Flash. Verify.</p>
       </div>
       <div class="hero-orbit" aria-hidden="true">
         <img src="/assets/neonpocketmc-mark.png" alt="">
@@ -56,7 +65,7 @@
     <section class="panel active" data-panel="1">
       <div class="panel-heading">
         <div><p class="eyebrow">STEP 1</p><h2>Choose device</h2></div>
-        <p>Choose a hardware family first. USB hardware is checked before flashing.</p>
+        <p>Pick the exact board. USB is checked before flashing.</p>
       </div>
       <div id="device-family-bar" class="compact-heading hidden">
         <div><p class="eyebrow">HARDWARE FAMILY</p><h3 id="device-family-name"></h3></div>

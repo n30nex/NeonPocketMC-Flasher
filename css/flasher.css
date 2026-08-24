@@ -20,6 +20,16 @@ html { min-height: 100%; background: var(--bg); scroll-behavior: smooth; }
 body { margin: 0; min-height: 100vh; color: var(--text); background: radial-gradient(circle at 50% -20%, #173a72 0, #071128 32%, var(--bg) 68%); overflow-x: hidden; }
 body::before { content: ""; position: fixed; z-index: -2; inset: 0; pointer-events: none; opacity: .2; background-image: linear-gradient(rgba(24,183,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(156,255,56,.08) 1px, transparent 1px); background-size: 54px 54px; transform: perspective(420px) rotateX(58deg) scale(1.45) translateY(28%); transform-origin: center bottom; animation: grid-drive 14s linear infinite; }
 body::after { content: ""; position: fixed; z-index: 100; inset: 0; pointer-events: none; opacity: .055; background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(101,209,255,.32) 4px); animation: scanline-drift 9s linear infinite; }
+
+.boot-sequence { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; overflow: hidden; color: #effff7; background: #000806; transition: opacity .18s linear, visibility .18s linear; }
+.boot-sequence::before { position: absolute; inset: 0; content: ""; background: linear-gradient(rgba(24,183,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(156,255,56,.06) 1px, transparent 1px); background-size: 24px 24px; animation: boot-grid .8s linear both; }
+.boot-sequence::after { position: absolute; inset: -25% 0 auto; height: 35%; content: ""; background: linear-gradient(transparent, rgba(156,255,56,.22), transparent); animation: boot-scan .72s ease-out both; }
+.boot-sequence.is-done { opacity: 0; visibility: hidden; }
+.boot-sequence-core { position: relative; display: grid; justify-items: center; gap: 5px; min-width: min(86vw, 360px); padding: 28px; border: 1px solid rgba(101,209,255,.55); background: rgba(0,8,6,.9); box-shadow: 8px 8px 0 rgba(156,255,56,.08), 0 0 40px rgba(24,183,255,.12); animation: boot-core .52s steps(5,end) both; }
+.boot-sequence-core img { width: 72px; height: 72px; object-fit: contain; filter: drop-shadow(0 0 16px rgba(101,209,255,.55)); }
+.boot-sequence-core p, .boot-sequence-core span { margin: 0; color: var(--muted); font: 800 9px/1.4 "Cascadia Mono", Consolas, monospace; letter-spacing: .18em; }
+.boot-sequence-core strong { color: var(--lime); font: 900 clamp(22px,6vw,34px)/1 "Cascadia Mono", Consolas, monospace; letter-spacing: .06em; text-shadow: 2px 0 var(--blue), -2px 0 var(--red); }
+.boot-sequence-core i { width: 100%; height: 3px; margin-top: 10px; background: linear-gradient(90deg, var(--blue), var(--lime)); transform-origin: left; animation: boot-meter .68s steps(8,end) both; }
 button, input, select { font: inherit; }
 button, a, label { -webkit-tap-highlight-color: transparent; }
 button { color: inherit; }
@@ -142,6 +152,10 @@ progress::-webkit-progress-bar { background: #111a33; } progress::-webkit-progre
 
 @keyframes grid-drive { to { background-position: 0 108px, 108px 0; } }
 @keyframes scanline-drift { to { background-position: 0 120px; } }
+@keyframes boot-grid { from { opacity: 0; transform: scale(1.08); } to { opacity: 1; transform: none; } }
+@keyframes boot-scan { to { transform: translateY(360%); } }
+@keyframes boot-core { 0% { transform: scale(.92); filter: brightness(1.55); } 45% { transform: scale(1.02); } 100% { transform: none; filter: none; } }
+@keyframes boot-meter { from { transform: scaleX(0); } to { transform: none; } }
 @keyframes ambient-fader { to { opacity: .24; transform: translate3d(60px,-35px,0) scale(1.12); } }
 @keyframes ticker-scroll { to { transform: translateX(-50%); } }
 @keyframes title-fader { 55% { filter: drop-shadow(0 0 22px rgba(156,255,56,.65)); } }
@@ -209,7 +223,7 @@ footer span { margin-right: auto; } footer a { color: var(--blue-soft); text-dec
   .sidecar-actions { display: grid; }.sidecar-actions a { white-space: normal; }.sidecar-actions .sidecar-download { justify-content: center; }
   .console-input { grid-template-columns: 1fr; } footer { flex-wrap: wrap; padding: 25px 0; } footer span { flex-basis: 100%; }
 }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }.scene-canvas { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }.scene-canvas, .boot-sequence { display: none; } }
 
 /* Canadaverse BBS release skin: compact, deterministic, and shared with MeshGangs Beta 1.0. */
 :root {

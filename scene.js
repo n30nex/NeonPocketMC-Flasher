@@ -1,5 +1,23 @@
 (() => {
   const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const boot = document.querySelector("#boot-sequence");
+  if (boot) {
+    let timer = 0;
+    function finishBoot() {
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", finishBoot);
+      window.removeEventListener("keydown", finishBoot);
+      boot.classList.add("is-done");
+      window.setTimeout(() => boot.remove(), reduced ? 0 : 180);
+    }
+    if (reduced) {
+      finishBoot();
+    } else {
+      timer = window.setTimeout(finishBoot, 820);
+      window.addEventListener("pointerdown", finishBoot, { once: true, passive: true });
+      window.addEventListener("keydown", finishBoot, { once: true });
+    }
+  }
   const finePointer = window.matchMedia?.("(pointer: fine)").matches;
   if (reduced || !finePointer) return;
 
