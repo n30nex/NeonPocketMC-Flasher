@@ -47,14 +47,14 @@
       "id": "meshgangs-sidecar",
       "repository": "https://github.com/n30nex/MeshGangs",
       "release": "https://mg.canadaverse.org/downloads/",
-      "tag": "v0.1.0-beta.20",
-      "commit": "a9460d65cd69ca77fe8c29f03247d6372ba710db",
+      "tag": "v0.1.0-beta.21",
+      "commit": "529d0fe253b80e8dd852f4b8f5073908d002fe33",
       "artifacts": [
         {
-          "name": "meshgangs-heltec-v3-v0.1.0-beta.20.bin",
-          "size": 1259680,
-          "sha256": "f102c0e6ca3ea47d039e33dc81313e6d6f3775f89199e413aadfe6ba6efbaeaa",
-          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.20.bin"
+          "name": "meshgangs-heltec-v3-v0.1.0-beta.21.bin",
+          "size": 1260320,
+          "sha256": "ea2f26aca4fa4f7139b56f146fece01df0dae750065f6c1eebfa604f3bac8ee3",
+          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.21.bin"
         }
       ]
     }
@@ -150,10 +150,10 @@
           "id": "meshgangs-sidecar",
           "product": "meshgangs-sidecar",
           "name": "MeshGangs Radio Scout",
-          "summary": "Beta 1.0 MeshCore territory scout with verified USB setup and live-only collection.",
+          "summary": "Signal Siege Beta 1.5 Heltec V3 scout with USB-only role setup and live-only collection.",
           "transport": "BLE + Wi-Fi",
           "features": ["OLED", "BLE patrol pairing", "live-only collection", "MeshGangs territory"],
-          "update": "meshgangs-heltec-v3-v0.1.0-beta.20.bin",
+          "update": "meshgangs-heltec-v3-v0.1.0-beta.21.bin",
           "update_address": 65536,
           "onboarding": "meshgangs-sidecar"
         }
