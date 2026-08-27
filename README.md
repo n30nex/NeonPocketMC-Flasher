@@ -32,7 +32,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 - RCC6 Ultimate Wi-Fi/Web companion with TFT
 - RCC6 screenless BLE, native-USB, or Wi-Fi Web/TCP companion
 - RCC6, Heltec V3, and Heltec V4 WDG Mesh Sidecar for Biscuit-compatible live MeshCore collection (V4 RC2 physically validated with public evidence)
-- Heltec V3 MeshGangs Signal Siege Beta 21 sidecar with USB-only role setup, privacy-safe live-only relay, and authenticated Android patrol pairing
+- Heltec V3 MeshGangs Signal Fields Beta 22 sidecar with USB-only role setup, privacy-safe live-only relay, and authenticated Android patrol pairing
 - RCC6 MQTT observer/repeater with WebUI
 - RCC6 Room Server minimal/full, headless/TFT
 - Experimental ULP Solar Repeater builds for V3, V4, RAK4631, RAK3401 1 W, Xiao ESP32-S3, Xiao nRF52840, and headless/TFT RCC6/RC52
