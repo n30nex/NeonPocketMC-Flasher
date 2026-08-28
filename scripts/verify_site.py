@@ -28,7 +28,7 @@ def main() -> int:
     require(catalog["schema"] == profiles["schema"] == 1, "unsupported catalog schema")
     require(len(catalog["devices"]) == 13, "expected thirteen hardware selections")
     profile_count = sum(len(device["profiles"]) for device in catalog["devices"])
-    require(profile_count == 42, f"expected 42 profiles, found {profile_count}")
+    require(profile_count == 43, f"expected 43 profiles, found {profile_count}")
 
     ids = re.findall(r'\bid="([^"]+)"', html)
     require(len(ids) == len(set(ids)), "HTML contains duplicate IDs")
@@ -110,7 +110,7 @@ def main() -> int:
                     f"bad local URL: {artifact['name']}",
                 )
                 require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 70, f"expected 70 flash artifacts, found {len(artifacts)}")
+    require(len(artifacts) == 71, f"expected 71 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     heltec_v3 = next(device for device in catalog["devices"] if device["id"] == "heltec-v3")
@@ -207,16 +207,16 @@ def main() -> int:
     require({device["id"] for device, profile in meshgangs_profiles} == {"heltec-v3"}, "wrong MeshGangs hardware matrix")
     expected_meshgangs = {
         "heltec-v3": (
-            "meshgangs-heltec-v3-v0.1.0-beta.22.bin",
-            1_268_608,
-            "f2d8400de6430824486d4c23dd1dd737324c24da42215ce34f9b26f670351f1a",
-            "1dd1b0495d20f3dd196d0b0fa454e4fa",
+            "meshgangs-heltec-v3-v0.1.0-beta.23.bin",
+            1_269_232,
+            "0566a8eaa38dc0526cb7be3cafc4049ce3b5cb131b1b1355296bf67c7d7b2d06",
+            "536543160157bb2618595f24825b449e",
         ),
     }
     for meshgangs_device, meshgangs in meshgangs_profiles:
         name, size, digest, md5 = expected_meshgangs[meshgangs_device["id"]]
-        require(meshgangs["tag"] == "v0.1.0-beta.22", "wrong MeshGangs release")
-        require(meshgangs["commit"] == "4c6ef0be5f6321e3f853b917a408b789eb81f024", "wrong MeshGangs source")
+        require(meshgangs["tag"] == "v0.1.0-beta.23", "wrong MeshGangs release")
+        require(meshgangs["commit"] == "c2eab22351163915135a79257633b68cec994a66", "wrong MeshGangs source")
         require(meshgangs["update"]["address"] == 0x10000, "MeshGangs update must preserve NVS")
         require("recovery" not in meshgangs, "MeshGangs beta must be app-only")
         require(meshgangs["update"]["name"] == name, "wrong MeshGangs artifact name")
@@ -224,6 +224,18 @@ def main() -> int:
         require(meshgangs["update"]["sha256"] == digest, "wrong MeshGangs artifact digest")
         require(meshgangs["update"]["md5"] == md5, "wrong MeshGangs write-verification digest")
         require(meshgangs["update"]["url"] == f"https://mg.canadaverse.org/downloads/files/{name}", "MeshGangs firmware must use its public download")
+    meshgangs_rollbacks = [
+        profile
+        for device in catalog["devices"]
+        for profile in device["profiles"]
+        if profile["id"] == "meshgangs-sidecar-beta22"
+    ]
+    require(len(meshgangs_rollbacks) == 1, "expected one retained MeshGangs Beta 22 rollback")
+    rollback = meshgangs_rollbacks[0]
+    require(rollback["tag"] == "v0.1.0-beta.22", "wrong retained MeshGangs release")
+    require(rollback["commit"] == "4c6ef0be5f6321e3f853b917a408b789eb81f024", "wrong retained MeshGangs source")
+    require(rollback["update"]["address"] == 0x10000, "retained MeshGangs rollback must preserve NVS")
+    require(rollback["update"]["sha256"] == "f2d8400de6430824486d4c23dd1dd737324c24da42215ce34f9b26f670351f1a", "wrong retained MeshGangs digest")
     for contract in (
         '#meshgangs-enroll=',
         'history.replaceState(null, "", `${location.pathname}${location.search}`)',
