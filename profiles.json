@@ -47,6 +47,21 @@
       "id": "meshgangs-sidecar",
       "repository": "https://github.com/n30nex/MeshGangs",
       "release": "https://mg.canadaverse.org/downloads/",
+      "tag": "v0.1.0-beta.23",
+      "commit": "c2eab22351163915135a79257633b68cec994a66",
+      "artifacts": [
+        {
+          "name": "meshgangs-heltec-v3-v0.1.0-beta.23.bin",
+          "size": 1269232,
+          "sha256": "0566a8eaa38dc0526cb7be3cafc4049ce3b5cb131b1b1355296bf67c7d7b2d06",
+          "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.23.bin"
+        }
+      ]
+    },
+    {
+      "id": "meshgangs-sidecar-beta22",
+      "repository": "https://github.com/n30nex/MeshGangs",
+      "release": "https://mg.canadaverse.org/downloads/",
       "tag": "v0.1.0-beta.22",
       "commit": "4c6ef0be5f6321e3f853b917a408b789eb81f024",
       "artifacts": [
@@ -150,9 +165,20 @@
           "id": "meshgangs-sidecar",
           "product": "meshgangs-sidecar",
           "name": "MeshGangs Radio Scout",
-          "summary": "Signal Fields Beta 1.7.1 Heltec V3 scout with USB-only role setup and live-only collection.",
+          "summary": "Signal Frontiers Beta 1.7.5 Heltec V3 scout with USB-only role setup and live-only collection.",
           "transport": "BLE + Wi-Fi",
-          "features": ["OLED", "BLE patrol pairing", "live-only collection", "MeshGangs territory"],
+          "features": ["OLED", "BLE patrol pairing", "live-only collection", "Signal Frontiers"],
+          "update": "meshgangs-heltec-v3-v0.1.0-beta.23.bin",
+          "update_address": 65536,
+          "onboarding": "meshgangs-sidecar"
+        },
+        {
+          "id": "meshgangs-sidecar-beta22",
+          "product": "meshgangs-sidecar-beta22",
+          "name": "MeshGangs Radio Scout (Beta 22 rollback)",
+          "summary": "Retained Signal Fields Beta 22 app-only rollback for existing Heltec V3 scouts.",
+          "transport": "BLE + Wi-Fi",
+          "features": ["OLED", "BLE patrol pairing", "live-only collection", "retained rollback"],
           "update": "meshgangs-heltec-v3-v0.1.0-beta.22.bin",
           "update_address": 65536,
           "onboarding": "meshgangs-sidecar"

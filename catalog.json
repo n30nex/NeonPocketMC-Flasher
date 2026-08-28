@@ -234,13 +234,40 @@
           "id": "meshgangs-sidecar",
           "product": "meshgangs-sidecar",
           "name": "MeshGangs Radio Scout",
-          "summary": "Signal Fields Beta 1.7.1 Heltec V3 scout with USB-only role setup and live-only collection.",
+          "summary": "Signal Frontiers Beta 1.7.5 Heltec V3 scout with USB-only role setup and live-only collection.",
           "transport": "BLE + Wi-Fi",
           "features": [
             "OLED",
             "BLE patrol pairing",
             "live-only collection",
-            "MeshGangs territory"
+            "Signal Frontiers"
+          ],
+          "update": {
+            "name": "meshgangs-heltec-v3-v0.1.0-beta.23.bin",
+            "size": 1269232,
+            "sha256": "0566a8eaa38dc0526cb7be3cafc4049ce3b5cb131b1b1355296bf67c7d7b2d06",
+            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.23.bin",
+            "address": 65536,
+            "md5": "536543160157bb2618595f24825b449e",
+            "local_url": "/firmware/0566a8eaa38dc0526cb7be3cafc4049ce3b5cb131b1b1355296bf67c7d7b2d06/meshgangs-heltec-v3-v0.1.0-beta.23.bin"
+          },
+          "onboarding": "meshgangs-sidecar",
+          "repository": "https://github.com/n30nex/MeshGangs",
+          "release": "https://mg.canadaverse.org/downloads/",
+          "tag": "v0.1.0-beta.23",
+          "commit": "c2eab22351163915135a79257633b68cec994a66"
+        },
+        {
+          "id": "meshgangs-sidecar-beta22",
+          "product": "meshgangs-sidecar-beta22",
+          "name": "MeshGangs Radio Scout (Beta 22 rollback)",
+          "summary": "Retained Signal Fields Beta 22 app-only rollback for existing Heltec V3 scouts.",
+          "transport": "BLE + Wi-Fi",
+          "features": [
+            "OLED",
+            "BLE patrol pairing",
+            "live-only collection",
+            "retained rollback"
           ],
           "update": {
             "name": "meshgangs-heltec-v3-v0.1.0-beta.22.bin",
