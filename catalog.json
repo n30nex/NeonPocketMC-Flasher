@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "suite_version": "1.10.0-rc.1",
+  "suite_version": "1.10.0-rc.2",
   "devices": [
     {
       "id": "heltec-v3",
@@ -14,9 +14,9 @@
       "usb_vid": 4292,
       "usb_pid": 60000,
       "repository": "https://github.com/n30nex/NeonPocketMC-Heltec-V3",
-      "release": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/tag/v2.0.0-rc.1",
-      "tag": "v2.0.0-rc.1",
-      "commit": "02f8ec87a3061811d78e3b6ac3614bacd99b3b24",
+      "release": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/tag/v2.0.0-rc.2",
+      "tag": "v2.0.0-rc.2",
+      "commit": "cb006ca2074feb766d04cf7f5d32632c1dbd930a",
       "profiles": [
         {
           "id": "ble-companion-oled",
@@ -120,19 +120,19 @@
           ],
           "update": {
             "name": "NeonPocketMC-Heltec-V3-Ultimate-Web-app.bin",
-            "size": 1251360,
-            "sha256": "7b28b486067f8b376e76cc93091084748e49dabdf0da52e64070c219e8cf55e0",
-            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/download/v2.0.0-rc.1/NeonPocketMC-Heltec-V3-Ultimate-Web-app.bin",
-            "md5": "016cda8dec2df10a31a5235d69d37a7e",
-            "local_url": "/firmware/7b28b486067f8b376e76cc93091084748e49dabdf0da52e64070c219e8cf55e0/NeonPocketMC-Heltec-V3-Ultimate-Web-app.bin"
+            "size": 1253232,
+            "sha256": "3179d9d97012dce6d40325f1b18deb47f0a01224fa0a4a0d88557f0a1bea63d9",
+            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/download/v2.0.0-rc.2/NeonPocketMC-Heltec-V3-Ultimate-Web-app.bin",
+            "md5": "9d81593c41a555754ae944e8869edfc9",
+            "local_url": "/firmware/3179d9d97012dce6d40325f1b18deb47f0a01224fa0a4a0d88557f0a1bea63d9/NeonPocketMC-Heltec-V3-Ultimate-Web-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-Heltec-V3-Ultimate-Web-recovery-preserves-settings.bin",
-            "size": 1316896,
-            "sha256": "15038e902af98972361924abb11c11e9cc101330c40b91f4efa4dd34e080f48e",
-            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/download/v2.0.0-rc.1/NeonPocketMC-Heltec-V3-Ultimate-Web-recovery-preserves-settings.bin",
-            "md5": "452497c05451168a1e4a3011d9424a7f",
-            "local_url": "/firmware/15038e902af98972361924abb11c11e9cc101330c40b91f4efa4dd34e080f48e/NeonPocketMC-Heltec-V3-Ultimate-Web-recovery-preserves-settings.bin"
+            "size": 1318768,
+            "sha256": "ce284f1d07d9b66dc6ba3e975690d631648b0adf2dd9030132448eb6c95b581e",
+            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V3/releases/download/v2.0.0-rc.2/NeonPocketMC-Heltec-V3-Ultimate-Web-recovery-preserves-settings.bin",
+            "md5": "aad5d3ab796cfa823bea53b85d029e83",
+            "local_url": "/firmware/ce284f1d07d9b66dc6ba3e975690d631648b0adf2dd9030132448eb6c95b581e/NeonPocketMC-Heltec-V3-Ultimate-Web-recovery-preserves-settings.bin"
           },
           "onboarding": "companion-web"
         },
@@ -296,9 +296,9 @@
       "expected_chip": "ESP32-S3",
       "ambiguous_with": "Heltec V3",
       "repository": "https://github.com/n30nex/NeonPocketMC-Heltec-V4",
-      "release": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/tag/v2.0.0-rc.1",
-      "tag": "v2.0.0-rc.1",
-      "commit": "807efbba11dda35d3d72d0f8ee9e3a0502e24bcf",
+      "release": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/tag/v2.0.0-rc.2",
+      "tag": "v2.0.0-rc.2",
+      "commit": "3bc4fbffae632859976550afff597d5954e05a2c",
       "profiles": [
         {
           "id": "ble-companion-oled",
@@ -402,19 +402,19 @@
           ],
           "update": {
             "name": "NeonPocketMC-Heltec-V4-Ultimate-Web-app.bin",
-            "size": 1248928,
-            "sha256": "cee81b67cbe2a3adfcf3677733179c5d45bc00dc05458eac8280506aed57d889",
-            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v2.0.0-rc.1/NeonPocketMC-Heltec-V4-Ultimate-Web-app.bin",
-            "md5": "6db9f03869166888c3a71135985b6c5a",
-            "local_url": "/firmware/cee81b67cbe2a3adfcf3677733179c5d45bc00dc05458eac8280506aed57d889/NeonPocketMC-Heltec-V4-Ultimate-Web-app.bin"
+            "size": 1250816,
+            "sha256": "c04be742f57fdb57f416db583875e07c40f76ee29ff011387abe5313806e273d",
+            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v2.0.0-rc.2/NeonPocketMC-Heltec-V4-Ultimate-Web-app.bin",
+            "md5": "a7b3085f721995766a60cb233a7a6581",
+            "local_url": "/firmware/c04be742f57fdb57f416db583875e07c40f76ee29ff011387abe5313806e273d/NeonPocketMC-Heltec-V4-Ultimate-Web-app.bin"
           },
           "recovery": {
             "name": "NeonPocketMC-Heltec-V4-Ultimate-Web-recovery-preserves-settings.bin",
-            "size": 1314464,
-            "sha256": "2629815dc5e69d984ccc658ab4b2627e531ebaee5dca6f533495328d94f5eec8",
-            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v2.0.0-rc.1/NeonPocketMC-Heltec-V4-Ultimate-Web-recovery-preserves-settings.bin",
-            "md5": "ef996678ee78542e02d07c4a48ac0343",
-            "local_url": "/firmware/2629815dc5e69d984ccc658ab4b2627e531ebaee5dca6f533495328d94f5eec8/NeonPocketMC-Heltec-V4-Ultimate-Web-recovery-preserves-settings.bin"
+            "size": 1316352,
+            "sha256": "68699b8a6b88dd8ec8f11baa06130fd0d8b15ce0af0e4c2b2e4f649793193565",
+            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v2.0.0-rc.2/NeonPocketMC-Heltec-V4-Ultimate-Web-recovery-preserves-settings.bin",
+            "md5": "a91620e4a8e7be515cd13291e3c109fc",
+            "local_url": "/firmware/68699b8a6b88dd8ec8f11baa06130fd0d8b15ce0af0e4c2b2e4f649793193565/NeonPocketMC-Heltec-V4-Ultimate-Web-recovery-preserves-settings.bin"
           },
           "onboarding": "companion-web"
         },
@@ -755,9 +755,9 @@
       "usb_vid": 12346,
       "usb_pid": 4097,
       "repository": "https://github.com/n30nex/NeonPocketMC-RCC6",
-      "release": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/tag/v2.3.0-rc.5",
-      "tag": "v2.3.0-rc.5",
-      "commit": "d6b7dd073ae27254ae17d66ec926201b72309213",
+      "release": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/tag/v2.3.0-rc.7",
+      "tag": "v2.3.0-rc.7",
+      "commit": "125e35b9764eccf1c45961e5137e446e8b5c0d24",
       "profiles": [
         {
           "id": "ble-companion-tft",
@@ -772,20 +772,20 @@
             "network explorer"
           ],
           "update": {
-            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-BLE-app.bin",
-            "size": 1564416,
-            "sha256": "f4feecea4e9c21f64a0f047836b3a914b6883dec5d0df265f18f3d6a700ef17f",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.5/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-BLE-app.bin",
-            "md5": "47300f2b7837509835162bc4bc7097ae",
-            "local_url": "/firmware/f4feecea4e9c21f64a0f047836b3a914b6883dec5d0df265f18f3d6a700ef17f/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-BLE-app.bin"
+            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-BLE-app.bin",
+            "size": 1564464,
+            "sha256": "68139efe571f5a186d357844ada6c8a96a95fbecad132e9d3c6ce98013ed469e",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.6/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-BLE-app.bin",
+            "md5": "02743e5f250a5d9f6371c04225b51aa3",
+            "local_url": "/firmware/68139efe571f5a186d357844ada6c8a96a95fbecad132e9d3c6ce98013ed469e/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-BLE-app.bin"
           },
           "recovery": {
-            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-BLE-recovery-preserves-settings.bin",
-            "size": 1629952,
-            "sha256": "3c5514e7bb5043a1e6182e120e971face5583bd18a9f0f980405ca6fc009617d",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.5/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-BLE-recovery-preserves-settings.bin",
-            "md5": "162f7630b55385a3088957a865a26e10",
-            "local_url": "/firmware/3c5514e7bb5043a1e6182e120e971face5583bd18a9f0f980405ca6fc009617d/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-BLE-recovery-preserves-settings.bin"
+            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-BLE-recovery-preserves-settings.bin",
+            "size": 1630000,
+            "sha256": "43f2ea19ac9fc83339a591227da33d9cecf5040582c4cef45ec2a7d2bd1fc266",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.6/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-BLE-recovery-preserves-settings.bin",
+            "md5": "dc10bcf551782b54480eceea898d9012",
+            "local_url": "/firmware/43f2ea19ac9fc83339a591227da33d9cecf5040582c4cef45ec2a7d2bd1fc266/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-BLE-recovery-preserves-settings.bin"
           },
           "onboarding": "companion"
         },
@@ -802,20 +802,20 @@
             "network explorer"
           ],
           "update": {
-            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-USB-app.bin",
-            "size": 650992,
-            "sha256": "419fd979a2c63c93a3c589fab2069ad9c637c4bf18a3fba755b73655328cbfbe",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.5/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-USB-app.bin",
-            "md5": "a58deeecee9a71cea3af983bf18a6b31",
-            "local_url": "/firmware/419fd979a2c63c93a3c589fab2069ad9c637c4bf18a3fba755b73655328cbfbe/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-USB-app.bin"
+            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-USB-app.bin",
+            "size": 651040,
+            "sha256": "4a6cdbfd05c5ced056df5f0b8bba450502c2f43208610dad8763a8ebd6982b60",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.6/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-USB-app.bin",
+            "md5": "8a06b2dcddcec3e2ea2cec02cf60f2d4",
+            "local_url": "/firmware/4a6cdbfd05c5ced056df5f0b8bba450502c2f43208610dad8763a8ebd6982b60/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-USB-app.bin"
           },
           "recovery": {
-            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-USB-recovery-preserves-settings.bin",
-            "size": 716528,
-            "sha256": "39cc364c4b7f8e3393314c0738ddf7861cd59218384b61ec0f60ad7b72521017",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.5/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-USB-recovery-preserves-settings.bin",
-            "md5": "52302474ec98a013a484786966b7abab",
-            "local_url": "/firmware/39cc364c4b7f8e3393314c0738ddf7861cd59218384b61ec0f60ad7b72521017/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-USB-recovery-preserves-settings.bin"
+            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-USB-recovery-preserves-settings.bin",
+            "size": 716576,
+            "sha256": "154441739c9742d867e4806e28155b50e5d2685bca8dc8016d40b2bddeec22ab",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.6/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-USB-recovery-preserves-settings.bin",
+            "md5": "dcd1abfb9b814316aea2fe8473a8e4a9",
+            "local_url": "/firmware/154441739c9742d867e4806e28155b50e5d2685bca8dc8016d40b2bddeec22ab/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.6-USB-recovery-preserves-settings.bin"
           },
           "onboarding": "companion-usb"
         },
@@ -832,20 +832,20 @@
             "signed OTA"
           ],
           "update": {
-            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-Web-app.bin",
-            "size": 1486672,
-            "sha256": "1aff86efafd9acc8c38219e9e20105f050c640fedb54c6d078845f34a765f783",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.5/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-Web-app.bin",
-            "md5": "ca47a818f08e22577dfb2de377429666",
-            "local_url": "/firmware/1aff86efafd9acc8c38219e9e20105f050c640fedb54c6d078845f34a765f783/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-Web-app.bin"
+            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.7-Web-app.bin",
+            "size": 1489296,
+            "sha256": "785d78ab11b4aff5d96c38577f7442ff862f8b19a9e0150acd8106d6b120c5c0",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.7/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.7-Web-app.bin",
+            "md5": "17a7f7687e2bf0b40831be96240a4b97",
+            "local_url": "/firmware/785d78ab11b4aff5d96c38577f7442ff862f8b19a9e0150acd8106d6b120c5c0/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.7-Web-app.bin"
           },
           "recovery": {
-            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-Web-recovery-preserves-settings.bin",
-            "size": 1552208,
-            "sha256": "96719fbe02d41df66623df79234bbc5bc8e2074f1478853eff91fb9bcc3d5034",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.5/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-Web-recovery-preserves-settings.bin",
-            "md5": "97d3789bbce4d843556c16f521e8233b",
-            "local_url": "/firmware/96719fbe02d41df66623df79234bbc5bc8e2074f1478853eff91fb9bcc3d5034/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.5-Web-recovery-preserves-settings.bin"
+            "name": "NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.7-Web-recovery-preserves-settings.bin",
+            "size": 1554832,
+            "sha256": "d9a95609fa0a48395f8e8433117cf9fe0507655e1d73a111bf3d5585d66090ff",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6/releases/download/v2.3.0-rc.7/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.7-Web-recovery-preserves-settings.bin",
+            "md5": "f010a13253003544881e55b3fdb9e139",
+            "local_url": "/firmware/d9a95609fa0a48395f8e8433117cf9fe0507655e1d73a111bf3d5585d66090ff/NeonPocketMC-RCC6-Ultimate-v2.3.0-rc.7-Web-recovery-preserves-settings.bin"
           },
           "onboarding": "companion-web"
         },
@@ -889,9 +889,9 @@
       "usb_vid": 12346,
       "usb_pid": 4097,
       "repository": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless",
-      "release": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/tag/v1.0.0-rc.3",
-      "tag": "v1.0.0-rc.3",
-      "commit": "08c0a8a9b21833a1c411e449d0e35ecf5b19f9ed",
+      "release": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/tag/v1.0.0-rc.5",
+      "tag": "v1.0.0-rc.5",
+      "commit": "b3ff9d1564d9a304b1eafb034e23cb0ce08ed1cc",
       "profiles": [
         {
           "id": "ble-companion-headless",
@@ -905,20 +905,20 @@
             "low power"
           ],
           "update": {
-            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-BLE-app.bin",
-            "size": 1475648,
-            "sha256": "1429c3a84b7ae880aa8e120764d2c91b3997111aef88a40927e5b1d7599cbf5e",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.3/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-BLE-app.bin",
-            "md5": "abcedc4e89370dbb95d10ef9236ca1bd",
-            "local_url": "/firmware/1429c3a84b7ae880aa8e120764d2c91b3997111aef88a40927e5b1d7599cbf5e/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-BLE-app.bin"
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-BLE-app.bin",
+            "size": 1475696,
+            "sha256": "528bd23ace8b21fc14cdd7b3e86db7e2c18c433ee5e8048653b56f0d851debbc",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.4/NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-BLE-app.bin",
+            "md5": "84b3ac9a8016d388a221f8100b61f8a6",
+            "local_url": "/firmware/528bd23ace8b21fc14cdd7b3e86db7e2c18c433ee5e8048653b56f0d851debbc/NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-BLE-app.bin"
           },
           "recovery": {
-            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
-            "size": 1541184,
-            "sha256": "8dde1114c941d454aa0e290fbb10192b22e2f0cac4f6f145fd5df35087265f2a",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.3/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
-            "md5": "f2e74f0be89cca39ac4641d40aa0f1e0",
-            "local_url": "/firmware/8dde1114c941d454aa0e290fbb10192b22e2f0cac4f6f145fd5df35087265f2a/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin"
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "size": 1541232,
+            "sha256": "eec5f50f70ffe48a012a7b5f58a090730084ffd38e476ebc04b7215a8b05183f",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.4/NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "md5": "47a4998d6131eadc80440c73ca1cc6e6",
+            "local_url": "/firmware/eec5f50f70ffe48a012a7b5f58a090730084ffd38e476ebc04b7215a8b05183f/NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-BLE-recovery-resets-nvs-preserves-meshcore-storage.bin"
           },
           "onboarding": "companion-headless"
         },
@@ -933,20 +933,20 @@
             "low power"
           ],
           "update": {
-            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-USB-app.bin",
-            "size": 562640,
-            "sha256": "f75e690c92f3252709ae1f7e342199472edca722bf2076688bd4be2d55ba9336",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.3/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-USB-app.bin",
-            "md5": "d714361e4ee65ed1d454b03f54718df1",
-            "local_url": "/firmware/f75e690c92f3252709ae1f7e342199472edca722bf2076688bd4be2d55ba9336/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-USB-app.bin"
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-USB-app.bin",
+            "size": 562688,
+            "sha256": "30caae35e2fe3208f80dee03b82e72e54f43b644b1d3944b20f5dd82a0c6f143",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.4/NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-USB-app.bin",
+            "md5": "2447b1b4a29cd3e83d92470827b1bf70",
+            "local_url": "/firmware/30caae35e2fe3208f80dee03b82e72e54f43b644b1d3944b20f5dd82a0c6f143/NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-USB-app.bin"
           },
           "recovery": {
-            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
-            "size": 628176,
-            "sha256": "a345b4ed66412dc68e805b72fd1865077277ea9c12a914b65341b1eb06fa4300",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.3/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
-            "md5": "aebb3185a0a10b862d7dd2f156a4fb07",
-            "local_url": "/firmware/a345b4ed66412dc68e805b72fd1865077277ea9c12a914b65341b1eb06fa4300/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-USB-recovery-resets-nvs-preserves-meshcore-storage.bin"
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "size": 628224,
+            "sha256": "61a38d2bf918c5154c37f3463c49194df20881a2b07c5544effe0215fa98483c",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.4/NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-USB-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "md5": "e02a79db2d8d62b1a9d49f48bfb72aca",
+            "local_url": "/firmware/61a38d2bf918c5154c37f3463c49194df20881a2b07c5544effe0215fa98483c/NeonPocketMC-RCC6-Headless-v1.0.0-rc.4-USB-recovery-resets-nvs-preserves-meshcore-storage.bin"
           },
           "onboarding": "companion-usb"
         },
@@ -963,20 +963,20 @@
             "USB setup log"
           ],
           "update": {
-            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-Web-app.bin",
-            "size": 1377712,
-            "sha256": "6d48a3da70f5dd78418e922caf07626aef9cb9144cd43fc4461f760c9574f2c6",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.3/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-Web-app.bin",
-            "md5": "3fa8ece6f86a7b625bce86990f0e3b62",
-            "local_url": "/firmware/6d48a3da70f5dd78418e922caf07626aef9cb9144cd43fc4461f760c9574f2c6/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-Web-app.bin"
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.5-Web-app.bin",
+            "size": 1380752,
+            "sha256": "e89c86f57acd4b890f5fe9d99e317fa595878ea2f8a0e8040d2b49f603ab5254",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.5/NeonPocketMC-RCC6-Headless-v1.0.0-rc.5-Web-app.bin",
+            "md5": "c2111c7b3ae249d2747e4af578d44ad2",
+            "local_url": "/firmware/e89c86f57acd4b890f5fe9d99e317fa595878ea2f8a0e8040d2b49f603ab5254/NeonPocketMC-RCC6-Headless-v1.0.0-rc.5-Web-app.bin"
           },
           "recovery": {
-            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
-            "size": 1443248,
-            "sha256": "e15db1555968c65b0c5540a966066969cd1b13a31a74dfcf0cfb4f2e7fda7daa",
-            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.3/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
-            "md5": "e64bfea997651acb052b8d4101ae82ff",
-            "local_url": "/firmware/e15db1555968c65b0c5540a966066969cd1b13a31a74dfcf0cfb4f2e7fda7daa/NeonPocketMC-RCC6-Headless-v1.0.0-rc.3-Web-recovery-resets-nvs-preserves-meshcore-storage.bin"
+            "name": "NeonPocketMC-RCC6-Headless-v1.0.0-rc.5-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "size": 1446288,
+            "sha256": "14746870032449c1ff3baafd700b6b5ff4a85617276d7c174be9f26149906c92",
+            "url": "https://github.com/n30nex/NeonPocketMC-RCC6-Headless/releases/download/v1.0.0-rc.5/NeonPocketMC-RCC6-Headless-v1.0.0-rc.5-Web-recovery-resets-nvs-preserves-meshcore-storage.bin",
+            "md5": "4b06a40b3850f37ac3ce9853a52b9ce5",
+            "local_url": "/firmware/14746870032449c1ff3baafd700b6b5ff4a85617276d7c174be9f26149906c92/NeonPocketMC-RCC6-Headless-v1.0.0-rc.5-Web-recovery-resets-nvs-preserves-meshcore-storage.bin"
           },
           "onboarding": "companion-web"
         }

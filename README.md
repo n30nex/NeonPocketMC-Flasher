@@ -72,6 +72,8 @@ python -m http.server 8877 --bind 127.0.0.1
 
 Production runs on the Canadaverse Pi 5 behind the existing Cloudflare Tunnel. Firmware stays in the product GitHub releases; the Pi streams only catalog-pinned release assets through a same-origin endpoint so the browser can verify SHA-256 before writing and MD5 after writing. The container listens on the internal Docker network at port 8080 and is reached publicly as `https://flasher.canadaverse.org`.
 
+For V3, V4, and RCC6 companion Web builds, the LAN WebUI login is `meshcore` plus the eight-letter device key shown before restart. The device key is not the home Wi-Fi password. Headless RCC6 prints both the key and LAN IP in the 115200-baud serial console.
+
 ## License and attribution
 
 MIT. This repository began from `agessaman/flasher.meshcore.io` and retains its MIT license and copyright notice. NeonPocketMC ULP profiles use and attribute IoTThinks' EasySkyMesh power-saving work. NeonPocketMC additions are copyright n30nex/Canadaverse contributors. MeshCore, EasySkyMesh, and the hardware vendors are independent projects; this is not an official service of any of them.
