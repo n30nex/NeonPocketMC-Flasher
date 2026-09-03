@@ -122,6 +122,17 @@ def main() -> int:
         ultimate = {profile["id"]: profile for profile in device["profiles"] if profile["id"].startswith("ultimate-")}
         require(set(ultimate) == {"ultimate-ble-companion-oled", "ultimate-web-companion-oled", "ultimate-repeater-web-oled"}, f"bad Ultimate profile set: {device_id}")
         require(ultimate["ultimate-repeater-web-oled"]["onboarding"] == "repeater-web", f"bad repeater onboarding: {device_id}")
+    wifi_hotfixes = {
+        "heltec-v3": ("v2.0.0-rc.2", "3179d9d97012dce6d40325f1b18deb47f0a01224fa0a4a0d88557f0a1bea63d9"),
+        "heltec-v4": ("v2.0.0-rc.2", "c04be742f57fdb57f416db583875e07c40f76ee29ff011387abe5313806e273d"),
+        "rcc6-companion": ("v2.3.0-rc.7", "785d78ab11b4aff5d96c38577f7442ff862f8b19a9e0150acd8106d6b120c5c0"),
+        "rcc6-headless-companion": ("v1.0.0-rc.5", "e89c86f57acd4b890f5fe9d99e317fa595878ea2f8a0e8040d2b49f603ab5254"),
+    }
+    for device_id, (tag, digest) in wifi_hotfixes.items():
+        device = next(item for item in catalog["devices"] if item["id"] == device_id)
+        web = next(profile for profile in device["profiles"] if profile["onboarding"] == "companion-web")
+        require(device["tag"] == tag, f"wrong Wi-Fi hotfix release: {device_id}")
+        require(web["update"]["sha256"] == digest, f"wrong Wi-Fi hotfix artifact: {device_id}")
 
     for family_id in ("radiocore", "heltec-oled", "solar-maker", "deskos"):
         require(f'id: "{family_id}"' in js, f"missing hardware family: {family_id}")
@@ -129,6 +140,14 @@ def main() -> int:
     require("state.deviceFamily = deviceFamilies.find" in js, "deep links must restore their hardware family")
     require('const screenLabel = /oled/i.test(state.device.display) ? "OLED" : "TFT"' in js, "screen onboarding must match OLED versus TFT hardware")
     require("Ultimate BLE/Web companions" in (ROOT / "README.md").read_text(encoding="utf-8"), "Ultimate Heltec roles are missing from README")
+    require(
+        "sign in with meshcore and that same eight-letter device key" in js,
+        "companion Web onboarding must state the LAN username and device key",
+    )
+    require(
+        "not the home Wi-Fi password" in js,
+        "companion Web onboarding must distinguish the device key from Wi-Fi credentials",
+    )
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
