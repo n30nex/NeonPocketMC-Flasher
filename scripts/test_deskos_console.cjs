@@ -36,6 +36,7 @@ const version = { schema: 1, ok: true, cmd: 'version', firmware: 'MeshCore DeskO
 const health = { schema: 1, ok: true, cmd: 'health', board_ready: true, ui_ready: true, build_commit: state.device.commit };
 const mesh = { schema: 1, ok: true, cmd: 'mesh status', radio_ready: true, identity_ready: true, companion_framing_ready: true, build_commit: state.device.commit };
 const storage = { schema: 1, ok: true, cmd: 'storage status', build_commit: state.device.commit, data_enabled: true,
+  retained_sd: {degraded:false,backup_degraded:false},
   sd: { rp2040_bridge_ready: true, rp2040_protocol_supported: true, present: true, mounted: true,
     data_root_ready: true, file_ops: true, filesystem: 'fat32', status_stale: false, presence_stale: false } };
 
@@ -98,6 +99,12 @@ const storage = { schema: 1, ok: true, cmd: 'storage status', build_commit: stat
   assert.equal(connections, 1, 'slow startup must not reopen/reset the device');
   assert.equal(state.deskosVerified.version.version, '1.8.0-rc.1');
   assert.equal(context.deskOsStorageReadiness(storage).sdReady, true);
+  assert.equal(context.deskOsStorageReadiness({...storage,retained_sd:undefined}).sdReady,false);
+  const degraded={...storage,retained_sd:{degraded:true,backup_degraded:false}};
+  assert.equal(context.deskOsStorageReadiness(degraded).sdReady,false);
+  context.reflectDeskOsStorage(degraded);
+  assert.equal(elements.get('#deskos-sd-state').textContent,'History needs attention');
+  assert.equal(elements.get('#deskos-required-action').textContent,'Recheck storage');
   assert.equal(context.deskOsStorageReadiness({ ...storage, sd: { ...storage.sd, status_stale: true } }).sdReady, false);
   assert.equal(context.deskOsStorageReadiness({ ...storage, ok: false }).bridgeReady, false);
   state.install = 'recovery';

@@ -42,7 +42,7 @@ Normal updates preserve bootloader, partitions, identity, contacts, channels, an
 
 DeskOS **1.8.0-rc.1** is the current release candidate. It improves radio timing and diagnostics, loading progress, and map labels. The browser reads real DeskOS JSON, waits for startup over one USB connection, and verifies the display, identity, radio, and nested SD status. Preserving updates can finish without optional SD storage; fresh installs retain the complete setup. Hardware/build choices stay locked while flashing, and verification is invalidated when the selection changes.
 
-The complete package, signed SD update, installation guide, and previous stable **1.7.12** remain linked from the D1L build card. Builds and checks run locally on the Pi 5. Official Android app 1.49.0 interoperability was verified on 1.7.12; the candidate release notes identify the physical tests actually run. Wi-Fi and Bluetooth remain selectable exclusive modes.
+The complete package, signed SD update, installation guide, and previous stable **1.7.12** remain linked from the D1L build card. An unresolved retained-storage fault is shown explicitly and cannot count as a ready SD stage. Builds and checks run locally on the Pi 5. Official Android app 1.49.0 interoperability was verified on 1.7.12; the candidate release notes identify the physical tests actually run. Wi-Fi and Bluetooth remain selectable exclusive modes.
 
 The WDG Mesh Sidecar profile is deliberately live-only. It has no WiGLE import, historical scan, stored upload backlog, catch-up, migration, or backfill path. After flashing, use the device's temporary setup Wi-Fi to store a 2.4 GHz hotspot and WDGWars API key directly on the device; the flasher does not receive or store either credential.
 

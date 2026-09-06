@@ -484,13 +484,16 @@ function deskOsStorageReadiness(storage) {
     && sd?.response_truncated !== true;
   const bridgeReady = current && sd?.rp2040_bridge_ready === true
     && sd?.rp2040_protocol_supported === true;
+  const retainedIssue = storage?.retained_sd?.degraded === true
+    || storage?.retained_sd?.backup_degraded === true;
   const sdReady = bridgeReady && sd?.presence_stale !== true
     && sd?.present === true && sd?.mounted === true && sd?.data_root_ready === true
-    && sd?.file_ops === true && sd?.filesystem === "fat32" && storage?.data_enabled === true;
-  return { bridgeReady, sdReady, needsFat32: sd?.needs_fat32 === true };
+    && sd?.file_ops === true && sd?.filesystem === "fat32" && storage?.data_enabled === true
+    && storage?.retained_sd?.degraded === false && storage?.retained_sd?.backup_degraded === false;
+  return { bridgeReady, sdReady, retainedIssue, needsFat32: sd?.needs_fat32 === true };
 }
 
-function updateDeskOsCompletion({ bridgeReady = false, sdReady = false } = {}) {
+function updateDeskOsCompletion({ bridgeReady = false, sdReady = false, retainedIssue = false } = {}) {
   const firmwareReady = deskOsFirmwareVerified();
   const completeCount = Number(firmwareReady) + Number(bridgeReady) + Number(sdReady);
   const cleanInstall = state.install === "recovery";
@@ -511,6 +514,10 @@ function updateDeskOsCompletion({ bridgeReady = false, sdReady = false } = {}) {
     $("#deskos-install-title").textContent = "Verify the installed DeskOS firmware";
     $("#deskos-install-copy").textContent = "Connect the ESP32 USB side and verify the release before finishing setup.";
     action.textContent = "Verify ESP32 firmware";
+  } else if (retainedIssue) {
+    $("#deskos-install-title").textContent = "Firmware ready; storage needs attention";
+    $("#deskos-install-copy").textContent = "DeskOS reported a problem saving history. Keep the card inserted, check Storage on the D1L, and verify again after it recovers.";
+    action.textContent = "Recheck storage";
   } else if (complete && !sdReady) {
     $("#deskos-install-title").textContent = "DeskOS update complete";
     $("#deskos-install-copy").textContent = "Firmware is verified. Chat can run live-only; add SD storage for retained history and cached maps.";
@@ -535,7 +542,7 @@ function updateDeskOsCompletion({ bridgeReady = false, sdReady = false } = {}) {
 }
 
 function reflectDeskOsStorage(storage) {
-  const { bridgeReady, sdReady, needsFat32 } = deskOsStorageReadiness(storage);
+  const { bridgeReady, sdReady, needsFat32, retainedIssue } = deskOsStorageReadiness(storage);
   setDeskOsSetupState(
     "#deskos-bridge-state",
     bridgeReady ? "Bridge ready" : "Needs verification",
@@ -546,13 +553,16 @@ function reflectDeskOsStorage(storage) {
   if (needsFat32) {
     sdText = "FAT32 required";
     sdKind = "error";
+  } else if (retainedIssue) {
+    sdText = "History needs attention";
+    sdKind = "error";
   } else if (sdReady) {
     sdText = "SD ready";
     sdKind = "ready";
   }
   setDeskOsSetupState("#deskos-sd-state", sdText, sdKind);
-  updateDeskOsCompletion({ bridgeReady, sdReady });
-  return { bridgeReady, sdReady, needsFat32 };
+  updateDeskOsCompletion({ bridgeReady, sdReady, retainedIssue });
+  return { bridgeReady, sdReady, needsFat32, retainedIssue };
 }
 
 async function disconnectDeskOsConsole() {
@@ -1762,6 +1772,9 @@ async function verifyDeskOsStorage(kind) {
     deskosLog("PASS: DeskOS reports the RP2040 bridge protocol ready.");
     if (kind === "sd") {
       if (!result.sdReady) {
+        if (result.retainedIssue) {
+          throw new Error("DeskOS reports an unresolved history-storage problem. Check Storage on the D1L and verify again after it recovers.");
+        }
         throw new Error(result.needsFat32
           ? "Use an existing FAT32 card, then run Prepare again. This tool does not format cards."
           : "DeskOS has not mounted the prepared card yet. Reseat it, wait a few seconds, and retry.");
@@ -1792,8 +1805,10 @@ async function runRequiredDeskOsAction() {
     return;
   }
   const storage = state.deskosVerified?.storage;
-  const { bridgeReady, sdReady } = deskOsStorageReadiness(storage);
-  if (!bridgeReady) {
+  const { bridgeReady, sdReady, retainedIssue } = deskOsStorageReadiness(storage);
+  if (retainedIssue) {
+    await verifyDeskOsStorage("sd");
+  } else if (!bridgeReady) {
     if (state.deskosBridgeSent) await verifyDeskOsStorage("bridge");
     else await installDeskOsBridge();
   } else if (!sdReady) {
