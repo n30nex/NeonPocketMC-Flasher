@@ -516,6 +516,37 @@
           "release": "https://github.com/n30nex/Canadaverse-WDG-Mesh-Sidecar/releases/tag/v1.0.0-rc.2",
           "tag": "v1.0.0-rc.2",
           "commit": "ecf1db13c153f90d38a40bca01f8d766b3342281"
+        },
+        {
+          "id": "meshgangs-sidecar",
+          "product": "meshgangs-home-v4",
+          "name": "MeshGangs Home Collector",
+          "summary": "Home USB or direct Wi-Fi on original V4/V4.3 with 2 MB PSRAM. V4 R8 and Mobile BLE are not supported.",
+          "transport": "USB + Wi-Fi",
+          "features": [
+            "OLED",
+            "passive MeshCore RX",
+            "live-only collection",
+            "2 MB PSRAM only"
+          ],
+          "roles": [
+            "usb",
+            "wifi"
+          ],
+          "update": {
+            "name": "meshgangs-heltec-v4-v0.1.0-beta.24.bin",
+            "size": 1257968,
+            "sha256": "1013b734787219e66d50d682401c6104c1b77d93cbfa672e5340f2037715b1ec",
+            "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v4-v0.1.0-beta.24.bin",
+            "address": 65536,
+            "md5": "7e582cf4596522ccec98be5b44e4e6d0",
+            "local_url": "/firmware/1013b734787219e66d50d682401c6104c1b77d93cbfa672e5340f2037715b1ec/meshgangs-heltec-v4-v0.1.0-beta.24.bin"
+          },
+          "onboarding": "meshgangs-sidecar",
+          "repository": "https://github.com/n30nex/MeshGangs",
+          "release": "https://mg.canadaverse.org/downloads/",
+          "tag": "v0.1.0-beta.24",
+          "commit": "e5b2541df9c1316ee8101b437677c96817cbd379"
         }
       ]
     },

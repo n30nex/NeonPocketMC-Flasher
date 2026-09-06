@@ -142,9 +142,10 @@ function escapeHtml(value) {
 }
 
 function captureMeshGangsEnrollment() {
+  const requestedRole = new URLSearchParams(location.search).get("role");
+  if (meshGangsRoles.has(requestedRole)) state.meshGangsRole = requestedRole;
   if (!location.hash.startsWith("#meshgangs-enroll=")) return;
   const match = location.hash.match(/^#meshgangs-enroll=([A-Za-z0-9_-]{40,64})$/);
-  const requestedRole = new URLSearchParams(location.search).get("role");
   let handoff = null;
   try {
     handoff = JSON.parse(sessionStorage.getItem(meshGangsHandoffKey) || "null");
@@ -171,7 +172,7 @@ function saveMeshGangsHandoff() {
     role: meshGangsRoles.has(state.meshGangsRole) ? state.meshGangsRole : null,
     label: label.length >= 1 && label.length <= 60 && !/[\x00-\x1f\x7f]/.test(label)
       ? label
-      : "MeshGangs V3",
+      : "MeshGangs collector",
   };
   try { sessionStorage.setItem(meshGangsHandoffKey, JSON.stringify(handoff)); } catch (_error) {}
 }
@@ -180,8 +181,12 @@ function isMeshGangsSidecar() {
   return state.profile?.onboarding === "meshgangs-sidecar";
 }
 
+function meshGangsAllowedRoles() {
+  return state.profile?.roles || [...meshGangsRoles];
+}
+
 function meshGangsInputsValid() {
-  if (!meshGangsRoles.has(state.meshGangsRole)) return false;
+  if (!meshGangsAllowedRoles().includes(state.meshGangsRole)) return false;
   const label = $("#meshgangs-label").value.trim();
   if (!label || label.length > 60 || /[\x00-\x1f\x7f]/.test(label)) return false;
   if (state.meshGangsRole !== "wifi") return true;
@@ -198,6 +203,8 @@ function updateMeshGangsSetup() {
   const selected = isMeshGangsSidecar();
   $("#meshgangs-setup").classList.toggle("hidden", !selected);
   if (!selected) return;
+  const allowedRoles = meshGangsAllowedRoles();
+  if (state.meshGangsRole && !allowedRoles.includes(state.meshGangsRole)) state.meshGangsRole = null;
   const hasEnrollment = Boolean(state.meshGangsToken || state.meshGangsEnrollment);
   const status = $("#meshgangs-account-state");
   status.classList.remove("ready", "error", "working", "pending");
@@ -215,10 +222,12 @@ function updateMeshGangsSetup() {
     status.classList.add("pending");
   }
   $("#meshgangs-enroll-link").classList.toggle("hidden", hasEnrollment);
+  $("#meshgangs-enroll-link").href = `https://mg.canadaverse.org/devices/flasher/?board=${encodeURIComponent(state.device.id)}${state.meshGangsRole ? `&role=${state.meshGangsRole}` : ""}`;
   $("#meshgangs-wifi-fields").classList.toggle("hidden", state.meshGangsRole !== "wifi");
   $$('input[name="meshgangs-role"]').forEach((radio) => {
     radio.checked = radio.value === state.meshGangsRole;
-    radio.disabled = Boolean(state.meshGangsEnrollment);
+    radio.disabled = Boolean(state.meshGangsEnrollment) || !allowedRoles.includes(radio.value);
+    radio.closest(".choice")?.classList.toggle("hidden", !allowedRoles.includes(radio.value));
     radio.closest(".choice")?.classList.toggle("selected", radio.checked);
   });
   ["#meshgangs-label", "#meshgangs-wifi-ssid", "#meshgangs-wifi-password"].forEach((selector) => {
@@ -546,6 +555,31 @@ function hex(value) {
   return value == null ? "unknown" : `0x${value.toString(16).padStart(4, "0")}`;
 }
 
+async function verifyMeshGangsFlashHardware(loader, port, artifact, size) {
+  if (state.device.id !== "heltec-v4") return;
+  const usb = port.getInfo();
+  if (usb.usbVendorId !== 0x303a || usb.usbProductId !== 0x1001
+      || await loader.chip.getPsramCap(loader) !== 2
+      || await loader.chip.getPsramVendor(loader) !== "AP_3v3"
+      || await loader.getFlashSize() !== 16 * 1024) {
+    throw new Error("This MeshGangs release requires the original Heltec V4 with 2 MB PSRAM and 16 MB flash. V4 R8 is not supported.");
+  }
+  const table = await loader.readFlash(0x8000, 0x1000);
+  const view = new DataView(table.buffer, table.byteOffset, table.byteLength);
+  let fits = false;
+  for (let offset = 0; offset + 32 <= view.byteLength; offset += 32) {
+    if (view.getUint16(offset, true) !== 0x50aa) break;
+    const type = view.getUint8(offset + 2);
+    const subtype = view.getUint8(offset + 3);
+    const start = view.getUint32(offset + 4, true);
+    const capacity = view.getUint32(offset + 8, true);
+    if (type === 0 && [0, 0x10].includes(subtype) && start === 0x10000 && capacity >= size) fits = true;
+  }
+  if (artifact.address !== 0x10000 || !fits) {
+    throw new Error("The existing V4 partition layout cannot accept this app-only update. Its bootloader and saved data were left untouched.");
+  }
+}
+
 async function flashEsp32(artifact, bytes) {
   if (!artifact.md5) throw new Error("This catalog has no device-verification MD5. The deployment is incomplete; flashing was blocked.");
   const deskosUpdate = state.device.id === "deskos-d1l" && state.install === "update";
@@ -573,7 +607,8 @@ async function flashEsp32(artifact, bytes) {
       throw new Error(`Wrong chip. Selected ${state.device.expected_chip}, detected ${chip}.`);
     }
     if (isMeshGangsSidecar()) {
-      flashLog("Exact V3 confirmed. Creating its one-time MeshGangs credential; secret values stay hidden…");
+      await verifyMeshGangsFlashHardware(loader, port, artifact, bytes.byteLength);
+      flashLog("Collector hardware confirmed. Creating its one-time MeshGangs credential; secret values stay hidden…");
       await enrollMeshGangsDevice();
     }
     const address = artifact.address ?? (state.install === "recovery" ? 0 : 0x10000);
@@ -798,12 +833,13 @@ async function exchangeMeshGangsSerial(port, command, pattern, timeout = 12000) 
     try { writer?.releaseLock(); } catch (_error) {}
     try { await port.close(); } catch (_error) {}
   }
-  throw new Error("The MeshGangs V3 did not return the expected USB response.");
+  throw new Error("The MeshGangs collector did not return the expected USB response.");
 }
 
 async function provisionMeshGangs(port) {
   const enrollment = state.meshGangsEnrollment;
   if (!enrollment?.secret) throw new Error("The one-time MeshGangs credential is no longer available in this tab.");
+  if (!meshGangsAllowedRoles().includes(enrollment.role)) throw new Error("This collector does not support the selected role.");
   let command = "";
   const expected = enrollment.role === "usb" ? "USB" : enrollment.role === "wifi" ? "WIFI" : "MOBILE";
   if (enrollment.role === "usb") {
@@ -820,8 +856,8 @@ async function provisionMeshGangs(port) {
       /RSP:mgprovision:(?:OK:(?:USB|WIFI|MOBILE)|ERROR)/,
       15000,
     );
-    if (/RSP:mgprovision:ERROR/.test(reply)) throw new Error("The V3 rejected the selected MeshGangs role or credential.");
-    if (!reply.includes(`RSP:mgprovision:OK:${expected}`)) throw new Error("The V3 confirmed a different role than the one selected.");
+    if (/RSP:mgprovision:ERROR/.test(reply)) throw new Error("The collector rejected the selected MeshGangs role or credential.");
+    if (!reply.includes(`RSP:mgprovision:OK:${expected}`)) throw new Error("The collector confirmed a different role than the one selected.");
   } finally {
     command = "";
   }
@@ -842,7 +878,7 @@ async function waitForMeshGangsReady(port) {
         6000,
       );
       if (/storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 init failed|display failed to start|guru meditation|panic|assert failed/i.test(reply)) {
-        throw new Error("The MeshGangs V3 reported a hardware or storage failure after setup.");
+        throw new Error("The MeshGangs collector reported a hardware or storage failure after setup.");
       }
       const status = reply.match(/MeshGangs status: ([A-Z_]+)/)?.[1] || "UNKNOWN";
       if (status !== lastStatus) {
@@ -857,8 +893,8 @@ async function waitForMeshGangsReady(port) {
     await sleep(1500);
   }
   throw new Error(role === "wifi"
-    ? "The V3 saved Home Wi-Fi setup but did not authenticate within two minutes. Check the 2.4 GHz network details."
-    : `The V3 saved setup but did not reach ${expected}.`);
+    ? "The collector saved Home Wi-Fi setup but did not authenticate within two minutes. Check the 2.4 GHz network details."
+    : `The collector saved setup but did not reach ${expected}.`);
 }
 
 function parseCliJson(reply, command) {
@@ -921,9 +957,15 @@ async function verifyBoot() {
     }
     if (isMeshGangsSidecar() && !state.meshGangsProvisioned) {
       if (!state.meshGangsEnrollment) throw new Error("The MeshGangs account enrollment is missing; return to the build step and link the account again.");
+      if (state.device.id === "heltec-v4") {
+        const identity = await exchangeMeshGangsSerial(port, "CMD:MG1:INFO", /MG1 INFO [^\r\n]+/, 12000);
+        if (!identity.split(/\r?\n/).includes(`MG1 INFO meshgangs-v4 ${state.profile.tag}`)) {
+          throw new Error("The restarted V4 did not confirm the selected MeshGangs release. No credentials were sent.");
+        }
+      }
       bootLog(`Applying the exclusive ${state.meshGangsEnrollment.role} role over USB; secret values are hidden…`);
       await provisionMeshGangs(port);
-      bootLog("PASS: the V3 confirmed that its role was saved; verifying the restarted collector…");
+      bootLog("PASS: the collector confirmed that its role was saved; verifying the restarted collector…");
       await waitForMeshGangsReady(port);
       if (state.meshGangsEnrollment.role === "usb") {
         state.meshGangsUsbKey = state.meshGangsEnrollment.secret;
@@ -1032,18 +1074,18 @@ function renderMeshGangsOnboarding() {
   $("#meshgangs-usb-key-value").textContent = state.meshGangsUsbKey || "";
   if (role === "usb") {
     $("#onboarding-heading").textContent = "Home USB collector configured.";
-    $("#meshgangs-ready-title").textContent = "Home USB V3 is ready";
+    $("#meshgangs-ready-title").textContent = "Home USB is ready";
     $("#meshgangs-ready-copy").textContent = "The radio has no Wi-Fi or game key. Keep this one-time key for the Windows/Linux uploader, which will own uploads.";
-    checks.innerHTML = "<label>✓ Radio role verified as <strong>USB_READY</strong>.</label><label>✓ Radio Wi-Fi and relay credentials were cleared.</label><label>Next: download the setup file, install the desktop uploader, and select this V3.</label>";
+    checks.innerHTML = "<label>✓ Radio role verified as <strong>USB_READY</strong>.</label><label>✓ Radio Wi-Fi and relay credentials were cleared.</label><label>Next: download the setup file, install the desktop uploader, and select this collector.</label>";
   } else if (role === "wifi") {
     $("#onboarding-heading").textContent = "Home Wi-Fi collector configured.";
-    $("#meshgangs-ready-title").textContent = "Home Wi-Fi V3 is online";
-    $("#meshgangs-ready-copy").textContent = "The V3 joined the selected 2.4 GHz network and authenticated directly with MeshGangs. USB is no longer required.";
-    checks.innerHTML = "<label>✓ Radio role verified as <strong>READY</strong>.</label><label>✓ BLE patrol relay is disabled in this role.</label><label>Place the powered V3 at home with its LoRa antenna attached.</label>";
+    $("#meshgangs-ready-title").textContent = "Home Wi-Fi is online";
+    $("#meshgangs-ready-copy").textContent = "The collector joined the selected 2.4 GHz network and authenticated directly with MeshGangs. USB is no longer required.";
+    checks.innerHTML = "<label>✓ Radio role verified as <strong>READY</strong>.</label><label>✓ BLE patrol relay is disabled in this role.</label><label>Place the powered collector at home with its LoRa antenna attached.</label>";
   } else {
     $("#onboarding-heading").textContent = "Mobile BLE companion configured.";
     $("#meshgangs-ready-title").textContent = "Mobile V3 is ready to pair";
-    $("#meshgangs-ready-copy").textContent = "The V3 has only its scoped phone-relay credential. Android supplies GPS and internet; the radio does not join Wi-Fi.";
+    $("#meshgangs-ready-copy").textContent = "The collector has only its scoped phone-relay credential. Android supplies GPS and internet; the radio does not join Wi-Fi.";
     checks.innerHTML = "<label>✓ Radio role verified as <strong>MOBILE_READY</strong>.</label><label>✓ Radio Wi-Fi and direct-upload key were cleared.</label><label>Next: unplug USB, open MeshGangs on Android, select this V3, and start a patrol.</label>";
   }
 }

@@ -44,6 +44,7 @@ jobs:
           for asset in assets/devices/*.svg; do test -f "bundle/site/$asset"; done
           node --check flasher.js
           node scripts/test_deskos_flash.cjs
+          node scripts/test_meshgangs_v4.cjs
           node --check scene.js
           git diff --check
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
