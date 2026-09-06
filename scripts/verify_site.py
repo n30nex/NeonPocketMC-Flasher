@@ -239,10 +239,10 @@ def main() -> int:
             "v0.1.0-beta.23", "c2eab22351163915135a79257633b68cec994a66",
         ),
         "heltec-v4": (
-            "meshgangs-heltec-v4-v0.1.0-beta.24.bin", 1_257_968,
-            "1013b734787219e66d50d682401c6104c1b77d93cbfa672e5340f2037715b1ec",
-            "7e582cf4596522ccec98be5b44e4e6d0",
-            "v0.1.0-beta.24", "e5b2541df9c1316ee8101b437677c96817cbd379",
+            "meshgangs-heltec-v4-v0.1.0-beta.25.bin", 1_257_968,
+            "e528180d4744f215d8f152252b34310b619638a7f1c11faa4aaaf9282e01af27",
+            "bfd80de2d71f57501cec98aafdefa94f",
+            "v0.1.0-beta.25", "d952d5ba95de6294cf0eafd59bfbc583e76f3707",
         ),
     }
     for meshgangs_device, meshgangs in meshgangs_profiles:
