@@ -70,6 +70,7 @@ The site is deliberately static. It uses the vendored ESPTool-JS bundle inherite
 python scripts\verify_site.py
 node --check flasher.js
 node scripts/test_meshgangs_v4.cjs
+node scripts/test_meshgangs_serial.cjs
 node scripts/test_deskos_flash.cjs
 node scripts/test_deskos_console.cjs
 python -m http.server 8877 --bind 127.0.0.1

@@ -45,6 +45,7 @@ jobs:
           node --check flasher.js
           node scripts/test_deskos_flash.cjs
           node scripts/test_meshgangs_v4.cjs
+          node scripts/test_meshgangs_serial.cjs
           node scripts/test_deskos_console.cjs
           node --check scene.js
           git diff --check
