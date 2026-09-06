@@ -77,7 +77,7 @@ def main() -> int:
                     "tag": profile_product["tag"],
                     "commit": profile_product["commit"],
                 })
-            for kind in ("update", "recovery", "bridge"):
+            for kind in ("update", "recovery", "bridge", "update_boot"):
                 name = profile.get(kind)
                 if not name:
                     continue

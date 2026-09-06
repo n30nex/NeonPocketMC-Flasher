@@ -72,6 +72,39 @@
           "url": "https://mg.canadaverse.org/downloads/files/meshgangs-heltec-v3-v0.1.0-beta.22.bin"
         }
       ]
+    },
+    {
+      "id": "deskos-d1l-client",
+      "repository": "https://github.com/n30nex/DeskOS-MeshCore",
+      "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.7.12",
+      "tag": "v1.7.12",
+      "commit": "59cb0cd3da0e23005ac79ac08657380e96d95b62",
+      "artifacts": [
+        {
+          "name": "MeshCore-DeskOS-D1L-1.7.12-UPDATE-existing-deskos-at-0x20000.bin",
+          "size": 2257648,
+          "sha256": "f058be2c252410e67b583d88e689dc18f788e6cf69ff53892f16da85e39b4245",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.12/MeshCore-DeskOS-D1L-1.7.12-UPDATE-existing-deskos-at-0x20000.bin"
+        },
+        {
+          "name": "MeshCore-DeskOS-D1L-1.7.12-FRESH-CLEAN-full-8mb-at-0x0.bin",
+          "size": 8388608,
+          "sha256": "c0c5067959b0034298708787dbac6cb67d7f7944d09099ab9da733ac0725e1fe",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.12/MeshCore-DeskOS-D1L-1.7.12-FRESH-CLEAN-full-8mb-at-0x0.bin"
+        },
+        {
+          "name": "MeshCore-DeskOS-D1L-1.7.12-RP2040-UPDATE-OR-FRESH.uf2",
+          "size": 305152,
+          "sha256": "1f2aa4c5dbe911f0618ec70582e838af325ec4a8882b213bf74b6251a09043fb",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.12/MeshCore-DeskOS-D1L-1.7.12-RP2040-UPDATE-OR-FRESH.uf2"
+        },
+        {
+          "name": "MeshCore-DeskOS-D1L-1.7.12-ota-data.bin",
+          "size": 8192,
+          "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.12/MeshCore-DeskOS-D1L-1.7.12-ota-data.bin"
+        }
+      ]
     }
   ],
   "devices": [
@@ -664,16 +697,40 @@
       "profiles": [
         {
           "id": "deskos-full-feature",
-          "name": "DeskOS Full Feature",
-          "summary": "Standalone MeshCore desk client with touch UI, messages, maps, and repeater administration.",
-          "transport": "USB + Wi-Fi",
-          "features": ["480x480 touch", "MeshCore client", "repeater admin", "maps", "SD history"],
-          "update": "MeshCore-DeskOS-D1L-1.7.9-UPDATE-existing-deskos-at-0x20000.bin",
+          "name": "DeskOS 1.7.12 Full Feature",
+          "summary": "Touch mesh client with secure phone companion, confirmed messages, maps, and repeater management.",
+          "transport": "USB + BLE or Wi-Fi",
+          "features": [
+            "480x480 touch",
+            "phone companion",
+            "confirmed DMs",
+            "repeater console",
+            "maps",
+            "SD history",
+            "signed updates"
+          ],
+          "update": "MeshCore-DeskOS-D1L-1.7.12-UPDATE-existing-deskos-at-0x20000.bin",
           "update_address": 131072,
-          "recovery": "MeshCore-DeskOS-D1L-1.7.9-FRESH-CLEAN-full-8mb-at-0x0.bin",
+          "recovery": "MeshCore-DeskOS-D1L-1.7.12-FRESH-CLEAN-full-8mb-at-0x0.bin",
           "recovery_address": 0,
-          "bridge": "MeshCore-DeskOS-D1L-1.7.9-RP2040-UPDATE-OR-FRESH.uf2",
-          "onboarding": "deskos"
+          "bridge": "MeshCore-DeskOS-D1L-1.7.12-RP2040-UPDATE-OR-FRESH.uf2",
+          "onboarding": "deskos",
+          "update_boot": "MeshCore-DeskOS-D1L-1.7.12-ota-data.bin",
+          "update_boot_address": 61440
+        }
+      ],
+      "downloads": [
+        {
+          "name": "Download complete package",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.12/MeshCore-DeskOS-D1L-1.7.12.zip"
+        },
+        {
+          "name": "Download signed SD update",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.12/MeshCore-DeskOS-D1L-1.7.12-SIGNED-SD-UPDATE.zip"
+        },
+        {
+          "name": "Installation guide",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.7.12/START_HERE-1.7.12.md"
         }
       ]
     }

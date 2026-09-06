@@ -323,6 +323,9 @@ function renderProfiles() {
     </button>
   `).join("");
   $$("[data-profile]").forEach((card) => card.addEventListener("click", () => selectProfile(card.dataset.profile)));
+  $("#release-downloads").innerHTML = (state.device.downloads || []).map((download) =>
+    `<a href="${escapeHtml(download.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(download.name)} ↗</a>`
+  ).join("");
   $("#install-mode").classList.add("hidden");
   $("#deskos-clean-confirm").classList.add("hidden");
   $("#ambiguous-confirm").classList.add("hidden");
@@ -545,6 +548,12 @@ function hex(value) {
 
 async function flashEsp32(artifact, bytes) {
   if (!artifact.md5) throw new Error("This catalog has no device-verification MD5. The deployment is incomplete; flashing was blocked.");
+  const deskosUpdate = state.device.id === "deskos-d1l" && state.install === "update";
+  const bootSelection = deskosUpdate ? state.profile.update_boot : null;
+  if (deskosUpdate && (artifact.address !== 0x20000 || !bootSelection?.md5 || bootSelection.address !== 0xf000 || bootSelection.size !== 0x2000)) {
+    throw new Error("The DeskOS boot selection file is missing or invalid. Flashing was blocked.");
+  }
+  const bootBytes = bootSelection ? await fetchFirmware(bootSelection) : null;
   const port = await requestMatchingPort(state.device);
   state.port = port;
   let transport;
@@ -583,6 +592,18 @@ async function flashEsp32(artifact, bytes) {
     const actualMd5 = typeof actual === "string" ? actual.toLowerCase() : [...actual].map((value) => value.toString(16).padStart(2, "0")).join("");
     if (actualMd5 !== artifact.md5.toLowerCase()) throw new Error(`Flash MD5 mismatch: device ${actualMd5}, expected ${artifact.md5}`);
     flashLog(`Device flash MD5 verified: ${actualMd5}`);
+    if (bootSelection) {
+      setProgress("Selecting the verified DeskOS update", 95);
+      await loader.writeFlash({
+        fileArray: [{ data: bytesToBinaryString(bootBytes), address: bootSelection.address }],
+        flashSize: "keep", flashMode: "keep", flashFreq: "keep",
+        eraseAll: false, compress: true,
+      });
+      const bootMd5 = await loader.flashMd5sum(bootSelection.address, bootBytes.byteLength);
+      const bootDigest = typeof bootMd5 === "string" ? bootMd5.toLowerCase() : [...bootMd5].map((value) => value.toString(16).padStart(2, "0")).join("");
+      if (bootDigest !== bootSelection.md5.toLowerCase()) throw new Error("DeskOS boot selection verification failed.");
+      flashLog("The verified DeskOS update is selected for the next boot.");
+    }
     setProgress("Resetting device", 98);
     await loader.after("hard_reset");
     await sleep(300);
