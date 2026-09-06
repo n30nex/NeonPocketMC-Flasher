@@ -25,5 +25,6 @@ jobs:
       - run: node --check flasher.js
       - run: node scripts/test_deskos_flash.cjs
       - run: node scripts/test_meshgangs_v4.cjs
+      - run: node scripts/test_deskos_console.cjs
       - run: node --check scene.js
       - run: git diff --check

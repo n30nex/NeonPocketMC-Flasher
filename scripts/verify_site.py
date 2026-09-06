@@ -151,16 +151,17 @@ def main() -> int:
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
-    require(deskos["tag"] == "v1.7.12", "wrong DeskOS release")
-    require(deskos["commit"] == "59cb0cd3da0e23005ac79ac08657380e96d95b62", "wrong DeskOS commit")
+    require(deskos["tag"] == "v1.8.0-rc.1", "wrong DeskOS release")
+    require(deskos["commit"] == "cbeeb2dd16301bb68d3776d5298338a37d7f070f", "wrong DeskOS commit")
     deskos_profile = deskos["profiles"][0]
     require(deskos_profile["update"]["address"] == 0x20000, "DeskOS update must use 0x20000")
     require(deskos_profile["recovery"]["address"] == 0, "DeskOS clean image must use 0x0")
     require(deskos_profile["bridge"]["name"].endswith(".uf2"), "DeskOS bridge must be UF2")
     require(deskos_profile["update_boot"]["address"] == 0xf000, "DeskOS boot selection must use 0xf000")
     require(deskos_profile["update_boot"]["sha256"] == "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f", "wrong DeskOS boot selection")
-    require(deskos_profile["update"]["sha256"] == "f058be2c252410e67b583d88e689dc18f788e6cf69ff53892f16da85e39b4245", "wrong DeskOS app")
-    require(len(deskos["downloads"]) == 3, "DeskOS needs package, signed update and installation links")
+    require(deskos_profile["update"]["sha256"] == "d462f941e1876053980ae8eb61e754fae94a5620708450a5dcab8ff1a8ebdd2b", "wrong DeskOS app")
+    require(len(deskos["downloads"]) == 4, "DeskOS needs candidate package, signed update, installation and stable-release links")
+    require(deskos["downloads"][-1]["url"].endswith("/releases/tag/v1.7.12"), "previous stable DeskOS must remain linked")
 
     for contract in (
         'crypto.subtle.digest("SHA-256"',
@@ -169,7 +170,8 @@ def main() -> int:
         'set path.hash.mode 2',
         "INFO_UF2.TXT",
         "Passwords remain in this tab only",
-        "Fresh clean install deletes the existing DeskOS identity",
+        "Fresh clean install replaces the ESP32 identity and settings",
+        "Existing SD files stay on the card",
         "flashing the ESP32 alone will not enable storage",
         "Complete DeskOS setup",
         "Prepare SD card",
@@ -373,7 +375,7 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260906v4home24" in html, "flasher JS cache bust is stale")
+    require("flasher.js?v=20260906deskosrc1" in html, "flasher JS cache bust is stale")
     require("flasher.css?v=20260824boot1" in html, "flasher CSS cache bust is stale")
     require("scene.js?v=20260824boot1" in html, "scene JS cache bust is stale")
     require(".hero-orbit, .sidecar-promo" not in css, "Aircraft Sidecar download must remain visible")

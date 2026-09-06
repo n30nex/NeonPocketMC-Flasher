@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/assets/neonpocketmc-mark.png">
   <link rel="stylesheet" href="/css/flasher.css?v=20260824boot1">
   <script src="/scene.js?v=20260824boot1" defer></script>
-  <script type="module" src="/flasher.js?v=20260906v4home24"></script>
+  <script type="module" src="/flasher.js?v=20260906deskosrc1"></script>
 </head>
 <body>
   <div id="boot-sequence" class="boot-sequence" aria-hidden="true">
@@ -92,7 +92,7 @@
         </label>
       </div>
       <div id="deskos-clean-confirm" class="confirm-box danger hidden">
-        <label><input id="deskos-clean-checkbox" type="checkbox"> Fresh clean install deletes the existing DeskOS identity, contacts, settings, and history. It also requires the RP2040 SD bridge and a prepared FAT32 card; flashing the ESP32 alone will not enable storage. I understand this cannot be undone.</label>
+        <label><input id="deskos-clean-checkbox" type="checkbox"> Fresh clean install replaces the ESP32 identity and settings. Existing SD files stay on the card. Complete the RP2040 bridge and prepared FAT32 card stages; flashing the ESP32 alone will not enable storage. I understand the ESP32 data will be replaced.</label>
       </div>
       <div id="ambiguous-confirm" class="confirm-box hidden">
         <label><input id="model-confirm" type="checkbox"> I physically checked the board label and selected the correct model. ESP32-S3 alone cannot distinguish V3 from V4.</label>
