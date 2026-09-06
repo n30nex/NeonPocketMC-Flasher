@@ -375,7 +375,7 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260906deskosrc1" in html, "flasher JS cache bust is stale")
+    require("flasher.js?v=20260906mgserial" in html, "flasher JS cache bust is stale")
     require("flasher.css?v=20260824boot1" in html, "flasher CSS cache bust is stale")
     require("scene.js?v=20260824boot1" in html, "scene JS cache bust is stale")
     require(".hero-orbit, .sidecar-promo" not in css, "Aircraft Sidecar download must remain visible")

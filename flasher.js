@@ -874,6 +874,19 @@ async function enrollMeshGangsDevice() {
   }
 }
 
+function meshGangsStartupFailure(output) {
+  const lines = output.split(/\r?\n/).map((line) => line.trim());
+  for (const [index, line] of lines.entries()) {
+    // This warning is emitted before the firmware retries radio initialization.
+    // Only the later successful client startup proves that the retry recovered.
+    if (/^SX1262 init failed \(-?\d+\); retrying without TCXO control$/.test(line)
+        && lines.slice(index + 1).some((later) => later.startsWith("MeshCore client ready: "))) continue;
+    const fatal = line.match(/storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 (?:init|configuration) failed|MeshCore client failed to start|display failed to start|guru meditation|panic|assert failed/i);
+    if (fatal) return fatal[0];
+  }
+  return null;
+}
+
 async function exchangeMeshGangsSerial(port, command, pattern, timeout = 12000) {
   let reader;
   let writer;
@@ -883,10 +896,16 @@ async function exchangeMeshGangsSerial(port, command, pattern, timeout = 12000) 
     writer = port.writable.getWriter();
     reader = port.readable.getReader();
     await writer.write(new TextEncoder().encode(`${command}\r\n`));
+    let lastWrite = Date.now();
+    const retryQuery = command === "CMD:MG1:INFO" || command === "CMD:mgstatus:";
     const decoder = new TextDecoder();
     const deadline = Date.now() + timeout;
     let pendingRead = reader.read();
     while (Date.now() < deadline) {
+      if (retryQuery && Date.now() - lastWrite >= 1500) {
+        await writer.write(new TextEncoder().encode(`${command}\r\n`));
+        lastWrite = Date.now();
+      }
       const result = await Promise.race([
         pendingRead,
         sleep(300).then(() => ({ timeout: true })),
@@ -895,7 +914,9 @@ async function exchangeMeshGangsSerial(port, command, pattern, timeout = 12000) 
       if (result.done) break;
       output += decoder.decode(result.value, { stream: true });
       if (output.length > 24000) output = output.slice(-24000);
-      if (pattern.test(output)) return output;
+      // Web Serial chunks are not lines; a chunk may end halfway through a version.
+      const complete = output.slice(0, output.lastIndexOf("\n") + 1);
+      if (pattern.test(complete)) return complete;
       pendingRead = reader.read();
     }
   } finally {
@@ -905,6 +926,13 @@ async function exchangeMeshGangsSerial(port, command, pattern, timeout = 12000) 
     try { await port.close(); } catch (_error) {}
   }
   throw new Error("The MeshGangs collector did not return the expected USB response.");
+}
+
+async function verifyMeshGangsIdentity(port) {
+  const identity = await exchangeMeshGangsSerial(port, "CMD:MG1:INFO", /^MG1 INFO [^\r\n]+\r?$/m, 30000);
+  if (!identity.split(/\r?\n/).includes(`MG1 INFO meshgangs-v4 ${state.profile.tag}`)) {
+    throw new Error("The restarted V4 did not confirm the selected MeshGangs release. No credentials were sent.");
+  }
 }
 
 async function provisionMeshGangs(port) {
@@ -924,11 +952,11 @@ async function provisionMeshGangs(port) {
     const reply = await exchangeMeshGangsSerial(
       port,
       command,
-      /RSP:mgprovision:(?:OK:(?:USB|WIFI|MOBILE)|ERROR)/,
+      /^RSP:mgprovision:(?:OK:(?:USB|WIFI|MOBILE)|ERROR)\r?$/m,
       15000,
     );
     if (/RSP:mgprovision:ERROR/.test(reply)) throw new Error("The collector rejected the selected MeshGangs role or credential.");
-    if (!reply.includes(`RSP:mgprovision:OK:${expected}`)) throw new Error("The collector confirmed a different role than the one selected.");
+    if (!reply.split(/\r?\n/).includes(`RSP:mgprovision:OK:${expected}`)) throw new Error("The collector confirmed a different role than the one selected.");
   } finally {
     command = "";
   }
@@ -945,11 +973,12 @@ async function waitForMeshGangsReady(port) {
       const reply = await exchangeMeshGangsSerial(
         port,
         "CMD:mgstatus:",
-        /MeshGangs status: [A-Z_]+/,
+        /^MeshGangs status: [A-Z_]+(?: [^\r\n]*)?\r?$/m,
         6000,
       );
-      if (/storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 init failed|display failed to start|guru meditation|panic|assert failed/i.test(reply)) {
-        throw new Error("The MeshGangs collector reported a hardware or storage failure after setup.");
+      const failure = meshGangsStartupFailure(reply);
+      if (failure) {
+        throw new Error(`The MeshGangs collector reported a hardware or storage failure after setup (${failure}).`);
       }
       const status = reply.match(/MeshGangs status: ([A-Z_]+)/)?.[1] || "UNKNOWN";
       if (status !== lastStatus) {
@@ -1056,17 +1085,17 @@ async function verifyBoot() {
       const sample = await readBootSample(port);
       if (sample.trim()) bootLog(sample.trim());
       else bootLog("No text startup log was emitted; USB enumeration succeeded.");
-      if (/storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 init failed|display failed to start|guru meditation|panic|assert failed/i.test(sample)) {
+      const failure = isMeshGangsSidecar()
+        ? meshGangsStartupFailure(sample)
+        : /storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 init failed|display failed to start|guru meditation|panic|assert failed/i.test(sample);
+      if (failure) {
         throw new Error("Startup output contains a fatal error. Do not disconnect USB.");
       }
     }
     if (isMeshGangsSidecar() && !state.meshGangsProvisioned) {
       if (!state.meshGangsEnrollment) throw new Error("The MeshGangs account enrollment is missing; return to the build step and link the account again.");
       if (state.device.id === "heltec-v4") {
-        const identity = await exchangeMeshGangsSerial(port, "CMD:MG1:INFO", /MG1 INFO [^\r\n]+/, 12000);
-        if (!identity.split(/\r?\n/).includes(`MG1 INFO meshgangs-v4 ${state.profile.tag}`)) {
-          throw new Error("The restarted V4 did not confirm the selected MeshGangs release. No credentials were sent.");
-        }
+        await verifyMeshGangsIdentity(port);
       }
       bootLog(`Applying the exclusive ${state.meshGangsEnrollment.role} role over USB; secret values are hidden…`);
       await provisionMeshGangs(port);
