@@ -98,7 +98,7 @@ def main() -> int:
         require(device["flash_method"] in ("esp32", "uf2"), f"bad flash method: {device['id']}")
         for profile in device["profiles"]:
             require(profile["onboarding"] in ("companion", "companion-headless", "companion-usb", "companion-web", "repeater-web", "server-core", "server-network", "room-core", "room-network", "ulp-repeater", "deskos", "wdg-sidecar", "meshgangs-sidecar"), f"bad onboarding: {profile['id']}")
-            for kind in ("update", "recovery", "bridge"):
+            for kind in ("update", "recovery", "bridge", "update_boot"):
                 if kind not in profile:
                     continue
                 artifact = profile[kind]
@@ -109,8 +109,8 @@ def main() -> int:
                     artifact["local_url"] == f"/firmware/{artifact['sha256']}/{artifact['name']}",
                     f"bad local URL: {artifact['name']}",
                 )
-                require(artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
-    require(len(artifacts) == 71, f"expected 71 flash artifacts, found {len(artifacts)}")
+                require(artifact["size"] == 8192 if kind == "update_boot" else artifact["size"] > 100_000, f"implausible firmware size: {artifact['name']}")
+    require(len(artifacts) == 72, f"expected 72 flash artifacts, found {len(artifacts)}")
     require(len({artifact["name"] for artifact in artifacts}) == len(artifacts), "duplicate artifact name")
 
     heltec_v3 = next(device for device in catalog["devices"] if device["id"] == "heltec-v3")
@@ -151,12 +151,16 @@ def main() -> int:
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
-    require(deskos["tag"] == "v1.7.9", "wrong DeskOS release")
-    require(deskos["commit"] == "40a2edaa2f4f356955727d0b6e22662d55fec142", "wrong DeskOS commit")
+    require(deskos["tag"] == "v1.7.12", "wrong DeskOS release")
+    require(deskos["commit"] == "59cb0cd3da0e23005ac79ac08657380e96d95b62", "wrong DeskOS commit")
     deskos_profile = deskos["profiles"][0]
     require(deskos_profile["update"]["address"] == 0x20000, "DeskOS update must use 0x20000")
     require(deskos_profile["recovery"]["address"] == 0, "DeskOS clean image must use 0x0")
     require(deskos_profile["bridge"]["name"].endswith(".uf2"), "DeskOS bridge must be UF2")
+    require(deskos_profile["update_boot"]["address"] == 0xf000, "DeskOS boot selection must use 0xf000")
+    require(deskos_profile["update_boot"]["sha256"] == "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f", "wrong DeskOS boot selection")
+    require(deskos_profile["update"]["sha256"] == "f058be2c252410e67b583d88e689dc18f788e6cf69ff53892f16da85e39b4245", "wrong DeskOS app")
+    require(len(deskos["downloads"]) == 3, "DeskOS needs package, signed update and installation links")
 
     for contract in (
         'crypto.subtle.digest("SHA-256"',
