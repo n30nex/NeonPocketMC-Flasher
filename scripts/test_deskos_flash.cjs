@@ -41,6 +41,45 @@ async function run({ badApp = false, badBoot = false, badDownload = false, missi
   return { events, error };
 }
 
+async function checkSelectionLock(failDownload) {
+  const panels = [{inert:false}, {inert:false}, {inert:false}];
+  const button = {disabled:false};
+  const state = {device:{id:'deskos-d1l',flash_method:'esp32'},profile:{id:'candidate'},install:'update'};
+  let finishDownload;
+  const downloaded = new Promise((resolve, reject) => { finishDownload = () => failDownload ? reject(new Error('download failed')) : resolve(new Uint8Array(1)); });
+  let flashes = 0, completed = 0;
+  const context = vm.createContext({state, navigator:{serial:{}}, $:()=>button, $$:()=>panels,
+    enableThrough() {}, resetLog() {}, playModem() {}, setProgress() {}, flashLog() {},
+    isMeshGangsSidecar:()=>false, currentArtifact:()=>app, fetchFirmware:()=>downloaded,
+    flashEsp32:async()=>{ flashes++; assert.equal(state.device.id,'deskos-d1l'); assert.equal(state.profile.id,'candidate'); assert.equal(state.install,'update'); },
+  });
+  const functionSource = (name) => {
+    const start = source.search(new RegExp(`(?:async )?function ${name}\\(`));
+    assert.ok(start >= 0);
+    const next = source.slice(start + 1).search(/\n(?:async )?function /);
+    return source.slice(start, next < 0 ? undefined : start + 1 + next);
+  };
+  for (const name of ['flashSelected','goToStep','showDeviceFamilies','selectDevice','selectProfile','selectInstallMode']) {
+    vm.runInContext(functionSource(name), context);
+  }
+  const pending = context.flashSelected();
+  assert.equal(state.flashing,true);
+  assert.ok(panels.every(panel=>panel.inert));
+  context.showDeviceFamilies(); context.selectDevice('other'); context.selectProfile('other');
+  context.selectInstallMode('recovery'); context.goToStep(1);
+  await context.flashSelected(); // A second click cannot start another download/write.
+  assert.equal(state.device.id,'deskos-d1l'); assert.equal(state.profile.id,'candidate');
+  assert.equal(state.install,'update');
+  context.goToStep=()=>{completed++; assert.equal(state.flashing,false);};
+  finishDownload();
+  await pending;
+  assert.equal(state.flashing,false);
+  assert.ok(panels.every(panel=>!panel.inert));
+  assert.equal(button.disabled,false);
+  assert.equal(flashes, failDownload ? 0 : 1);
+  assert.equal(completed, failDownload ? 0 : 1);
+}
+
 (async () => {
   const good = await run();
   assert.equal(good.error, undefined);
@@ -59,5 +98,7 @@ async function run({ badApp = false, badBoot = false, badDownload = false, missi
   const recovery = await run({ install: 'recovery', missingBoot: true });
   assert.equal(recovery.error, undefined);
   assert.deepEqual(recovery.events, [['usb'], ['write', 0], ['verify', 0], ['reset']]);
+  await checkSelectionLock(false);
+  await checkSelectionLock(true);
   console.log('PASS: DeskOS app verification precedes boot selection; download/write failures never select or reset; clean install unchanged.');
 })().catch((error) => { console.error(error); process.exitCode = 1; });

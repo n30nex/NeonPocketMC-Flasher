@@ -92,7 +92,7 @@
         </label>
       </div>
       <div id="deskos-clean-confirm" class="confirm-box danger hidden">
-        <label><input id="deskos-clean-checkbox" type="checkbox"> Fresh clean install deletes the existing DeskOS identity, contacts, settings, and history. It also requires the RP2040 SD bridge and a prepared FAT32 card; flashing the ESP32 alone will not enable storage. I understand this cannot be undone.</label>
+        <label><input id="deskos-clean-checkbox" type="checkbox"> Fresh clean install replaces the ESP32 identity and settings. Existing SD files stay on the card. Complete the RP2040 bridge and prepared FAT32 card stages; flashing the ESP32 alone will not enable storage. I understand the ESP32 data will be replaced.</label>
       </div>
       <div id="ambiguous-confirm" class="confirm-box hidden">
         <label><input id="model-confirm" type="checkbox"> I physically checked the board label and selected the correct model. ESP32-S3 alone cannot distinguish V3 from V4.</label>

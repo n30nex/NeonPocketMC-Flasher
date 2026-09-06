@@ -10,6 +10,7 @@ const state = {
   device: null,
   profile: null,
   install: "update",
+  flashing: false,
   maxStep: 1,
   port: null,
   cli: null,
@@ -127,6 +128,7 @@ function enableThrough(step) {
 }
 
 function goToStep(step) {
+  if (state.flashing) return;
   if (step > state.maxStep) return;
   playModem("hop");
   $$(".panel").forEach((panel) => panel.classList.toggle("active", Number(panel.dataset.panel) === step));
@@ -291,6 +293,7 @@ function renderDevices() {
 }
 
 function showDeviceFamilies() {
+  if (state.flashing) return;
   resetMeshGangsDeviceWorkflow();
   state.deviceFamily = null;
   state.device = null;
@@ -307,7 +310,10 @@ function showDeviceFamilies() {
 }
 
 function selectDevice(id) {
+  if (state.flashing) return;
   resetMeshGangsDeviceWorkflow();
+  state.maxStep = 1;
+  state.port = null;
   state.device = state.catalog.devices.find((device) => device.id === id);
   state.profile = null;
   state.install = "update";
@@ -343,7 +349,11 @@ function renderProfiles() {
 }
 
 function selectProfile(id) {
+  if (state.flashing) return;
   resetMeshGangsDeviceWorkflow();
+  state.maxStep = 2;
+  state.deskosVerified = null;
+  enableThrough(2);
   state.profile = state.device.profiles.find((profile) => profile.id === id);
   $$("[data-profile]").forEach((card) => card.classList.toggle("selected", card.dataset.profile === id));
   const hasRecovery = Boolean(state.profile.recovery);
@@ -374,6 +384,7 @@ function updateContinueState() {
 }
 
 function selectInstallMode(value) {
+  if (state.flashing) return;
   state.install = value;
   if (value !== "recovery") $("#deskos-clean-checkbox").checked = false;
   updateContinueState();
@@ -457,21 +468,54 @@ function setDeskOsSetupState(id, text, kind = "pending") {
   element.classList.add(kind);
 }
 
+function deskOsFirmwareVerified() {
+  const verified = state.deskosVerified;
+  const expected = state.device?.commit;
+  return Boolean(expected) && verified?.version?.ok === true && verified?.health?.ok === true
+    && verified?.version?.build_commit === expected && verified?.health?.build_commit === expected
+    && verified?.health?.board_ready === true && verified?.health?.ui_ready === true
+    && verified?.mesh?.build_commit === expected && verified?.mesh?.radio_ready === true
+    && verified?.mesh?.identity_ready === true;
+}
+
+function deskOsStorageReadiness(storage) {
+  const sd = storage?.sd;
+  const current = storage?.ok === true && sd?.status_stale !== true
+    && sd?.response_truncated !== true;
+  const bridgeReady = current && sd?.rp2040_bridge_ready === true
+    && sd?.rp2040_protocol_supported === true;
+  const sdReady = bridgeReady && sd?.presence_stale !== true
+    && sd?.present === true && sd?.mounted === true && sd?.data_root_ready === true
+    && sd?.file_ops === true && sd?.filesystem === "fat32" && storage?.data_enabled === true;
+  return { bridgeReady, sdReady, needsFat32: sd?.needs_fat32 === true };
+}
+
 function updateDeskOsCompletion({ bridgeReady = false, sdReady = false } = {}) {
-  const completeCount = 1 + Number(bridgeReady) + Number(sdReady);
-  const complete = completeCount === 3;
+  const firmwareReady = deskOsFirmwareVerified();
+  const completeCount = Number(firmwareReady) + Number(bridgeReady) + Number(sdReady);
   const cleanInstall = state.install === "recovery";
-  $("#deskos-install-count").textContent = `${cleanInstall ? "Fresh DeskOS install" : "DeskOS setup"} · ${completeCount} of 3`;
-  $("#deskos-install-progress").value = completeCount;
-  $("#deskos-install-progress").textContent = `${completeCount} of 3`;
+  const complete = cleanInstall ? completeCount === 3 : firmwareReady;
+  const progress = cleanInstall ? `${completeCount} of 3` : firmwareReady ? "Update verified" : "Verification required";
+  $("#deskos-install-count").textContent = `${cleanInstall ? "Fresh DeskOS install" : "DeskOS update"} · ${progress}`;
+  $("#deskos-install-progress").max = cleanInstall ? 3 : 1;
+  $("#deskos-install-progress").value = cleanInstall ? completeCount : Number(firmwareReady);
+  $("#deskos-install-progress").textContent = progress;
   $("#deskos-install-status").classList.toggle("complete", complete);
   $("#deskos-install-status").classList.toggle("incomplete", !complete);
   $("#deskos-success-mark").classList.toggle("pending", !complete);
   $("#deskos-success-mark").textContent = complete ? "✓" : "!";
 
   const action = $("#deskos-required-action");
-  action.disabled = complete;
-  if (complete) {
+  action.disabled = complete && sdReady;
+  if (!firmwareReady) {
+    $("#deskos-install-title").textContent = "Verify the installed DeskOS firmware";
+    $("#deskos-install-copy").textContent = "Connect the ESP32 USB side and verify the release before finishing setup.";
+    action.textContent = "Verify ESP32 firmware";
+  } else if (complete && !sdReady) {
+    $("#deskos-install-title").textContent = "DeskOS update complete";
+    $("#deskos-install-copy").textContent = "Firmware is verified. Chat can run live-only; add SD storage for retained history and cached maps.";
+    action.textContent = "Set up SD storage (optional)";
+  } else if (complete) {
     $("#deskos-install-title").textContent = "DeskOS installation complete";
     $("#deskos-install-copy").textContent = "The ESP32 firmware, RP2040 bridge, and FAT32 SD storage are verified on the D1L.";
     action.textContent = "Installation complete";
@@ -491,10 +535,7 @@ function updateDeskOsCompletion({ bridgeReady = false, sdReady = false } = {}) {
 }
 
 function reflectDeskOsStorage(storage) {
-  const bridgeReady = storage?.rp2040_bridge_ready === true
-    && storage?.rp2040_protocol_supported !== false;
-  const sdReady = bridgeReady && storage?.present === true
-    && storage?.mounted === true && storage?.data_root_ready === true;
+  const { bridgeReady, sdReady, needsFat32 } = deskOsStorageReadiness(storage);
   setDeskOsSetupState(
     "#deskos-bridge-state",
     bridgeReady ? "Bridge ready" : "Needs verification",
@@ -502,7 +543,7 @@ function reflectDeskOsStorage(storage) {
   );
   let sdText = "Needs setup";
   let sdKind = "pending";
-  if (storage?.needs_fat32 === true) {
+  if (needsFat32) {
     sdText = "FAT32 required";
     sdKind = "error";
   } else if (sdReady) {
@@ -511,7 +552,7 @@ function reflectDeskOsStorage(storage) {
   }
   setDeskOsSetupState("#deskos-sd-state", sdText, sdKind);
   updateDeskOsCompletion({ bridgeReady, sdReady });
-  return { bridgeReady, sdReady };
+  return { bridgeReady, sdReady, needsFat32 };
 }
 
 async function disconnectDeskOsConsole() {
@@ -532,6 +573,9 @@ function bytesToBinaryString(bytes) {
 
 function portMatchesDevice(port, device) {
   const info = port.getInfo();
+  if (device.id === "deskos-d1l") {
+    return info.usbVendorId === device.usb_vid && info.usbProductId === device.usb_pid;
+  }
   if (device.usb_vid && info.usbVendorId && info.usbVendorId !== device.usb_vid) return false;
   if (device.usb_pid && info.usbProductId && info.usbProductId !== device.usb_pid) return false;
   return true;
@@ -588,6 +632,10 @@ async function flashEsp32(artifact, bytes) {
     throw new Error("The DeskOS boot selection file is missing or invalid. Flashing was blocked.");
   }
   const bootBytes = bootSelection ? await fetchFirmware(bootSelection) : null;
+  if (state.cli) {
+    await state.cli.disconnect();
+    state.cli = null;
+  }
   const port = await requestMatchingPort(state.device);
   state.port = port;
   let transport;
@@ -684,7 +732,11 @@ async function flashUf2(artifact, bytes) {
 }
 
 async function flashSelected() {
+  if (state.flashing) return;
   const button = $("#flash-button");
+  state.deskosVerified = null;
+  state.maxStep = 3;
+  enableThrough(3);
   if (!navigator.serial) {
     resetLog($("#flash-log"), "ERROR: Web Serial is unavailable. Use current desktop Chrome or Edge; Safari and Firefox are not supported.");
     return;
@@ -693,22 +745,31 @@ async function flashSelected() {
     resetMeshGangsDeviceWorkflow();
   }
   playModem("dial");
+  state.flashing = true;
+  const selectionPanels = $$('.stepper, [data-panel="1"], [data-panel="2"]');
+  selectionPanels.forEach((panel) => { panel.inert = true; });
   button.disabled = true;
   resetLog($("#flash-log"), "ATZ\nATDT USB://NEONPOCKET\nNEGOTIATING FAIL-CLOSED FLASH LINE…");
   setProgress("Downloading exact release", 1);
+  let completed = false;
   try {
     const artifact = currentArtifact();
     const bytes = await fetchFirmware(artifact);
     if (state.device.flash_method === "esp32") await flashEsp32(artifact, bytes);
     else await flashUf2(artifact, bytes);
     flashLog("Firmware write completed. Keep USB connected.");
-    enableThrough(4);
-    goToStep(4);
+    completed = true;
   } catch (error) {
     flashLog(`ERROR: ${error.message}`);
     setProgress("Stopped safely", 0);
   } finally {
+    state.flashing = false;
+    selectionPanels.forEach((panel) => { panel.inert = false; });
     button.disabled = !navigator.serial;
+  }
+  if (completed) {
+    enableThrough(4);
+    goToStep(4);
   }
 }
 
@@ -905,23 +966,54 @@ function parseCliJson(reply, command) {
   }
 }
 
+async function waitForDeskOsVersion(cli) {
+  const deadline = performance.now() + 120000;
+  let explained = false;
+  while (performance.now() < deadline) {
+    try {
+      return parseCliJson(await cli.command("version", {
+        timeout: Math.max(1, Math.min(5000, deadline - performance.now())),
+      }), "version");
+    } catch (error) {
+      if (error.code !== "CLI_TIMEOUT") throw error;
+      if (!explained) {
+        deskosLog("DeskOS is still loading saved history. Keep USB connected; startup can take up to two minutes.");
+        explained = true;
+      }
+    }
+  }
+  throw new Error("DeskOS did not finish startup within two minutes. Keep USB connected and check the device display.");
+}
+
 async function verifyDeskOsIdentity(port) {
+  state.deskosVerified = null;
   resetLog($("#deskos-log"), "Checking the installed DeskOS identity over USB…");
   let cli;
   try {
     cli = await connectConsole(port);
-    const version = parseCliJson(await cli.command("version", { timeout: 12000 }), "version");
+    const version = await waitForDeskOsVersion(cli);
     const expectedVersion = state.device.tag.replace(/^v/, "");
     if (!version.ok || version.firmware !== "MeshCore DeskOS D1L") throw new Error("The connected device did not identify itself as DeskOS D1L.");
     if (version.version !== expectedVersion) throw new Error(`Wrong DeskOS version: device ${version.version}, expected ${expectedVersion}.`);
     if (version.build_commit !== state.device.commit) throw new Error("DeskOS build commit does not match the selected release.");
+    if (version.release_profile !== "full_feature") throw new Error("The installed DeskOS profile does not match the selected full-feature release.");
 
     const health = parseCliJson(await cli.command("health", { timeout: 12000 }), "health");
     if (!health.ok || !health.board_ready || !health.ui_ready) throw new Error("DeskOS started, but its board or interface is not ready.");
+    if (["PANIC", "INT_WDT", "TASK_WDT", "WDT"].includes(health.reset_reason)) {
+      throw new Error("DeskOS restarted after a fault. Check the device before finishing the update.");
+    }
+    const mesh = parseCliJson(await cli.command("mesh status", { timeout: 12000 }), "mesh status");
+    if (!mesh.ok || !mesh.radio_ready || !mesh.identity_ready || !mesh.companion_framing_ready) {
+      throw new Error("DeskOS started, but its radio or identity is not ready.");
+    }
     const storage = parseCliJson(await cli.command("storage status", { timeout: 12000 }), "storage status");
     if (!storage.ok) throw new Error("DeskOS started, but storage is not ready.");
+    if (health.build_commit !== state.device.commit || mesh.build_commit !== state.device.commit || storage.build_commit !== state.device.commit) {
+      throw new Error("DeskOS changed builds during verification. Verify the device again.");
+    }
 
-    state.deskosVerified = { version, health, storage };
+    state.deskosVerified = { version, health, mesh, storage };
     $("#deskos-release").textContent = `v${version.version}`;
     $("#deskos-build").textContent = version.build_commit.slice(0, 12);
     const setup = reflectDeskOsStorage(storage);
@@ -929,6 +1021,7 @@ async function verifyDeskOsIdentity(port) {
     deskosLog(`PASS: DeskOS ${version.version}`);
     deskosLog(`PASS: exact build ${version.build_commit}`);
     deskosLog(`PASS: board and interface ready`);
+    deskosLog("PASS: radio and identity ready");
     deskosLog(storage.data_enabled ? "PASS: SD storage ready" : "PASS: DeskOS is healthy without SD-backed storage");
   } catch (error) {
     if (cli) {
@@ -948,12 +1041,14 @@ async function verifyBoot() {
     if (!portMatchesDevice(port, state.device)) throw new Error("The selected USB device is not the flashed hardware.");
     state.port = port;
     bootLog(`USB returned: VID ${hex(port.getInfo().usbVendorId)} · PID ${hex(port.getInfo().usbProductId)}`);
-    bootLog("Listening briefly for startup output…");
-    const sample = await readBootSample(port);
-    if (sample.trim()) bootLog(sample.trim());
-    else bootLog("No text startup log was emitted; USB enumeration succeeded.");
-    if (/storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 init failed|display failed to start|guru meditation|panic|assert failed/i.test(sample)) {
-      throw new Error("Startup output contains a fatal error. Do not disconnect USB.");
+    if (state.device.id !== "deskos-d1l") {
+      bootLog("Listening briefly for startup output…");
+      const sample = await readBootSample(port);
+      if (sample.trim()) bootLog(sample.trim());
+      else bootLog("No text startup log was emitted; USB enumeration succeeded.");
+      if (/storage(?:_| )?(?:layout(?:_| )?)?error|radio init failed|SX1262 init failed|display failed to start|guru meditation|panic|assert failed/i.test(sample)) {
+        throw new Error("Startup output contains a fatal error. Do not disconnect USB.");
+      }
     }
     if (isMeshGangsSidecar() && !state.meshGangsProvisioned) {
       if (!state.meshGangsEnrollment) throw new Error("The MeshGangs account enrollment is missing; return to the build step and link the account again.");
@@ -982,7 +1077,9 @@ async function verifyBoot() {
       await verifyDeskOsIdentity(port);
       bootLog(`PASS: DeskOS ${state.deskosVerified.version.version} matches ${state.device.commit.slice(0, 12)}.`);
     }
-    bootLog("PASS: the expected USB device returned without a detected fatal startup marker.");
+    bootLog(state.device.id === "deskos-d1l"
+      ? "PASS: the expected USB device returned and DeskOS checks passed."
+      : "PASS: the expected USB device returned without a detected fatal startup marker.");
     prepareOnboarding();
     enableThrough(5);
     goToStep(5);
@@ -1113,8 +1210,10 @@ function downloadMeshGangsUsbKey() {
 }
 
 class CliSession {
-  constructor(port) {
+  constructor(port, { jsonReplies = false, deviceId = null } = {}) {
     this.port = port;
+    this.jsonReplies = jsonReplies;
+    this.deviceId = deviceId;
     this.reader = null;
     this.writer = null;
     this.buffer = "";
@@ -1132,6 +1231,7 @@ class CliSession {
 
   async readLoop() {
     const decoder = new TextDecoder();
+    let failure = new Error("console disconnected");
     try {
       while (this.running) {
         const { value, done } = await this.reader.read();
@@ -1139,21 +1239,47 @@ class CliSession {
         this.buffer += decoder.decode(value, { stream: true });
         const lines = this.buffer.split(/\r?\n/);
         this.buffer = lines.pop();
+        if (this.buffer.length > 65536 || lines.some((line) => line.length > 65536)) {
+          throw new Error("USB console response exceeded its supported size");
+        }
         lines.forEach((line) => this.onLine(line));
       }
     } catch (error) {
+      failure = error;
       if (this.running) serialLog(`*** Console disconnected: ${error.message}`);
+    } finally {
+      this.running = false;
+      this.rejectWaiter(failure);
     }
   }
 
+  rejectWaiter(error, expected = this.waiter) {
+    if (!expected || this.waiter !== expected) return;
+    this.waiter = null;
+    clearTimeout(expected.timer);
+    expected.reject(error);
+  }
+
   onLine(line) {
-    serialLog(line);
-    if (this.waiter && /^\s*->/.test(line)) {
-      const waiter = this.waiter;
-      this.waiter = null;
-      clearTimeout(waiter.timer);
-      waiter.resolve(line.replace(/^\s*->\s*/, "").trim());
+    serialLog(this.waiter?.secret ? "[hidden console reply]" : line);
+    const waiter = this.waiter;
+    if (!waiter) return;
+    let reply;
+    if (this.jsonReplies) {
+      const start = line.indexOf("{");
+      if (start < 0) return;
+      reply = line.slice(start).trim();
+      let parsed;
+      try { parsed = JSON.parse(reply); } catch (_error) { return; }
+      if (parsed.schema !== 1 || typeof parsed.ok !== "boolean" || typeof parsed.cmd !== "string" || !parsed.cmd
+        || (waiter.command !== parsed.cmd && !waiter.command.startsWith(`${parsed.cmd} `))) return;
+    } else {
+      if (!/^\s*->/.test(line)) return;
+      reply = line.replace(/^\s*->\s*/, "").trim();
     }
+    this.waiter = null;
+    clearTimeout(waiter.timer);
+    waiter.resolve(reply);
   }
 
   async write(command, display = command) {
@@ -1162,27 +1288,31 @@ class CliSession {
   }
 
   async command(command, { secret = false, timeout = 7000 } = {}) {
+    if (!this.running) throw new Error("console disconnected");
     if (this.waiter) throw new Error("another CLI command is still pending");
+    let waiter;
     const response = new Promise((resolve, reject) => {
+      waiter = { resolve, reject, command, secret, timer: null };
       const timer = setTimeout(() => {
-        this.waiter = null;
-        reject(new Error(`No CLI reply for ${secret ? "a secret setting" : command}`));
+        const error = new Error(`No CLI reply for ${secret ? "a secret setting" : command}`);
+        error.code = "CLI_TIMEOUT";
+        this.rejectWaiter(error, waiter);
       }, timeout);
-      this.waiter = { resolve, reject, timer };
+      waiter.timer = timer;
+      this.waiter = waiter;
     });
-    await this.write(command, secret ? `${command.split(" ").slice(0, 2).join(" ")} [hidden]` : command);
+    this.write(command, secret ? `${command.split(" ").slice(0, 2).join(" ")} [hidden]` : command)
+      .catch((error) => this.rejectWaiter(error, waiter));
     const reply = await response;
-    if (/^(error|err|unknown|\?\?)/i.test(reply)) throw new Error(`${command.split(" ")[0]} failed: ${reply}`);
+    if (/^(error|err|unknown|\?\?)/i.test(reply)) {
+      throw new Error(secret ? "A secret setting was rejected" : `${command.split(" ")[0]} failed: ${reply}`);
+    }
     return reply;
   }
 
   async disconnect() {
     this.running = false;
-    if (this.waiter) {
-      clearTimeout(this.waiter.timer);
-      this.waiter.reject(new Error("console disconnected"));
-      this.waiter = null;
-    }
+    this.rejectWaiter(new Error("console disconnected"));
     try { await this.reader?.cancel(); } catch (_error) {}
     try { this.reader?.releaseLock(); } catch (_error) {}
     try { this.writer?.releaseLock(); } catch (_error) {}
@@ -1191,11 +1321,18 @@ class CliSession {
 }
 
 async function connectConsole(port = null) {
-  if (state.cli?.running) return state.cli;
+  const jsonReplies = state.device.id === "deskos-d1l";
+  if (state.cli?.running && (!port || state.cli.port === port)
+    && state.cli.deviceId === state.device.id && state.cli.jsonReplies === jsonReplies
+    && portMatchesDevice(state.cli.port, state.device)) return state.cli;
+  if (state.cli) {
+    await state.cli.disconnect();
+    state.cli = null;
+  }
   const selected = port || state.port || await navigator.serial.requestPort({ filters: usbFilters(state.device) });
   if (!portMatchesDevice(selected, state.device)) throw new Error("The selected USB device does not match the chosen hardware.");
   resetLog($("#serial-log"), "Opening 115200 baud MeshCore CLI…");
-  const cli = new CliSession(selected);
+  const cli = new CliSession(selected, { jsonReplies, deviceId: state.device.id });
   await cli.connect();
   state.port = selected;
   state.cli = cli;
@@ -1602,13 +1739,17 @@ async function verifyDeskOsStorage(kind) {
       throw new Error("The selected USB device is not the DeskOS ESP32 side.");
     }
     await disconnectDeskOsConsole();
-    const cli = await connectConsole(selected);
+    await verifyDeskOsIdentity(selected);
+    const cli = state.cli;
     let storage = null;
     for (let attempt = 0; attempt < 5; attempt += 1) {
       storage = parseCliJson(
         await cli.command("storage status", { timeout: 12000 }),
         "storage status",
       );
+      if (storage.build_commit !== state.device.commit) {
+        throw new Error("DeskOS changed builds during storage verification. Verify the device again.");
+      }
       const result = reflectDeskOsStorage(storage);
       if (result.bridgeReady && (kind === "bridge" || result.sdReady)) break;
       await sleep(1500);
@@ -1621,8 +1762,8 @@ async function verifyDeskOsStorage(kind) {
     deskosLog("PASS: DeskOS reports the RP2040 bridge protocol ready.");
     if (kind === "sd") {
       if (!result.sdReady) {
-        throw new Error(storage?.needs_fat32
-          ? "DeskOS found the card, but it is not FAT32. Format it on a computer, then prepare it again."
+        throw new Error(result.needsFat32
+          ? "Use an existing FAT32 card, then run Prepare again. This tool does not format cards."
           : "DeskOS has not mounted the prepared card yet. Reseat it, wait a few seconds, and retry.");
       }
       deskosLog("PASS: DeskOS reports the SD card mounted with its data root ready.");
@@ -1646,11 +1787,12 @@ async function verifyDeskOsStorage(kind) {
 }
 
 async function runRequiredDeskOsAction() {
+  if (!deskOsFirmwareVerified()) {
+    await verifyBoot();
+    return;
+  }
   const storage = state.deskosVerified?.storage;
-  const bridgeReady = storage?.rp2040_bridge_ready === true
-    && storage?.rp2040_protocol_supported !== false;
-  const sdReady = bridgeReady && storage?.present === true
-    && storage?.mounted === true && storage?.data_root_ready === true;
+  const { bridgeReady, sdReady } = deskOsStorageReadiness(storage);
   if (!bridgeReady) {
     if (state.deskosBridgeSent) await verifyDeskOsStorage("bridge");
     else await installDeskOsBridge();
@@ -1678,6 +1820,7 @@ function bindEvents() {
   $("#deskos-clean-checkbox").addEventListener("change", updateContinueState);
   $("#meshgangs-enroll-link").addEventListener("click", saveMeshGangsHandoff);
   $$('input[name="meshgangs-role"]').forEach((radio) => radio.addEventListener("change", () => {
+    if (state.flashing) return;
     state.meshGangsRole = radio.value;
     updateMeshGangsSetup();
     updateContinueState();
@@ -1686,6 +1829,7 @@ function bindEvents() {
     $(selector).addEventListener("input", updateContinueState);
   });
   $("#to-flash").addEventListener("click", () => {
+    if (state.flashing) return;
     state.install = $('input[name="install"]:checked')?.value || "update";
     renderFlashSummary();
     enableThrough(3);

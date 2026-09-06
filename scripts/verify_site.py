@@ -151,16 +151,17 @@ def main() -> int:
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
-    require(deskos["tag"] == "v1.7.12", "wrong DeskOS release")
-    require(deskos["commit"] == "59cb0cd3da0e23005ac79ac08657380e96d95b62", "wrong DeskOS commit")
+    require(deskos["tag"] == "v1.8.0-rc.1", "wrong DeskOS release")
+    require(deskos["commit"] == "93daa2a906db0b95280221e70dd236abaa574f81", "wrong DeskOS commit")
     deskos_profile = deskos["profiles"][0]
     require(deskos_profile["update"]["address"] == 0x20000, "DeskOS update must use 0x20000")
     require(deskos_profile["recovery"]["address"] == 0, "DeskOS clean image must use 0x0")
     require(deskos_profile["bridge"]["name"].endswith(".uf2"), "DeskOS bridge must be UF2")
     require(deskos_profile["update_boot"]["address"] == 0xf000, "DeskOS boot selection must use 0xf000")
     require(deskos_profile["update_boot"]["sha256"] == "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f", "wrong DeskOS boot selection")
-    require(deskos_profile["update"]["sha256"] == "f058be2c252410e67b583d88e689dc18f788e6cf69ff53892f16da85e39b4245", "wrong DeskOS app")
-    require(len(deskos["downloads"]) == 3, "DeskOS needs package, signed update and installation links")
+    require(deskos_profile["update"]["sha256"] == "fd22ca5026d738b8863d9e0ae89497aaef6ef252f0ad500cd7eb6e73f8733943", "wrong DeskOS app")
+    require(len(deskos["downloads"]) == 4, "DeskOS needs candidate package, signed update, installation and stable-release links")
+    require(deskos["downloads"][-1]["url"].endswith("/releases/tag/v1.7.12"), "previous stable DeskOS must remain linked")
 
     for contract in (
         'crypto.subtle.digest("SHA-256"',
@@ -169,7 +170,8 @@ def main() -> int:
         'set path.hash.mode 2',
         "INFO_UF2.TXT",
         "Passwords remain in this tab only",
-        "Fresh clean install deletes the existing DeskOS identity",
+        "Fresh clean install replaces the ESP32 identity and settings",
+        "Existing SD files stay on the card",
         "flashing the ESP32 alone will not enable storage",
         "Complete DeskOS setup",
         "Prepare SD card",
