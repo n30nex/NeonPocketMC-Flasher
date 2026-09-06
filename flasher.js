@@ -1076,12 +1076,12 @@ function renderMeshGangsOnboarding() {
     $("#onboarding-heading").textContent = "Home USB collector configured.";
     $("#meshgangs-ready-title").textContent = "Home USB is ready";
     $("#meshgangs-ready-copy").textContent = "The radio has no Wi-Fi or game key. Keep this one-time key for the Windows/Linux uploader, which will own uploads.";
-    checks.innerHTML = "<label>✓ Radio role verified as <strong>USB_READY</strong>.</label><label>✓ Radio Wi-Fi and relay credentials were cleared.</label><label>Next: download the setup file, install the desktop uploader, and select this V3.</label>";
+    checks.innerHTML = "<label>✓ Radio role verified as <strong>USB_READY</strong>.</label><label>✓ Radio Wi-Fi and relay credentials were cleared.</label><label>Next: download the setup file, install the desktop uploader, and select this collector.</label>";
   } else if (role === "wifi") {
     $("#onboarding-heading").textContent = "Home Wi-Fi collector configured.";
     $("#meshgangs-ready-title").textContent = "Home Wi-Fi is online";
     $("#meshgangs-ready-copy").textContent = "The collector joined the selected 2.4 GHz network and authenticated directly with MeshGangs. USB is no longer required.";
-    checks.innerHTML = "<label>✓ Radio role verified as <strong>READY</strong>.</label><label>✓ BLE patrol relay is disabled in this role.</label><label>Place the powered V3 at home with its LoRa antenna attached.</label>";
+    checks.innerHTML = "<label>✓ Radio role verified as <strong>READY</strong>.</label><label>✓ BLE patrol relay is disabled in this role.</label><label>Place the powered collector at home with its LoRa antenna attached.</label>";
   } else {
     $("#onboarding-heading").textContent = "Mobile BLE companion configured.";
     $("#meshgangs-ready-title").textContent = "Mobile V3 is ready to pair";
