@@ -60,6 +60,11 @@ ULP Solar Repeater builds start new installs in the balanced EasySkyMesh power p
 
 ULP repeaters are configured over USB. They do not create a setup access point or WebUI. The wizard can keep or update the saved map coordinates and explicitly verifies whether that location is included in adverts.
 
+ULP **v1.0.0-rc.4** includes the corrected Python USB configurator for nRF52
+replies and macOS setup. Select an ULP profile to download the configurator or
+open its USB setup guide. Existing rc.2/rc.3 users can use this configurator
+without reflashing or resetting saved settings.
+
 For the D1L RP2040 bridge, hold BOOTSEL while reconnecting the RP2040 USB side, then select the drive containing `INFO_UF2.TXT`. Reconnect the ESP32 side and use **Verify bridge** afterward. For SD setup, select the root of an already-formatted FAT32 microSD card. Both workflows are additive and never format the card.
 
 ## Development
@@ -68,6 +73,7 @@ The site is deliberately static. It uses the vendored ESPTool-JS bundle inherite
 
 ```powershell
 python scripts\verify_site.py
+python scripts/test_sync_firmware.py
 node --check flasher.js
 node scripts/test_meshgangs_v4.cjs
 node scripts/test_meshgangs_serial.cjs

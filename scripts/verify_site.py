@@ -364,8 +364,14 @@ def main() -> int:
         "rak3401-1w-ulp", "xiao-esp32s3-ulp", "xiao-nrf52840-ulp",
     }, "wrong ULP hardware matrix")
     for device, profile in ulp_profiles:
-        require(profile.get("tag", device["tag"]) == "v1.0.0-rc.2", f"wrong ULP release: {device['id']}")
-        require(profile.get("commit", device["commit"]) == "f1ad326267618d03027a745258a2b5718d098d7d", f"wrong ULP source: {device['id']}")
+        require(profile.get("tag", device["tag"]) == "v1.0.0-rc.4", f"wrong ULP release: {device['id']}")
+        require(profile.get("commit", device["commit"]) == "c12d218cf956ccca0186cc1e91f628f4857786de", f"wrong ULP source: {device['id']}")
+        downloads = profile.get("downloads", [])
+        require(len(downloads) == 2, f"missing ULP configurator/setup links: {device['id']}")
+        require(downloads[0]["url"].endswith("/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"),
+                f"wrong ULP configurator: {device['id']}")
+        require(downloads[1]["url"].endswith("/blob/v1.0.0-rc.4/docs/INSTALL.md"),
+                f"wrong ULP setup guide: {device['id']}")
         require("EasySkyMesh" in profile["features"], f"ULP attribution missing: {device['id']}")
         if device["flash_method"] == "esp32":
             require(profile["update"]["address"] == 0x10000, f"unsafe ULP update address: {device['id']}")
@@ -375,7 +381,7 @@ def main() -> int:
     for contract in ('id="ulp-profile"', 'value="on"', 'value="conservative"', 'value="max"', 'value="off"', "`ulp ${config.ulpProfile}`", "`gps advert ${config.ulpLocationPolicy}`", "do not create a Wi-Fi access point", "external MPPT/charge controller"):
         require(contract in html + js, f"missing ULP setup contract: {contract}")
     require("validation-evidence" in js, "V4 evidence is not rendered")
-    require("flasher.js?v=20260906mgserial" in html, "flasher JS cache bust is stale")
+    require("flasher.js?v=20260908ulp4" in html, "flasher JS cache bust is stale")
     require("flasher.css?v=20260824boot1" in html, "flasher CSS cache bust is stale")
     require("scene.js?v=20260824boot1" in html, "scene JS cache bust is stale")
     require(".hero-orbit, .sidecar-promo" not in css, "Aircraft Sidecar download must remain visible")

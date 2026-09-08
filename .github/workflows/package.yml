@@ -40,6 +40,7 @@ jobs:
       - name: Verify exact bundle
         run: |
           python scripts/verify_site.py
+          python scripts/test_sync_firmware.py
           python bundle/server.py --site bundle/site --self-test
           for asset in assets/devices/*.svg; do test -f "bundle/site/$asset"; done
           node --check flasher.js

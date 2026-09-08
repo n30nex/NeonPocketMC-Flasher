@@ -338,14 +338,19 @@ function renderProfiles() {
     </button>
   `).join("");
   $$("[data-profile]").forEach((card) => card.addEventListener("click", () => selectProfile(card.dataset.profile)));
-  $("#release-downloads").innerHTML = (state.device.downloads || []).map((download) =>
-    `<a href="${escapeHtml(download.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(download.name)} ↗</a>`
-  ).join("");
+  renderReleaseDownloads();
   $("#install-mode").classList.add("hidden");
   $("#deskos-clean-confirm").classList.add("hidden");
   $("#ambiguous-confirm").classList.add("hidden");
   $("#meshgangs-setup").classList.add("hidden");
   $("#to-flash").disabled = true;
+}
+
+function renderReleaseDownloads() {
+  const downloads = state.profile?.downloads || state.device.downloads || [];
+  $("#release-downloads").innerHTML = downloads.map((download) =>
+    `<a href="${escapeHtml(download.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(download.name)} ↗</a>`
+  ).join("");
 }
 
 function selectProfile(id) {
@@ -355,6 +360,7 @@ function selectProfile(id) {
   state.deskosVerified = null;
   enableThrough(2);
   state.profile = state.device.profiles.find((profile) => profile.id === id);
+  renderReleaseDownloads();
   $$("[data-profile]").forEach((card) => card.classList.toggle("selected", card.dataset.profile === id));
   const hasRecovery = Boolean(state.profile.recovery);
   const deskos = state.device.id === "deskos-d1l";
