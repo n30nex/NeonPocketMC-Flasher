@@ -25,13 +25,13 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     suite = json.loads(Path(args.suite).read_text(encoding="utf-8"))
-    products = list(suite["products"])
+    products = {product["id"]: product for product in suite["products"]}
     if args.profiles:
         profiles = json.loads(Path(args.profiles).read_text(encoding="utf-8"))
-        products.extend(profiles.get("products", []))
+        products.update({product["id"]: product for product in profiles.get("products", [])})
     args.output.mkdir(parents=True, exist_ok=True)
 
-    for product in products:
+    for product in products.values():
         for artifact in product["artifacts"]:
             name = artifact["name"]
             if not name.endswith((".bin", ".uf2")):

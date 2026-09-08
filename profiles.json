@@ -192,11 +192,15 @@
           "summary": "Default-on EasySkyMesh power saving with guided USB setup.",
           "transport": "USB CLI",
           "features": ["OLED", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
-          "update": "NeonPocketMC-ULP-Heltec-V3-v1.0.0-rc.2-app.bin",
+          "update": "NeonPocketMC-ULP-Heltec-V3-v1.0.0-rc.4-app.bin",
           "update_address": 65536,
-          "recovery": "NeonPocketMC-ULP-Heltec-V3-v1.0.0-rc.2-full-recovery.bin",
+          "recovery": "NeonPocketMC-ULP-Heltec-V3-v1.0.0-rc.4-full-recovery.bin",
           "recovery_address": 0,
-          "onboarding": "ulp-repeater"
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         },
         {
           "id": "wdg-mesh-sidecar",
@@ -300,11 +304,15 @@
           "summary": "Default-on EasySkyMesh power saving with guided USB setup.",
           "transport": "USB CLI",
           "features": ["OLED", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
-          "update": "NeonPocketMC-ULP-Heltec-V4-v1.0.0-rc.2-app.bin",
+          "update": "NeonPocketMC-ULP-Heltec-V4-v1.0.0-rc.4-app.bin",
           "update_address": 65536,
-          "recovery": "NeonPocketMC-ULP-Heltec-V4-v1.0.0-rc.2-full-recovery.bin",
+          "recovery": "NeonPocketMC-ULP-Heltec-V4-v1.0.0-rc.4-full-recovery.bin",
           "recovery_address": 0,
-          "onboarding": "ulp-repeater"
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         },
         {
           "id": "wdg-mesh-sidecar",
@@ -420,8 +428,12 @@
           "summary": "Default-on EasySkyMesh power saving for battery or regulated-solar deployments.",
           "transport": "USB CLI",
           "features": ["headless", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
-          "update": "NeonPocketMC-ULP-RC52-Headless-v1.0.0-rc.2.uf2",
-          "onboarding": "ulp-repeater"
+          "update": "NeonPocketMC-ULP-RC52-Headless-v1.0.0-rc.4.uf2",
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         },
         {
           "id": "ulp-solar-repeater-tft",
@@ -430,8 +442,12 @@
           "summary": "Low-power repeater with the 220x128 status display and automatic screen timeout.",
           "transport": "USB CLI",
           "features": ["TFT", "ULP", "repeater", "EasySkyMesh", "auto-off display"],
-          "update": "NeonPocketMC-ULP-RC52-TFT-v1.0.0-rc.2.uf2",
-          "onboarding": "ulp-repeater"
+          "update": "NeonPocketMC-ULP-RC52-TFT-v1.0.0-rc.4.uf2",
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         },
         {
           "id": "room-server-headless",
@@ -568,11 +584,15 @@
           "summary": "Default-on EasySkyMesh power saving for battery or regulated-solar deployments.",
           "transport": "USB CLI",
           "features": ["headless", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
-          "update": "NeonPocketMC-ULP-RCC6-Headless-v1.0.0-rc.2-app.bin",
+          "update": "NeonPocketMC-ULP-RCC6-Headless-v1.0.0-rc.4-app.bin",
           "update_address": 65536,
-          "recovery": "NeonPocketMC-ULP-RCC6-Headless-v1.0.0-rc.2-full-recovery.bin",
+          "recovery": "NeonPocketMC-ULP-RCC6-Headless-v1.0.0-rc.4-full-recovery.bin",
           "recovery_address": 0,
-          "onboarding": "ulp-repeater"
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         },
         {
           "id": "ulp-solar-repeater-tft",
@@ -581,11 +601,15 @@
           "summary": "Low-power repeater with the 220x128 status display and automatic screen timeout.",
           "transport": "USB CLI",
           "features": ["TFT", "ULP", "repeater", "EasySkyMesh", "auto-off display"],
-          "update": "NeonPocketMC-ULP-RCC6-TFT-v1.0.0-rc.2-app.bin",
+          "update": "NeonPocketMC-ULP-RCC6-TFT-v1.0.0-rc.4-app.bin",
           "update_address": 65536,
-          "recovery": "NeonPocketMC-ULP-RCC6-TFT-v1.0.0-rc.2-full-recovery.bin",
+          "recovery": "NeonPocketMC-ULP-RCC6-TFT-v1.0.0-rc.4-full-recovery.bin",
           "recovery_address": 0,
-          "onboarding": "ulp-repeater"
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         },
         {
           "id": "mqtt-observer-repeater",
@@ -653,8 +677,12 @@
           "summary": "Default-on EasySkyMesh power saving for the RAK4631 WisBlock.",
           "transport": "USB CLI",
           "features": ["ULP", "repeater", "EasySkyMesh", "solar/battery"],
-          "update": "NeonPocketMC-ULP-RAK4631-v1.0.0-rc.2.uf2",
-          "onboarding": "ulp-repeater"
+          "update": "NeonPocketMC-ULP-RAK4631-v1.0.0-rc.4.uf2",
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         }
       ]
     },
@@ -672,8 +700,12 @@
           "summary": "Default-on EasySkyMesh power saving with the supported 1 W RF front end.",
           "transport": "USB CLI",
           "features": ["ULP", "repeater", "1 W FEM", "EasySkyMesh", "solar/battery"],
-          "update": "NeonPocketMC-ULP-RAK3401-1W-v1.0.0-rc.2.uf2",
-          "onboarding": "ulp-repeater"
+          "update": "NeonPocketMC-ULP-RAK3401-1W-v1.0.0-rc.4.uf2",
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         }
       ]
     },
@@ -692,11 +724,15 @@
           "summary": "Default-on EasySkyMesh power saving for the supported Xiao SX1262 wiring.",
           "transport": "USB CLI",
           "features": ["headless", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
-          "update": "NeonPocketMC-ULP-Xiao-ESP32S3-v1.0.0-rc.2-app.bin",
+          "update": "NeonPocketMC-ULP-Xiao-ESP32S3-v1.0.0-rc.4-app.bin",
           "update_address": 65536,
-          "recovery": "NeonPocketMC-ULP-Xiao-ESP32S3-v1.0.0-rc.2-full-recovery.bin",
+          "recovery": "NeonPocketMC-ULP-Xiao-ESP32S3-v1.0.0-rc.4-full-recovery.bin",
           "recovery_address": 0,
-          "onboarding": "ulp-repeater"
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         }
       ]
     },
@@ -714,8 +750,12 @@
           "summary": "Default-on EasySkyMesh power saving for the supported Xiao SX1262 wiring.",
           "transport": "USB CLI",
           "features": ["headless", "ULP", "repeater", "EasySkyMesh", "solar/battery"],
-          "update": "NeonPocketMC-ULP-Xiao-nRF52840-v1.0.0-rc.2.uf2",
-          "onboarding": "ulp-repeater"
+          "update": "NeonPocketMC-ULP-Xiao-nRF52840-v1.0.0-rc.4.uf2",
+          "onboarding": "ulp-repeater",
+          "downloads": [
+            {"name": "ULP rc.4 configurator (Windows / macOS / Linux)", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/releases/download/v1.0.0-rc.4/NeonPocketMC-ULP-Configurator.zip"},
+            {"name": "ULP USB setup guide", "url": "https://github.com/n30nex/NeonPocketMC-ULP-Solar-Repeaters/blob/v1.0.0-rc.4/docs/INSTALL.md"}
+          ]
         }
       ]
     },
