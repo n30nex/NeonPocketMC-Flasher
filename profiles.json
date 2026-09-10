@@ -78,18 +78,18 @@
       "repository": "https://github.com/n30nex/DeskOS-MeshCore",
       "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.8.0-rc.5",
       "tag": "v1.8.0-rc.5",
-      "commit": "2b92156be7663c7213d7f0cb01902210890d0ba9",
+      "commit": "510b7cc2b1dd19537c4361801c2da16c2289eb4a",
       "artifacts": [
         {
           "name": "MeshCore-DeskOS-D1L-1.8.0-rc.5-UPDATE-existing-deskos-at-0x20000.bin",
-          "size": 2284320,
-          "sha256": "d98ba71a841a932c69c5445520118bd9511a0173d93afdd5c6aa90be0e62c95b",
+          "size": 2285952,
+          "sha256": "c3b9ed8d2cd10122558a957807fd9882e09e3cceecf48cfdf1e1c82311dabbe5",
           "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/MeshCore-DeskOS-D1L-1.8.0-rc.5-UPDATE-existing-deskos-at-0x20000.bin"
         },
         {
           "name": "MeshCore-DeskOS-D1L-1.8.0-rc.5-FRESH-CLEAN-full-8mb-at-0x0.bin",
           "size": 8388608,
-          "sha256": "7f47203ac70eaa6cb2cb38246e1419ecbe9beafa3b97f1f4e4f35426b068154e",
+          "sha256": "5c1969cbbd2d1c7a7e12456ab92665cc699ddd9afc883c76acd52066ee23ee87",
           "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/MeshCore-DeskOS-D1L-1.8.0-rc.5-FRESH-CLEAN-full-8mb-at-0x0.bin"
         },
         {
@@ -773,20 +773,18 @@
         {
           "id": "deskos-full-feature",
           "name": "DeskOS 1.8.0-rc.5 Release Candidate",
-          "summary": "Radio recovery and verified phone-send admission, with saved drafts, quoted replies and on-device copy/paste.",
+          "summary": "Phone messaging, nearby discovery and contact telemetry, with radio recovery, saved drafts, quoted replies and on-device copy/paste.",
           "transport": "USB + BLE or Wi-Fi",
           "features": [
             "release candidate",
             "480x480 touch",
             "radio recovery",
-            "confirmed phone sends",
+            "phone messaging",
+            "nearby discovery",
+            "contact telemetry",
             "saved drafts",
             "quoted replies",
             "clipboard",
-            "paged contacts",
-            "quick replies",
-            "profile editor",
-            "phone companion",
             "confirmed DMs",
             "repeater console",
             "offline maps",
