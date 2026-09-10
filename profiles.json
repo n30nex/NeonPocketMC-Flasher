@@ -76,33 +76,33 @@
     {
       "id": "deskos-d1l-client",
       "repository": "https://github.com/n30nex/DeskOS-MeshCore",
-      "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.8.0-rc.5",
-      "tag": "v1.8.0-rc.5",
-      "commit": "510b7cc2b1dd19537c4361801c2da16c2289eb4a",
+      "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.8.0-rc.6",
+      "tag": "v1.8.0-rc.6",
+      "commit": "4c9293b5925c08bc9609242dfe986d20446036ed",
       "artifacts": [
         {
-          "name": "MeshCore-DeskOS-D1L-1.8.0-rc.5-UPDATE-existing-deskos-at-0x20000.bin",
-          "size": 2285952,
-          "sha256": "c3b9ed8d2cd10122558a957807fd9882e09e3cceecf48cfdf1e1c82311dabbe5",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/MeshCore-DeskOS-D1L-1.8.0-rc.5-UPDATE-existing-deskos-at-0x20000.bin"
+          "name": "MeshCore-DeskOS-D1L-1.8.0-rc.6-UPDATE-existing-deskos-at-0x20000.bin",
+          "size": 2286080,
+          "sha256": "fd67cbcc8344e3ae6de9800071fcb6a30ce6099d74d961996d30925944f05573",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.6/MeshCore-DeskOS-D1L-1.8.0-rc.6-UPDATE-existing-deskos-at-0x20000.bin"
         },
         {
-          "name": "MeshCore-DeskOS-D1L-1.8.0-rc.5-FRESH-CLEAN-full-8mb-at-0x0.bin",
+          "name": "MeshCore-DeskOS-D1L-1.8.0-rc.6-FRESH-CLEAN-full-8mb-at-0x0.bin",
           "size": 8388608,
-          "sha256": "5c1969cbbd2d1c7a7e12456ab92665cc699ddd9afc883c76acd52066ee23ee87",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/MeshCore-DeskOS-D1L-1.8.0-rc.5-FRESH-CLEAN-full-8mb-at-0x0.bin"
+          "sha256": "d31b45461ef0d8da223b00683d40f6c2767d8d76da2b27199d7d5cdf515227b4",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.6/MeshCore-DeskOS-D1L-1.8.0-rc.6-FRESH-CLEAN-full-8mb-at-0x0.bin"
         },
         {
-          "name": "MeshCore-DeskOS-D1L-1.8.0-rc.5-RP2040-UPDATE-OR-FRESH.uf2",
+          "name": "MeshCore-DeskOS-D1L-1.8.0-rc.6-RP2040-UPDATE-OR-FRESH.uf2",
           "size": 305152,
-          "sha256": "1f2aa4c5dbe911f0618ec70582e838af325ec4a8882b213bf74b6251a09043fb",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/MeshCore-DeskOS-D1L-1.8.0-rc.5-RP2040-UPDATE-OR-FRESH.uf2"
+          "sha256": "404f5c2a15df28fdafe2f556eb69b3b7b635594c88f3273868a6d2cfc3f2225f",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.6/MeshCore-DeskOS-D1L-1.8.0-rc.6-RP2040-UPDATE-OR-FRESH.uf2"
         },
         {
-          "name": "MeshCore-DeskOS-D1L-1.8.0-rc.5-ota-data.bin",
+          "name": "MeshCore-DeskOS-D1L-1.8.0-rc.6-ota-data.bin",
           "size": 8192,
           "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/MeshCore-DeskOS-D1L-1.8.0-rc.5-ota-data.bin"
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.6/MeshCore-DeskOS-D1L-1.8.0-rc.6-ota-data.bin"
         }
       ]
     },
@@ -772,47 +772,48 @@
       "profiles": [
         {
           "id": "deskos-full-feature",
-          "name": "DeskOS 1.8.0-rc.5 Release Candidate",
-          "summary": "Phone messaging, nearby discovery and contact telemetry, with radio recovery, saved drafts, quoted replies and on-device copy/paste.",
+          "name": "DeskOS 1.8.0-rc.6 Release Candidate",
+          "summary": "Correct received hop counts and reliable phone telemetry, with radio recovery, confirmed sends and saved conversation drafts.",
           "transport": "USB + BLE or Wi-Fi",
           "features": [
             "release candidate",
             "480x480 touch",
+            "correct hop counts",
+            "phone telemetry",
             "radio recovery",
-            "phone messaging",
-            "nearby discovery",
-            "contact telemetry",
             "saved drafts",
-            "quoted replies",
-            "clipboard",
+            "paged contacts",
+            "quick replies",
+            "profile editor",
+            "phone companion",
             "confirmed DMs",
             "repeater console",
             "offline maps",
             "SD history",
             "signed updates"
           ],
-          "update": "MeshCore-DeskOS-D1L-1.8.0-rc.5-UPDATE-existing-deskos-at-0x20000.bin",
+          "update": "MeshCore-DeskOS-D1L-1.8.0-rc.6-UPDATE-existing-deskos-at-0x20000.bin",
           "update_address": 131072,
-          "recovery": "MeshCore-DeskOS-D1L-1.8.0-rc.5-FRESH-CLEAN-full-8mb-at-0x0.bin",
+          "recovery": "MeshCore-DeskOS-D1L-1.8.0-rc.6-FRESH-CLEAN-full-8mb-at-0x0.bin",
           "recovery_address": 0,
-          "bridge": "MeshCore-DeskOS-D1L-1.8.0-rc.5-RP2040-UPDATE-OR-FRESH.uf2",
+          "bridge": "MeshCore-DeskOS-D1L-1.8.0-rc.6-RP2040-UPDATE-OR-FRESH.uf2",
           "onboarding": "deskos",
-          "update_boot": "MeshCore-DeskOS-D1L-1.8.0-rc.5-ota-data.bin",
+          "update_boot": "MeshCore-DeskOS-D1L-1.8.0-rc.6-ota-data.bin",
           "update_boot_address": 61440
         }
       ],
       "downloads": [
         {
           "name": "Download complete candidate package",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/MeshCore-DeskOS-D1L-1.8.0-rc.5.zip"
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.6/MeshCore-DeskOS-D1L-1.8.0-rc.6.zip"
         },
         {
           "name": "Download signed SD update",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/MeshCore-DeskOS-D1L-1.8.0-rc.5-SIGNED-SD-UPDATE.zip"
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.6/MeshCore-DeskOS-D1L-1.8.0-rc.6-SIGNED-SD-UPDATE.zip"
         },
         {
           "name": "Installation guide",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.5/START_HERE-1.8.0-rc.5.md"
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0-rc.6/START_HERE-1.8.0-rc.6.md"
         },
         {
           "name": "Previous stable 1.7.12",
