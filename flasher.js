@@ -615,15 +615,16 @@ function hex(value) {
   return value == null ? "unknown" : `0x${value.toString(16).padStart(4, "0")}`;
 }
 
-async function verifyMeshGangsFlashHardware(loader, port, artifact, size) {
+async function verifyHeltecV4FlashHardware(loader, port, artifact, size) {
   if (state.device.id !== "heltec-v4") return;
   const usb = port.getInfo();
   if (usb.usbVendorId !== 0x303a || usb.usbProductId !== 0x1001
       || await loader.chip.getPsramCap(loader) !== 2
       || await loader.chip.getPsramVendor(loader) !== "AP_3v3"
       || await loader.getFlashSize() !== 16 * 1024) {
-    throw new Error("This MeshGangs release requires the original Heltec V4 with 2 MB PSRAM and 16 MB flash. V4 R8 is not supported.");
+    throw new Error("This release requires the original Heltec V4 with 2 MB PSRAM and 16 MB flash. V4 R8 is not supported.");
   }
+  if (state.profile.product === "heltec-v42-solar-companion" && state.install === "recovery" && artifact.address === 0) return;
   const table = await loader.readFlash(0x8000, 0x1000);
   const view = new DataView(table.buffer, table.byteOffset, table.byteLength);
   let fits = false;
@@ -670,8 +671,10 @@ async function flashEsp32(artifact, bytes) {
     if (!chip.toUpperCase().includes(state.device.expected_chip.toUpperCase())) {
       throw new Error(`Wrong chip. Selected ${state.device.expected_chip}, detected ${chip}.`);
     }
+    if (isMeshGangsSidecar() || state.profile.product === "heltec-v42-solar-companion") {
+      await verifyHeltecV4FlashHardware(loader, port, artifact, bytes.byteLength);
+    }
     if (isMeshGangsSidecar()) {
-      await verifyMeshGangsFlashHardware(loader, port, artifact, bytes.byteLength);
       flashLog("Collector hardware confirmed. Creating its one-time MeshGangs credential; secret values stay hidden…");
       await enrollMeshGangsDevice();
     }

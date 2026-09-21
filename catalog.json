@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "suite_version": "1.10.0-rc.3",
+  "suite_version": "1.11.0-rc.1",
   "devices": [
     {
       "id": "heltec-v3",
@@ -338,6 +338,53 @@
             "local_url": "/firmware/284b643ee2b8d35a622348b684406f8d68cd08247cc10e6667aa322678cd4a1a/NeonPocketMC-Heltec-V4-BLE-recovery-preserves-settings.bin"
           },
           "onboarding": "companion"
+        },
+        {
+          "id": "solar-ble-companion",
+          "product": "heltec-v42-solar-companion",
+          "name": "Solar BLE Companion (V4.2 RC1)",
+          "summary": "V4.2 only: standard MeshCore phone companion with continuous LoRa receive, BLE availability and timed low-battery recovery. Experimental; battery endurance and recovery testing are in progress. V4 R8 is excluded.",
+          "transport": "BLE",
+          "features": [
+            "V4.2 only",
+            "continuous LoRa RX",
+            "solar / battery",
+            "timed recovery",
+            "test candidate"
+          ],
+          "update": {
+            "name": "NeonPocketMC-Heltec-V4-Solar-BLE-app.bin",
+            "size": 1291504,
+            "sha256": "8bdb99e2d6cd044cadc784ea00b341f336bdefb0722390b9773910349e2db3e9",
+            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v1.17.1-v42-solar-ble-rc.1/NeonPocketMC-Heltec-V4-Solar-BLE-app.bin",
+            "address": 65536,
+            "md5": "0697e281a9dc2c22287ac34b0a83e02d",
+            "local_url": "/firmware/8bdb99e2d6cd044cadc784ea00b341f336bdefb0722390b9773910349e2db3e9/NeonPocketMC-Heltec-V4-Solar-BLE-app.bin"
+          },
+          "recovery": {
+            "name": "NeonPocketMC-Heltec-V4-Solar-BLE-recovery-preserves-settings.bin",
+            "size": 1357040,
+            "sha256": "953dc458d641b9766cd280085cdd54889a6110bdc7fe55512348a1f07cd88b3c",
+            "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v1.17.1-v42-solar-ble-rc.1/NeonPocketMC-Heltec-V4-Solar-BLE-recovery-preserves-settings.bin",
+            "address": 0,
+            "md5": "94bc22c4ef3e50552cd839c0651aaeae",
+            "local_url": "/firmware/953dc458d641b9766cd280085cdd54889a6110bdc7fe55512348a1f07cd88b3c/NeonPocketMC-Heltec-V4-Solar-BLE-recovery-preserves-settings.bin"
+          },
+          "onboarding": "companion",
+          "downloads": [
+            {
+              "name": "Solar BLE installation and test guide",
+              "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v1.17.1-v42-solar-ble-rc.1/START_HERE.md"
+            },
+            {
+              "name": "Solar BLE RC1 release and known limits",
+              "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/tag/v1.17.1-v42-solar-ble-rc.1"
+            }
+          ],
+          "repository": "https://github.com/n30nex/NeonPocketMC-Heltec-V4",
+          "release": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/tag/v1.17.1-v42-solar-ble-rc.1",
+          "tag": "v1.17.1-v42-solar-ble-rc.1",
+          "commit": "183a0eec45e440f9cd0a496884e5a3247a90c78d"
         },
         {
           "id": "usb-companion-oled",
