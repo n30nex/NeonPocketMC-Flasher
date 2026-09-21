@@ -258,6 +258,35 @@
           "onboarding": "companion"
         },
         {
+          "id": "solar-ble-companion",
+          "product": "heltec-v42-solar-companion",
+          "name": "Solar BLE Companion (V4.2 RC1)",
+          "summary": "V4.2 only: standard MeshCore phone companion with continuous LoRa receive, BLE availability and timed low-battery recovery. Experimental; battery endurance and recovery testing are in progress. V4 R8 is excluded.",
+          "transport": "BLE",
+          "features": [
+            "V4.2 only",
+            "continuous LoRa RX",
+            "solar / battery",
+            "timed recovery",
+            "test candidate"
+          ],
+          "update": "NeonPocketMC-Heltec-V4-Solar-BLE-app.bin",
+          "update_address": 65536,
+          "recovery": "NeonPocketMC-Heltec-V4-Solar-BLE-recovery-preserves-settings.bin",
+          "recovery_address": 0,
+          "onboarding": "companion",
+          "downloads": [
+            {
+              "name": "Solar BLE installation and test guide",
+              "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/download/v1.17.1-v42-solar-ble-rc.1/START_HERE.md"
+            },
+            {
+              "name": "Solar BLE RC1 release and known limits",
+              "url": "https://github.com/n30nex/NeonPocketMC-Heltec-V4/releases/tag/v1.17.1-v42-solar-ble-rc.1"
+            }
+          ]
+        },
+        {
           "id": "usb-companion-oled",
           "name": "USB Companion + OLED",
           "summary": "Wired desktop companion with the NeonPocket OLED interface.",

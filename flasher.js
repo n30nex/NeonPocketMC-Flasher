@@ -371,6 +371,9 @@ function selectProfile(id) {
   $("#recovery-mode-title").textContent = deskos ? "Fresh clean install" : "Recovery";
   $("#recovery-mode-copy").textContent = deskos ? "Installs a new ESP32 image, then requires the RP2040 bridge and FAT32 SD card." : "Preserves MeshCore storage. Resets NVS and BLE bonds.";
   $("#model-confirm").checked = false;
+  $("#model-confirm-text").textContent = state.profile.product === "heltec-v42-solar-companion"
+    ? "I physically checked the board revision: Heltec V4.2 only. V4.3 and V4 R8 are excluded from this Solar BLE candidate. USB detection cannot identify the PCB revision."
+    : "I physically checked the board label and selected the correct model. ESP32-S3 alone cannot distinguish V3 from V4.";
   $("#deskos-clean-checkbox").checked = false;
   state.install = "update";
   const updateRadio = $('input[name="install"][value="update"]');
@@ -615,15 +618,16 @@ function hex(value) {
   return value == null ? "unknown" : `0x${value.toString(16).padStart(4, "0")}`;
 }
 
-async function verifyMeshGangsFlashHardware(loader, port, artifact, size) {
+async function verifyHeltecV4FlashHardware(loader, port, artifact, size) {
   if (state.device.id !== "heltec-v4") return;
   const usb = port.getInfo();
   if (usb.usbVendorId !== 0x303a || usb.usbProductId !== 0x1001
       || await loader.chip.getPsramCap(loader) !== 2
       || await loader.chip.getPsramVendor(loader) !== "AP_3v3"
       || await loader.getFlashSize() !== 16 * 1024) {
-    throw new Error("This MeshGangs release requires the original Heltec V4 with 2 MB PSRAM and 16 MB flash. V4 R8 is not supported.");
+    throw new Error("This release requires the original Heltec V4 with 2 MB PSRAM and 16 MB flash. V4 R8 is not supported.");
   }
+  if (state.profile.product === "heltec-v42-solar-companion" && state.install === "recovery" && artifact.address === 0) return;
   const table = await loader.readFlash(0x8000, 0x1000);
   const view = new DataView(table.buffer, table.byteOffset, table.byteLength);
   let fits = false;
@@ -642,6 +646,9 @@ async function verifyMeshGangsFlashHardware(loader, port, artifact, size) {
 
 async function flashEsp32(artifact, bytes) {
   if (!artifact.md5) throw new Error("This catalog has no device-verification MD5. The deployment is incomplete; flashing was blocked.");
+  if (state.profile.product === "heltec-v42-solar-companion" && !$("#model-confirm").checked) {
+    throw new Error("Confirm the physical board revision is Heltec V4.2 before flashing this Solar BLE candidate.");
+  }
   const deskosUpdate = state.device.id === "deskos-d1l" && state.install === "update";
   const bootSelection = deskosUpdate ? state.profile.update_boot : null;
   if (deskosUpdate && (artifact.address !== 0x20000 || !bootSelection?.md5 || bootSelection.address !== 0xf000 || bootSelection.size !== 0x2000)) {
@@ -670,8 +677,10 @@ async function flashEsp32(artifact, bytes) {
     if (!chip.toUpperCase().includes(state.device.expected_chip.toUpperCase())) {
       throw new Error(`Wrong chip. Selected ${state.device.expected_chip}, detected ${chip}.`);
     }
+    if (isMeshGangsSidecar() || state.profile.product === "heltec-v42-solar-companion") {
+      await verifyHeltecV4FlashHardware(loader, port, artifact, bytes.byteLength);
+    }
     if (isMeshGangsSidecar()) {
-      await verifyMeshGangsFlashHardware(loader, port, artifact, bytes.byteLength);
       flashLog("Collector hardware confirmed. Creating its one-time MeshGangs credential; secret values stay hidden…");
       await enrollMeshGangsDevice();
     }

@@ -24,6 +24,7 @@ No password is saved by the page, browser storage, repository, or server. Secret
 ## Supported released profiles
 
 - Heltec V3 / V4 BLE and native-USB companions, Ultimate BLE/Web companions, and Ultimate WebUI repeaters with OLED
+- Heltec V4.2 Solar BLE RC1 test companion: continuous LoRa receive, BLE power saving and timed low-battery recovery; V4 R8 excluded. Read the linked test guide: battery-only reconnection, recharge recovery and endurance remain under test.
 - RC52 BLE or native-USB companion with NV3001B TFT
 - RC52 screenless BLE companion with fixed pairing PIN `123456`
 - RC52 headless repeater
