@@ -6,7 +6,7 @@ const source = fs.readFileSync(path.join(__dirname, '../flasher.js'), 'utf8');
 const guard = source.slice(source.indexOf('async function verifyHeltecV4FlashHardware('), source.indexOf('async function flashEsp32('));
 const flash = source.slice(source.indexOf('async function flashEsp32('), source.indexOf('async function flashUf2('));
 
-async function run({ psram = 2, flashKiB = 16384, usbPid = 0x1001, start = 0x10000, capacity = 0x640000, solar = false, recovery = false } = {}) {
+async function run({ psram = 2, flashKiB = 16384, usbPid = 0x1001, start = 0x10000, capacity = 0x640000, solar = false, recovery = false, v42Confirmed = true } = {}) {
   const events = [];
   const partition = new Uint8Array(4096).fill(255);
   const table = new DataView(partition.buffer);
@@ -26,6 +26,7 @@ async function run({ psram = 2, flashKiB = 16384, usbPid = 0x1001, start = 0x100
     ESPLoader: Loader, Transport: class { async disconnect() {} },
     requestMatchingPort: async () => ({ getInfo: () => ({ usbVendorId: 0x303a, usbProductId: usbPid }) }),
     isMeshGangsSidecar: () => !solar, enrollMeshGangsDevice: async () => events.push('enroll'),
+    $: selector => { assert.equal(selector, '#model-confirm'); return {checked: v42Confirmed}; },
     setProgress() {}, flashLog() {}, sleep: async () => {}, bytesToBinaryString: () => '',
   });
   vm.runInContext(guard + flash, context);
@@ -44,6 +45,7 @@ async function run({ psram = 2, flashKiB = 16384, usbPid = 0x1001, start = 0x100
   for (const recovery of [false, true]) {
     const solar = await run({solar: true, recovery}); assert.equal(solar.error, undefined); assert.deepEqual(solar.events, ['write', 'reset']);
     const r8 = await run({solar: true, recovery, psram: 8}); assert.ok(r8.error); assert.deepEqual(r8.events, []);
+    const unconfirmed = await run({solar: true, recovery, v42Confirmed: false}); assert.match(unconfirmed.error.message, /physical board revision is Heltec V4.2/); assert.deepEqual(unconfirmed.events, []);
   }
   const roles = vm.createContext({ state: { profile: { roles: ['usb', 'wifi'] }, meshGangsRole: 'mobile' }, meshGangsRoles: new Set(['usb', 'wifi', 'mobile']) });
   vm.runInContext(source.slice(source.indexOf('function meshGangsAllowedRoles('), source.indexOf('function updateMeshGangsSetup(')), roles);
