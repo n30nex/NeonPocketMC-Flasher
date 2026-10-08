@@ -1581,7 +1581,7 @@
       "repository": "https://github.com/n30nex/DeskOS-MeshCore",
       "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.9.0",
       "tag": "v1.9.0",
-      "commit": "3b047fde07a9acd129430991e126792c4f4d1604",
+      "commit": "4e1a13f1791b3939fabae3159b596110b965f4af",
       "profiles": [
         {
           "id": "deskos-full-feature",
@@ -1607,21 +1607,21 @@
           ],
           "update": {
             "name": "MeshCore-DeskOS-D1L-1.9.0-UPDATE-existing-deskos-at-0x20000.bin",
-            "size": 2312176,
-            "sha256": "2d116e7d0e8403b3e48e4dd25b78cb164c0566af7deccee842c5c5699a83bfa7",
+            "size": 2312336,
+            "sha256": "9ec1669c4a6021d3ea4ad7b5393a637d5a3a3cf9c0fdcaf8c8c9f79294924167",
             "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/MeshCore-DeskOS-D1L-1.9.0-UPDATE-existing-deskos-at-0x20000.bin",
             "address": 131072,
-            "md5": "a983fddca6fa315e2e6eedb098a7fb01",
-            "local_url": "/firmware/2d116e7d0e8403b3e48e4dd25b78cb164c0566af7deccee842c5c5699a83bfa7/MeshCore-DeskOS-D1L-1.9.0-UPDATE-existing-deskos-at-0x20000.bin"
+            "md5": "791387dc7c5c2157e501455aa99375ce",
+            "local_url": "/firmware/9ec1669c4a6021d3ea4ad7b5393a637d5a3a3cf9c0fdcaf8c8c9f79294924167/MeshCore-DeskOS-D1L-1.9.0-UPDATE-existing-deskos-at-0x20000.bin"
           },
           "recovery": {
             "name": "MeshCore-DeskOS-D1L-1.9.0-FRESH-CLEAN-full-8mb-at-0x0.bin",
             "size": 8388608,
-            "sha256": "c49300333a536035711c2cc58b1f0ef7ce4048f21a1548a5c836e75380b1836f",
+            "sha256": "3385e7eaf11a6f6acf781c5f27b4547138637a33503533ae8ca52d6d5c96dcfa",
             "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/MeshCore-DeskOS-D1L-1.9.0-FRESH-CLEAN-full-8mb-at-0x0.bin",
             "address": 0,
-            "md5": "0e35bf1da7ea83483b775eb0452a0a7e",
-            "local_url": "/firmware/c49300333a536035711c2cc58b1f0ef7ce4048f21a1548a5c836e75380b1836f/MeshCore-DeskOS-D1L-1.9.0-FRESH-CLEAN-full-8mb-at-0x0.bin"
+            "md5": "6f30b36cf596386f2be58a42f86e24df",
+            "local_url": "/firmware/3385e7eaf11a6f6acf781c5f27b4547138637a33503533ae8ca52d6d5c96dcfa/MeshCore-DeskOS-D1L-1.9.0-FRESH-CLEAN-full-8mb-at-0x0.bin"
           },
           "bridge": {
             "name": "MeshCore-DeskOS-D1L-1.9.0-RP2040-UPDATE-OR-FRESH.uf2",
