@@ -1563,37 +1563,38 @@
       "downloads": [
         {
           "name": "Download complete stable package",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0/MeshCore-DeskOS-D1L-1.8.0.zip"
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/MeshCore-DeskOS-D1L-1.9.0.zip"
         },
         {
           "name": "Download signed SD update",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0/MeshCore-DeskOS-D1L-1.8.0-SIGNED-SD-UPDATE.zip"
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/MeshCore-DeskOS-D1L-1.9.0-SIGNED-SD-UPDATE.zip"
         },
         {
           "name": "Installation guide",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0/START_HERE-1.8.0.md"
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/START_HERE-1.9.0.md"
         },
         {
-          "name": "Previous stable 1.7.12",
-          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.7.12"
+          "name": "Previous stable 1.8.0",
+          "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.8.0"
         }
       ],
       "repository": "https://github.com/n30nex/DeskOS-MeshCore",
-      "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.8.0",
-      "tag": "v1.8.0",
-      "commit": "4299398ef4a9d5802ddb5a28acd9bf2b18d49680",
+      "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.9.0",
+      "tag": "v1.9.0",
+      "commit": "3b047fde07a9acd129430991e126792c4f4d1604",
       "profiles": [
         {
           "id": "deskos-full-feature",
-          "name": "DeskOS 1.8.0 Stable Release",
-          "summary": "Stable touch-first MeshCore with secure phone messaging, correct receive paths, saved drafts, offline maps and signed local updates.",
+          "name": "DeskOS 1.9.0 Stable Release",
+          "summary": "Larger text, mentions, contact auto-add rules and automatic daylight saving, with secure phone messaging and signed local updates.",
           "transport": "USB + BLE or Wi-Fi",
           "features": [
             "stable release",
+            "larger text",
+            "mentions",
+            "contact rules",
+            "automatic DST",
             "480x480 touch",
-            "correct hop counts",
-            "radio recovery",
-            "saved drafts",
             "paged contacts",
             "quick replies",
             "profile editor",
@@ -1605,40 +1606,40 @@
             "signed updates"
           ],
           "update": {
-            "name": "MeshCore-DeskOS-D1L-1.8.0-UPDATE-existing-deskos-at-0x20000.bin",
-            "size": 2287056,
-            "sha256": "a107d6c8315f5fe5d491d2c5d0ce41cb8b22eba7c8be86d42c17e6fce6e4ec13",
-            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0/MeshCore-DeskOS-D1L-1.8.0-UPDATE-existing-deskos-at-0x20000.bin",
+            "name": "MeshCore-DeskOS-D1L-1.9.0-UPDATE-existing-deskos-at-0x20000.bin",
+            "size": 2312176,
+            "sha256": "2d116e7d0e8403b3e48e4dd25b78cb164c0566af7deccee842c5c5699a83bfa7",
+            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/MeshCore-DeskOS-D1L-1.9.0-UPDATE-existing-deskos-at-0x20000.bin",
             "address": 131072,
-            "md5": "837d208647337005f68e3ae1f527a45c",
-            "local_url": "/firmware/a107d6c8315f5fe5d491d2c5d0ce41cb8b22eba7c8be86d42c17e6fce6e4ec13/MeshCore-DeskOS-D1L-1.8.0-UPDATE-existing-deskos-at-0x20000.bin"
+            "md5": "a983fddca6fa315e2e6eedb098a7fb01",
+            "local_url": "/firmware/2d116e7d0e8403b3e48e4dd25b78cb164c0566af7deccee842c5c5699a83bfa7/MeshCore-DeskOS-D1L-1.9.0-UPDATE-existing-deskos-at-0x20000.bin"
           },
           "recovery": {
-            "name": "MeshCore-DeskOS-D1L-1.8.0-FRESH-CLEAN-full-8mb-at-0x0.bin",
+            "name": "MeshCore-DeskOS-D1L-1.9.0-FRESH-CLEAN-full-8mb-at-0x0.bin",
             "size": 8388608,
-            "sha256": "21ffa42a9032d8ec3eccd1d7a35d16d6df35f3f1a713a0ebf79350d22144fbe3",
-            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0/MeshCore-DeskOS-D1L-1.8.0-FRESH-CLEAN-full-8mb-at-0x0.bin",
+            "sha256": "c49300333a536035711c2cc58b1f0ef7ce4048f21a1548a5c836e75380b1836f",
+            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/MeshCore-DeskOS-D1L-1.9.0-FRESH-CLEAN-full-8mb-at-0x0.bin",
             "address": 0,
-            "md5": "acec83b470ba0bdb4f895218657b0b0d",
-            "local_url": "/firmware/21ffa42a9032d8ec3eccd1d7a35d16d6df35f3f1a713a0ebf79350d22144fbe3/MeshCore-DeskOS-D1L-1.8.0-FRESH-CLEAN-full-8mb-at-0x0.bin"
+            "md5": "0e35bf1da7ea83483b775eb0452a0a7e",
+            "local_url": "/firmware/c49300333a536035711c2cc58b1f0ef7ce4048f21a1548a5c836e75380b1836f/MeshCore-DeskOS-D1L-1.9.0-FRESH-CLEAN-full-8mb-at-0x0.bin"
           },
           "bridge": {
-            "name": "MeshCore-DeskOS-D1L-1.8.0-RP2040-UPDATE-OR-FRESH.uf2",
+            "name": "MeshCore-DeskOS-D1L-1.9.0-RP2040-UPDATE-OR-FRESH.uf2",
             "size": 305152,
             "sha256": "404f5c2a15df28fdafe2f556eb69b3b7b635594c88f3273868a6d2cfc3f2225f",
-            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0/MeshCore-DeskOS-D1L-1.8.0-RP2040-UPDATE-OR-FRESH.uf2",
+            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/MeshCore-DeskOS-D1L-1.9.0-RP2040-UPDATE-OR-FRESH.uf2",
             "md5": "57a791141fda561bf21d36df01f42432",
-            "local_url": "/firmware/404f5c2a15df28fdafe2f556eb69b3b7b635594c88f3273868a6d2cfc3f2225f/MeshCore-DeskOS-D1L-1.8.0-RP2040-UPDATE-OR-FRESH.uf2"
+            "local_url": "/firmware/404f5c2a15df28fdafe2f556eb69b3b7b635594c88f3273868a6d2cfc3f2225f/MeshCore-DeskOS-D1L-1.9.0-RP2040-UPDATE-OR-FRESH.uf2"
           },
           "onboarding": "deskos",
           "update_boot": {
-            "name": "MeshCore-DeskOS-D1L-1.8.0-ota-data.bin",
+            "name": "MeshCore-DeskOS-D1L-1.9.0-ota-data.bin",
             "size": 8192,
             "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f",
-            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.8.0/MeshCore-DeskOS-D1L-1.8.0-ota-data.bin",
+            "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.9.0/MeshCore-DeskOS-D1L-1.9.0-ota-data.bin",
             "address": 61440,
             "md5": "84d04c9d6cc8ef35bf825d51a5277699",
-            "local_url": "/firmware/7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f/MeshCore-DeskOS-D1L-1.8.0-ota-data.bin"
+            "local_url": "/firmware/7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f/MeshCore-DeskOS-D1L-1.9.0-ota-data.bin"
           }
         }
       ]
