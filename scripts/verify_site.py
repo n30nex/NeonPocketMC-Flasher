@@ -151,17 +151,17 @@ def main() -> int:
 
     deskos = next(device for device in catalog["devices"] if device["id"] == "deskos-d1l")
     require((deskos["usb_vid"], deskos["usb_pid"]) == (0x1A86, 0x7523), "bad D1L USB identity")
-    require(deskos["tag"] == "v1.9.2", "wrong DeskOS release")
-    require(deskos["commit"] == "bfad4b4a31ebb6575445da5dd5565d3bc588e7f1", "wrong DeskOS commit")
+    require(deskos["tag"] == "v1.10.0", "wrong DeskOS release")
+    require(deskos["commit"] == "f1aaa565289afb839a10f75decc91957b360de0e", "wrong DeskOS commit")
     deskos_profile = deskos["profiles"][0]
     require(deskos_profile["update"]["address"] == 0x20000, "DeskOS update must use 0x20000")
     require(deskos_profile["recovery"]["address"] == 0, "DeskOS clean image must use 0x0")
     require(deskos_profile["bridge"]["name"].endswith(".uf2"), "DeskOS bridge must be UF2")
     require(deskos_profile["update_boot"]["address"] == 0xf000, "DeskOS boot selection must use 0xf000")
     require(deskos_profile["update_boot"]["sha256"] == "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f", "wrong DeskOS boot selection")
-    require(deskos_profile["update"]["sha256"] == "a6298d91e46cbe6736ae20392337cb8959ed5c5f216e48c700d9c87e2c64a7a5", "wrong DeskOS app")
+    require(deskos_profile["update"]["sha256"] == "b0a4470c5e2e00eb95a8248dfcd1aa0d1f7a0649e28d15d5bbe99d2dec83a0fc", "wrong DeskOS app")
     require(len(deskos["downloads"]) == 4, "DeskOS needs candidate package, signed update, installation and stable-release links")
-    require(deskos["downloads"][-1]["url"].endswith("/releases/tag/v1.9.1"), "previous stable DeskOS must remain linked")
+    require(deskos["downloads"][-1]["url"].endswith("/releases/tag/v1.9.2"), "previous stable DeskOS must remain linked")
 
     for contract in (
         'crypto.subtle.digest("SHA-256"',
