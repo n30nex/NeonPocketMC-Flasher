@@ -78,18 +78,18 @@
       "repository": "https://github.com/n30nex/DeskOS-MeshCore",
       "release": "https://github.com/n30nex/DeskOS-MeshCore/releases/tag/v1.11.0",
       "tag": "v1.11.0",
-      "commit": "e0fc5271b9bb756b253d3afaf25ea939d450910f",
+      "commit": "dc2c2c1e998af78343c3bc4d194a586a6cb48b09",
       "artifacts": [
         {
           "name": "MeshCore-DeskOS-D1L-1.11.0-UPDATE-existing-deskos-at-0x20000.bin",
           "size": 2327248,
-          "sha256": "657a5535638be9fe06cc68af44415ab19b45117067ae4cf906c3589a16d86759",
+          "sha256": "ad5ff12d04cad1371673f96326ddfab5a34f843cd7f3f31ed0b8b9dcc368f3c9",
           "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.11.0/MeshCore-DeskOS-D1L-1.11.0-UPDATE-existing-deskos-at-0x20000.bin"
         },
         {
           "name": "MeshCore-DeskOS-D1L-1.11.0-FRESH-CLEAN-full-8mb-at-0x0.bin",
           "size": 8388608,
-          "sha256": "0c5e36b4d0afac82a4752a21a3f9f7aa0ea8730ef2957289a7e8fe5fce6ac2c9",
+          "sha256": "f98108a099723dfa5be638812e259670455063f30e49afb61dc6bb5b21e56a49",
           "url": "https://github.com/n30nex/DeskOS-MeshCore/releases/download/v1.11.0/MeshCore-DeskOS-D1L-1.11.0-FRESH-CLEAN-full-8mb-at-0x0.bin"
         },
         {
